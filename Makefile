@@ -595,7 +595,7 @@ ifneq ($(XULRUNNER_SDK_DOWNLOAD),$(shell test -d $(XULRUNNER_DIRECTORY) && cat $
 # must download the xulrunner sdk
 	rm -rf $(XULRUNNER_BASE_DIRECTORY)
 	@echo "Downloading XULRunner..."
-	$(DOWNLOAD_CMD) $(XULRUNNER_SDK_DOWNLOAD)
+	#$(DOWNLOAD_CMD) $(XULRUNNER_SDK_DOWNLOAD)
 ifeq ($(findstring MINGW32,$(SYS)), MINGW32)
 	mkdir "$(XULRUNNER_BASE_DIRECTORY)"
 	@echo "Unzipping XULRunner..."
