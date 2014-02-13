@@ -61,6 +61,9 @@
 # flags.
 -include .b2g.mk
 
+#add for mozilla official in gaia.
+MOZILLA_OFFICIAL=1
+
 # Headless bot does not need the full output of wget
 # and it can cause crashes in bot.io option is here so
 # -nv can be passed and turn off verbose output.
@@ -72,7 +75,8 @@ DEVICE_DEBUG?=0
 PRODUCTION?=0
 DESKTOP_SHIMS?=0
 GAIA_OPTIMIZE?=0
-GAIA_DEV_PIXELS_PER_PX?=1
+# modified by tcl_chenguoqiang for foxfone
+GAIA_DEV_PIXELS_PER_PX?=1.5
 DOGFOOD?=0
 TEST_AGENT_PORT?=8789
 GAIA_APP_TARGET?=engineering
