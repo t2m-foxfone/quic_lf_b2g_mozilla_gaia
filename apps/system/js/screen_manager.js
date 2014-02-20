@@ -181,8 +181,8 @@ var ScreenManager = {
     // If nothing changed, we're done.
     if (clampedBrightness === currentBrightness)
       return;
-
-    this.setScreenBrightness(clampedBrightness, false);
+    if (Math.abs(clampedBrightness - currentBrightness) >= 0.4)
+      this.setScreenBrightness(clampedBrightness, false);
   },
 
   handleEvent: function scm_handleEvent(evt) {
