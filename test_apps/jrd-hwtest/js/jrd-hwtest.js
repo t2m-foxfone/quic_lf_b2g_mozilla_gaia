@@ -61,15 +61,19 @@ var JrdHwtest = {
       var wifiRate = $('wifiRate').options[rateIndex].value;
       dump("lx:wifiRate "+wifiRate);
       var runCommand = _self.getTxWifiRunCommand(protocolType, channel, txPower,wifiRate );
+      var initCommand= "/system/bin/wifitest power "+' > /data/wifitext.txt';
       $('wifiTxStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        var request = jrd.startUniversalCommand(runCommand, true);
+        dump("lx: initCommand "+initCommand+"\n");
+        var initRequest=jrd.startUniversalCommand(initCommand, true);
+         dump("lx: runCommand "+runCommand+"\n");
+        var request = jrd.startUniversalCommand(runCommand, true);   
       }
     });
     $('wifiTxStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = '/system/bin/wifitest stop';
+      var stopCommand = '/system/bin/wifitest stop'+' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
         var request = jrd.startUniversalCommand(stopCommand, false);
