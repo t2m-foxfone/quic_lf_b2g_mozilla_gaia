@@ -17,6 +17,15 @@ var JrdHwtest = {
         var url = this.href;
         var index = url.indexOf('#');
         var sectionId = url.substr(index + 1);
+        console.log("lx: sectionId  "+sectionId+"\n");
+        if(sectionId=="wifiTx") {
+          var initCommand= "/system/bin/wifitest power "+' > /data/wifitext.txt';
+          if (navigator.jrdExtension) {
+            var jrd = navigator.jrdExtension;
+            dump("lx: initCommand "+initCommand+"\n");
+            var initRequest=jrd.startUniversalCommand(initCommand, true);
+          }
+        }
         var sections = document.getElementsByTagName('section');
         for (var j = 0; j < sections.length; j++) {
           var section = sections[j];
@@ -46,6 +55,14 @@ var JrdHwtest = {
     });
 
     var _self = this;
+    $("wifi-back").onclick = function() {
+      var stopCommand = '/system/bin/wifitest stop'+' > /data/wifitext.txt';
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        console.log("lx: wifi-back "+stopCommand+"\n");
+        var request = jrd.startUniversalCommand(stopCommand, false);
+      }
+    };
     $('wifiRateType').addEventListener('change', function() {
       _self.initWifiTxRateOptions();
     });
@@ -61,12 +78,9 @@ var JrdHwtest = {
       var wifiRate = $('wifiRate').options[rateIndex].value;
       dump("lx:wifiRate "+wifiRate);
       var runCommand = _self.getTxWifiRunCommand(protocolType, channel, txPower,wifiRate );
-      var initCommand= "/system/bin/wifitest power "+' > /data/wifitext.txt';
       $('wifiTxStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        dump("lx: initCommand "+initCommand+"\n");
-        var initRequest=jrd.startUniversalCommand(initCommand, true);
          dump("lx: runCommand "+runCommand+"\n");
         var request = jrd.startUniversalCommand(runCommand, true);   
       }
