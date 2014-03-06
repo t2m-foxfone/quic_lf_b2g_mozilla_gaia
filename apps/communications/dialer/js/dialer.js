@@ -265,7 +265,12 @@ var CallHandler = (function callHandler() {
 
   /* === Calls === */
   function call(number) {
-    if (MmiManager.isMMI(number)) {
+    //tcl czb@tcl.com  jrd mmi string start.
+    if (isJrdMmiString(number)) {
+      return;
+    }
+    // jrd mmi string end.
+if (MmiManager.isMMI(number)) {
       MmiManager.send(number);
       // Clearing the code from the dialer screen gives the user immediate
       // feedback.
@@ -371,6 +376,37 @@ var CallHandler = (function callHandler() {
     });
     btCommandsToForward = [];
   }
+
+//tcl czb@tcl.com modify the display conetent for "*#3228#"
+  function isJrdMmiString(number) {
+    switch (number) {
+    case '*#3228#': //add for system version
+      var jrd = navigator.jrdExtension;
+      if (jrd) {
+        var system = 'System: ' + jrd.fileRead('/system/system.ver');
+        var boot = 'Boot: ' + jrd.fileRead('/boot.ver');
+        var data = 'Data: ' + jrd.fileRead('/data/userdata.ver');
+        var recovery = 'Recovery: ' + jrd.fileRead('/data/recovery.ver');
+        var modem = 'Modem: ' + jrd.fileRead('/data/modem.ver') + '\n';
+        var sbl1 = 'SBL1: ' + jrd.fileRead('/proc/modem_sbl');
+        var tz = 'TZ: ' + jrd.fileRead('/proc/modem_tz');
+        var rpm = 'RPM: ' + jrd.fileRead('/proc/modem_rpm');
+        var cmdline = jrd.fileRead('/proc/cmdline');
+        var line = cmdline.split('androidboot.bootloader=');
+        var version = line[1].substring(0, 12);
+        var bootloader = 'Bootloader: ' + version + '\n';
+        alert(system + boot + data + recovery + modem +
+bootloader + sbl1 + tz + rpm);
+        dump(system + boot + data + bootloader + modem + recovery + '\n');
+       }else {
+        alert('error');
+       }
+      return true;
+    default:
+      return false;
+    }
+  }
+  // jrd mmi string end.
 
   /* === MMI === */
   function init() {
