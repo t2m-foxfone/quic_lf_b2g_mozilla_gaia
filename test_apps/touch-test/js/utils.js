@@ -2,16 +2,14 @@ const INFO1_W = 90;
 const INFO1_H = 35;
 
 function getWidth(){
-  //return window.screen.width;
+  return window.screen.width;
   //return 320;
-  return 480;
 
 }
 
 function getHeight(){
-  //return window.screen.height;
+  return window.screen.height;
   //return 480;
-  return 854;
 }
 
 

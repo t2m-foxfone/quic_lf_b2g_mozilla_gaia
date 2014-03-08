@@ -5,7 +5,7 @@
   top: 11px;
   right: 11px;
   height:38px;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .configuration-list {
@@ -22,11 +22,11 @@
 
 .configuration-list > li {
   -moz-box-sizing: border-box;
-  height: 6rem;
+  height: 5rem;
   padding: 5px 5px;
 
   color: #fff;
-  font-size: 24px;
+  font-size: 14px;
   line-height: 40px;
   font-weight: 400;
 }
@@ -34,8 +34,8 @@
 .configuration-list input {
   float: right;
   width: calc(100% / 4);
-  height: 5rem;
-  font-size: 24px;
+  height: 4rem;
+  font-size: 16px;
   text-align: right;
 }
 
