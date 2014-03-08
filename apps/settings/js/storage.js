@@ -150,21 +150,26 @@ var Storage = {
     switch (state) {
       case 'available':
         this.updateMediaFreeSpace(volume);
-        this.lockMediaStorageMenu(false);
+        //this.lockMediaStorageMenu(false);
         break;
 
       case 'shared':
         this.mediaStorageDesc.textContent = '';
         this.mediaStorageDesc.dataset.l10nId = '';
-        this.lockMediaStorageMenu(false);
+        //this.lockMediaStorageMenu(false);
         break;
 
       case 'unavailable':
         this.mediaStorageDesc.textContent = _('no-storage');
         this.mediaStorageDesc.dataset.l10nId = 'no-storage';
-        this.lockMediaStorageMenu(true);
+        //this.lockMediaStorageMenu(true);
         break;
     }
+
+    // temporarily unlock media storage menu, no matter what state
+    // default volume is in. work around a bug that this meau cant be
+    // opened when internal storage corrupted but sdcard is ok
+    this.lockMediaStorageMenu(false);
   },
 
   updateMediaFreeSpace: function storage_updateMediaFreeSpace(volume) {

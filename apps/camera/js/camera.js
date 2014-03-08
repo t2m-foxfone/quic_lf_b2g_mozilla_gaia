@@ -1742,7 +1742,19 @@ var Camera = {
         callback();
       }
     }.bind(this));
+  },
+
+  updateStorageSpace: function camera_updateStorageSpace() {
+    this._storageState = this.STORAGE_INIT;
+
+    this._pictureStorage = navigator.getDeviceStorage('pictures');
+    this._videoStorage = navigator.getDeviceStorage('videos');
+    this._pictureStorage
+      .addEventListener('change', this.deviceStorageChangeHandler.bind(this));
+    this.checkStorageSpace();
+    this.previewEnabled();
   }
+
 };
 
 Camera.init();
@@ -1756,7 +1768,11 @@ document.addEventListener('visibilitychange', function() {
     if (this._secureMode) // If the lockscreen is locked
       Filmstrip.clear();  // then forget everything when closing camera
   } else {
-    Camera.startPreview();
+    if (this._pictureStorage !== navigator.getDeviceStorage('pictures')) {
+      Camera.updateStorageSpace();  // if storage changed by settings, update it.
+    } else {
+      Camera.startPreview();
+    }
   }
 });
 
