@@ -1,4 +1,7 @@
 'use strict';
+function debug(msg) {
+ dump("-*-*jrd-hwtest.js -*-* "+msg);
+}
 function $(id) {
   return document.getElementById(id);
 }
@@ -18,14 +21,38 @@ var JrdHwtest = {
         var index = url.indexOf('#');
         var sectionId = url.substr(index + 1);
         console.log("lx: sectionId  "+sectionId+"\n");
-        if(sectionId=="wifiTx") {
+        //if(sectionId=="wifiTx") {
+        switch(sectionId) {
+          case 'wifiTx':
+          case 'wifiRx':
           var initCommand= "/system/bin/wifitest power "+' > /data/wifitext.txt';
-          if (navigator.jrdExtension) {
-            var jrd = navigator.jrdExtension;
-            dump("lx: initCommand "+initCommand+"\n");
-            var initRequest=jrd.startUniversalCommand(initCommand, true);
-          }
+            if (navigator.jrdExtension) {
+              var jrd = navigator.jrdExtension;
+              debug("lx: wifiTx  initCommand "+initCommand+"\n");
+              var initRequest=jrd.startUniversalCommand(initCommand, true);
+            }
+            break;
+          case 'bluetoothTx':
+            //var initCommand = "/system/bin/btTx_test bttest enable; " + "/system/bin/btTx_test  bttest is_enabled " + " > /data/btTx_test.txt";
+            var initCommand = "/system/bin/btTx_start" + ' > /data/btTx_start.txt';
+	        if (navigator.jrdExtension) {
+              var jrd = navigator.jrdExtension;
+              debug("lx: bluetoothTx  initCommand " + initCommand+"\n");
+              var initRequest=jrd.startUniversalCommand(initCommand, true);
+            }
+            break;
+//          case 'bt-radio-test':
+//            var initCommand = "system/bin/bt_radio bttest enable;" + "system/bin/bt_radio  bttest is_enabled "+" > /data/bt_radio.txt";
+//            if (navigator.jrdExtension) {
+//              var jrd = navigator.jrdExtension;
+//              debug("lx: bt-radio-test initCommand " + initCommand+"\n");
+//              var initRequest=jrd.startUniversalCommand(initCommand, true);
+//            }
+//            break;
+          default :
+            break;
         }
+        //}
         var sections = document.getElementsByTagName('section');
         for (var j = 0; j < sections.length; j++) {
           var section = sections[j];
@@ -56,7 +83,7 @@ var JrdHwtest = {
 
     var _self = this;
     $("wifi-back").onclick = function() {
-      var stopCommand = '/system/bin/wifitest stop'+' > /data/wifitext.txt';
+      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
         console.log("lx: wifi-back "+stopCommand+"\n");
@@ -76,24 +103,56 @@ var JrdHwtest = {
       var protocolType = $('wifiRateType').options[protocolIndex].value;
       var rateIndex = $('wifiRate').selectedIndex;
       var wifiRate = $('wifiRate').options[rateIndex].value;
-      dump("lx:wifiRate "+wifiRate);
+      debug("lx:wifiRate "+wifiRate);
       var runCommand = _self.getTxWifiRunCommand(protocolType, channel, txPower,wifiRate );
       $('wifiTxStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-         dump("lx: runCommand "+runCommand+"\n");
+      debug("lx: runCommand "+runCommand+"\n");
         var request = jrd.startUniversalCommand(runCommand, true);   
       }
     });
     $('wifiTxStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = '/system/bin/wifitest stop'+' > /data/wifitext.txt';
+      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
         var request = jrd.startUniversalCommand(stopCommand, false);
       }
       $('wifiTxRun').disabled = false;
     });
+
+    $('wifiRxRun').addEventListener('click',function(){
+      this.disabled = true;
+      var channelIndex = $('rxChannelSelect').selectedIndex;
+      var channel = $('rxChannelSelect').options[channelIndex].value;
+      var rxRun="/system/bin/wifitest tx cmd "+ channel;
+      $('wifiRxStop').disabled = false;
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        debug("lx: runCommand "+rxRun+"\n");
+        var request = jrd.startUniversalCommand(rxRun, true);
+      }
+    });
+    $('wifiRxStop').addEventListener('click', function() {
+      this.disabled = true;
+      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        dump("lx:rxStop  " + stopCommand + "\n");
+        var request = jrd.startUniversalCommand(stopCommand, false);
+      }
+      $('wifiRxRun').disabled = false;
+    });
+
+    $('wifiRx-back').onclick=function() {
+      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        console.log("lx: wifi-back "+stopCommand+"\n");
+        var request = jrd.startUniversalCommand(stopCommand, false);
+      }
+    };
     $('btTxRun').addEventListener('click', function() {
       var patternIndex = $('btTxPattern').selectedIndex;
       var btTxPattern = $('btTxPattern').options[patternIndex].value;
@@ -107,11 +166,13 @@ var JrdHwtest = {
       var btTxPower = $('btTxPower').options[powerIndex].value;
       var rxGainIndex = $('btTxRxGain').selectedIndex;
       var btTxRxGain = $('btTxRxGain').options[rxGainIndex].value;
-      var runCommand = _self.getTxBTRunCommand(btTxPattern, btTxChannel, btTxPacketType, btTxWhitening, btTxPower, btTxRxGain);
+      //var runCommand = _self.getTxBTRunCommand(btTxPattern, btTxChannel, btTxPacketType, btTxWhitening, btTxPower, btTxRxGain);
+      var  txRunCommand = '/system/bin/btTx_run ' + btTxChannel + ' ' + btTxPattern + ' ' + btTxPacketType + ' ' + btTxWhitening + ' ' + btTxPower + ' ' + btTxRxGain;
       this.disabled = true;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        var request = jrd.startUniversalCommand(runCommand, true);
+        debug("lx: btTxRun runCommand "+ txRunCommand +"\n");
+        var request = jrd.startUniversalCommand(txRunCommand, true);
         request.onsuccess = function(e) {
           alert("success!");
           $('btTxRun').disabled = false;
@@ -122,19 +183,31 @@ var JrdHwtest = {
         };
       }
     });
+    $('btTx-back').onclick = function() {
+       var btDisable="bttest disable";
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        console.log("lx: bluetooth-back "+btDisable+"\n");
+        var request = jrd.startUniversalCommand(btDisable, false);
+      }
+
+    };
     $('gpsTest1Run').addEventListener('click', function() {
       this.disabled = true;
       var runCommand = '/system/bin/gps_test 1 0';
+     //var runCommand= '/system/bin/gps_run '+new Date().getTime();
       $('gpsTest1Stop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        var request = jrd.startUniversalCommand(runCommand, false);
+        debug("lx:gpsTest1Run runCommand "+runCommand+'\n');
+        var request = jrd.startUniversalCommand(runCommand, true);
       }
     });
     $('gpsTest1Stop').addEventListener('click', function() {
       this.disabled = true;
       var stopCommand = '/system/bin/wifitest stop';
       if (navigator.jrdExtension) {
+        debug("lx:gpsTest1Stop stopCommand "+stopCommand+'\n')
         navigator.jrdExtension.stopUniversalCommand();
       }
       $('gpsTest1Run').disabled = false;
@@ -143,17 +216,21 @@ var JrdHwtest = {
     $('btRadioTestRun').addEventListener('click', function() {
       this.disabled = true;
       $('btRadioTestStop').disabled = false;
-      var runCommand = 'bttest disable;' + 'bttest enable;' + 'hcitool cmd 0x06 0x0003;' + 'hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' + 'hcitool cmd 0x03 0x001A 0x03;' + 'hcitool cmd 0x03 0x0020 0x00;' + 'hcitool cmd 0x03 0x0022 0x00';
+     // var runCommand = 'bttest disable;' + 'bttest enable;' + 'hcitool cmd 0x06 0x0003;' + 'hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' + 'hcitool cmd 0x03 0x001A 0x03;' + 'hcitool cmd 0x03 0x0020 0x00;' + 'hcitool cmd 0x03 0x0022 0x00';
+     //var runCommand = 'hcitool cmd 0x3F 0x0B 0x01 0x24 0x0C 0xFF 00 07 07 07 07 00 00 07 07 02 00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x03;' + '/system/bin/bt_radio hcitool cmd 0x06 0x0003;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' + '/system/bin/bt_radio hcitool cmd 0x03 0x001A 0x03;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0020 0x00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0022 0x00';
+      var bttestCommand = '/system/bin/bt_radio_run ' + ' > /data/bt_radio_run.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        var request = jrd.startUniversalCommand(runCommand, false);
+        debug("lx:btRadioTestRun runCommand "+ bttestCommand + "\n");
+        var request = jrd.startUniversalCommand(bttestCommand, true);
       }
     });
     $('btRadioTestStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = 'bttest disable';
+      var stopCommand = '/system/bin/bt_radio_stop';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
+        debug("lx:btRadioTestStop stopCommand "+stopCommand+"\n");
         var request = jrd.startUniversalCommand(stopCommand, true);
       }
       $('btRadioTestRun').disabled = false;
@@ -232,10 +309,17 @@ var JrdHwtest = {
       }
       var crd = pos.coords;
       timeEnd = new Date().getTime();
+      dump("lx: timeEnd "+ timeEnd +"\n");
       result = parseInt((timeEnd - timeBegin) / 1000);
       result2 = result;
       result = result + '\t' + crd.latitude + '\t' + crd.longitude;
+      dump("lx: result2 "+result2 +"\n");
       result2 = '[' + id + ']' + result2 + '\t' + (crd.latitude + '').substr(0, 7) + '\t' + (crd.longitude + '').substr(0, 7);
+      {
+        var filename = '/data/jrdhwtest-gps2-' + type + '.log';   
+        var wirteCommand = "echo \"" + result + "\" >> " + filename;
+        var request = navigator.jrdExtension.startUniversalCommand(wirteCommand, true);
+      }
       $('gps2ResultPanel').innerHTML = result2 + '</br>' + $('gps2ResultPanel').innerHTML;
       
       Log('geolocation.watchPosition success id = ' + id + ' result: ' + result);
@@ -289,7 +373,7 @@ var JrdHwtest = {
 
     function runTest(){
       Log('runTest :' + type);
-      
+       debug("lx: Type "+type+"\n");
       if(count > total) {
         return;
       }   

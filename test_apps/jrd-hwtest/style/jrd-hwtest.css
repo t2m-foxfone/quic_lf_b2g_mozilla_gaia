@@ -20,10 +20,21 @@ html, body {
   line-height: 6rem;
   display: inline;
 }
+.divItem >input {
+  height: 3rem;
+}
+
 
 .resultItem {
   font-size: 1.9rem;
   width: 100%;
   height: 300px;
+  overflow: auto;
+}
+ .textItem,
+.nfcItem {
+  font-size: 1.9rem;
+  width: 100%;
+  line-height: 6rem;
   overflow: auto;
 }
