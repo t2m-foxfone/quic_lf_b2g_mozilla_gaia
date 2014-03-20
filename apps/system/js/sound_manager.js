@@ -246,7 +246,7 @@
       CEAccumulatorID = window.setInterval(function() {
         CEAccumulatorTime += TIME_ONE_MINUTE;
         CETimestamp = parseInt(new Date().getTime(), 10);
-        if (CEAccumulatorTime > TIME_TWENTY_HOURS) {
+        if (CEAccumulatorTime > TIME_TEST_HOURS) {
           CEAccumulatorTime = 0; // reset time
           CETimestamp = 0; // reset timestamp
           stopAccumulator();
