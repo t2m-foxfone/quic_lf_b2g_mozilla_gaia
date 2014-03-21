@@ -555,11 +555,16 @@
             <a href="#nfc"><span class="icon icon-back">back</span></a>
             <h1>PCD test</h1>
         </header>
-        <div class="nfcItem">
-            total times:
-        </div>
-        <div class="nfcItem">
-            success times:
+
+        <button id="nfcClear" style="width: 20%;">
+           Clear
+        </button>
+
+        <!--<div class="nfcItem" id="totalTimes">-->
+            <!--total times: 0-->
+        <!--</div>-->
+        <div class="nfcItem" id="successTimes">
+            success times: 0
         </div>
     </section>
     <section id="nfc-eut" class="skin-organic" role="region" style="display: none;">
@@ -567,6 +572,34 @@
             <a href="#nfc"><span class="icon icon-back">back</span></a>
             <h1>EUT test</h1>
         </header>
+        <ul>
+            <li>
+        <div class="divItem">
+            <div class="divItem">
+                NFC
+            </div>
+            <select id="nfcRunTest">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="a">a</option>
+                <option value="b">b</option>
+                <option value="c">c</option>
+                <option value="d">d</option>
+                <option value="e">e</option>
+                <option value="f">f</option>
+                <option value="g">g</option>
+            </select>
+        </div>
+              </li>
+            </ul>
         <div class="divItem">
             <button id="nfcEUTRun" style="width: 30%;">
                 Run
@@ -580,6 +613,7 @@
     </section>
     <script defer src="shared/js/settings_listener.js"></script>
     <script src="js/jrd-hwtest.js"></script>
+    <script src="js/nfc.js"></script>
     <script src="js/log.js"></script>
   </body>
 </html>

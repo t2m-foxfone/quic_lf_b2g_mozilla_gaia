@@ -1,17 +1,17 @@
 'use strict';
 function debug(msg) {
- dump("-*-*jrd-hwtest.js -*-* "+msg);
+ dump('-*-*jrd-hwtest.js -*-* ' + msg);
 }
 function $(id) {
   return document.getElementById(id);
 }
 
 var JrdHwtest = {
-  init : function jrdHwTestInit() {
+  init: function jrdHwTestInit() {
     this.pageChangeHandler();
     this.fireEvent();
   },
-  pageChangeHandler : function jrdHwTestPageChangeHandler() {
+  pageChangeHandler: function jrdHwTestPageChangeHandler() {
     this.initWifiTxRateOptions();
     var pageLinks = document.getElementsByTagName('a');
     for (var i = 0; i < pageLinks.length; i++) {
@@ -20,26 +20,30 @@ var JrdHwtest = {
         var url = this.href;
         var index = url.indexOf('#');
         var sectionId = url.substr(index + 1);
-        console.log("lx: sectionId  "+sectionId+"\n");
+        console.log('lx: sectionId ' + sectionId + '\n');
         //if(sectionId=="wifiTx") {
-        switch(sectionId) {
+        switch (sectionId) {
           case 'wifiTx':
           case 'wifiRx':
-          var initCommand= "/system/bin/wifitest power "+' > /data/wifitext.txt';
+          var initCommand = '/system/bin/wifitest power ' +
+            ' > /data/wifitext.txt';
             if (navigator.jrdExtension) {
               var jrd = navigator.jrdExtension;
-              debug("lx: wifiTx  initCommand "+initCommand+"\n");
-              var initRequest=jrd.startUniversalCommand(initCommand, true);
+              debug('lx: wifiTx  initCommand ' + initCommand + '\n');
+              var initRequest = jrd.startUniversalCommand(initCommand, true);
             }
             break;
           case 'bluetoothTx':
-            //var initCommand = "/system/bin/btTx_test bttest enable; " + "/system/bin/btTx_test  bttest is_enabled " + " > /data/btTx_test.txt";
-            var initCommand = "/system/bin/btTx_start" + ' > /data/btTx_start.txt';
-	        if (navigator.jrdExtension) {
+            //var initCommand = "/system/bin/btTx_test bttest enable; "
+            // + "/system/bin/btTx_test  bttest is_enabled " +
+            // " > /data/btTx_test.txt";
+            var initCommand = '/system/bin/btTx_start' +
+              ' > /data/btTx_start.txt';
+	          if (navigator.jrdExtension) {
               var jrd = navigator.jrdExtension;
-              debug("lx: bluetoothTx  initCommand " + initCommand+"\n");
-              var initRequest=jrd.startUniversalCommand(initCommand, true);
-            }
+              debug('lx: bluetoothTx  initCommand ' + initCommand + '\n');
+              var initRequest = jrd.startUniversalCommand(initCommand, true);
+             }
             break;
 //          case 'bt-radio-test':
 //            var initCommand = "system/bin/bt_radio bttest enable;" + "system/bin/bt_radio  bttest is_enabled "+" > /data/bt_radio.txt";
@@ -65,7 +69,7 @@ var JrdHwtest = {
       });
     }
   },
-  fireEvent : function jrdHwTestFireEvent() {
+  fireEvent: function jrdHwTestFireEvent() {
     //window.navigator.mozSettings.createLock().set({
       //'screen.timeout' : 9999999
     //});
@@ -82,11 +86,12 @@ var JrdHwtest = {
     });
 
     var _self = this;
-    $("wifi-back").onclick = function() {
-      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+    $('wifi-back').onclick = function() {
+      var stopCommand = '/system/bin/wifitest tx stop' +
+        ' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        console.log("lx: wifi-back "+stopCommand+"\n");
+        console.log('lx: wifi-back ' + stopCommand + '\n');
         var request = jrd.startUniversalCommand(stopCommand, false);
       }
     };
@@ -103,18 +108,19 @@ var JrdHwtest = {
       var protocolType = $('wifiRateType').options[protocolIndex].value;
       var rateIndex = $('wifiRate').selectedIndex;
       var wifiRate = $('wifiRate').options[rateIndex].value;
-      debug("lx:wifiRate "+wifiRate);
-      var runCommand = _self.getTxWifiRunCommand(protocolType, channel, txPower,wifiRate );
+      debug('lx:wifiRate ' + wifiRate);
+      var runCommand = _self.getTxWifiRunCommand(protocolType,
+        channel, txPower, wifiRate);
       $('wifiTxStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-      debug("lx: runCommand "+runCommand+"\n");
-        var request = jrd.startUniversalCommand(runCommand, true);   
+      debug('lx: runCommand ' + runCommand + '\n');
+        var request = jrd.startUniversalCommand(runCommand, true);
       }
     });
     $('wifiTxStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+      var stopCommand = '/system/bin/wifitest tx stop' + ' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
         var request = jrd.startUniversalCommand(stopCommand, false);
@@ -122,34 +128,36 @@ var JrdHwtest = {
       $('wifiTxRun').disabled = false;
     });
 
-    $('wifiRxRun').addEventListener('click',function(){
+    $('wifiRxRun').addEventListener('click', function() {
       this.disabled = true;
       var channelIndex = $('rxChannelSelect').selectedIndex;
       var channel = $('rxChannelSelect').options[channelIndex].value;
-      var rxRun="/system/bin/wifitest tx cmd "+ channel;
+      var rxRun = '/system/bin/wifitest tx cmd ' + channel;
       $('wifiRxStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        debug("lx: runCommand "+rxRun+"\n");
+        debug('lx: runCommand ' + rxRun + '\n');
         var request = jrd.startUniversalCommand(rxRun, true);
       }
     });
     $('wifiRxStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+      var stopCommand = '/system/bin/wifitest tx stop' +
+        ' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        dump("lx:rxStop  " + stopCommand + "\n");
+        dump('lx:rxStop  ' + stopCommand + '\n');
         var request = jrd.startUniversalCommand(stopCommand, false);
       }
       $('wifiRxRun').disabled = false;
     });
 
-    $('wifiRx-back').onclick=function() {
-      var stopCommand = '/system/bin/wifitest tx stop'+' > /data/wifitext.txt';
+    $('wifiRx-back').onclick = function() {
+      var stopCommand = '/system/bin/wifitest tx stop' +
+        ' > /data/wifitext.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        console.log("lx: wifi-back "+stopCommand+"\n");
+        console.log('lx: wifi-back ' + stopCommand + '\n');
         var request = jrd.startUniversalCommand(stopCommand, false);
       }
     };
@@ -166,15 +174,19 @@ var JrdHwtest = {
       var btTxPower = $('btTxPower').options[powerIndex].value;
       var rxGainIndex = $('btTxRxGain').selectedIndex;
       var btTxRxGain = $('btTxRxGain').options[rxGainIndex].value;
-      //var runCommand = _self.getTxBTRunCommand(btTxPattern, btTxChannel, btTxPacketType, btTxWhitening, btTxPower, btTxRxGain);
-      var  txRunCommand = '/system/bin/btTx_run ' + btTxChannel + ' ' + btTxPattern + ' ' + btTxPacketType + ' ' + btTxWhitening + ' ' + btTxPower + ' ' + btTxRxGain;
+      //var runCommand = _self.getTxBTRunCommand(btTxPattern,
+      // btTxChannel, btTxPacketType, btTxWhitening,
+      // btTxPower, btTxRxGain);
+      var txRunCommand = '/system/bin/btTx_run ' + btTxChannel + ' ' +
+        btTxPattern + ' ' + btTxPacketType + ' ' +
+        btTxWhitening + ' ' + btTxPower + ' ' + btTxRxGain;
       this.disabled = true;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        debug("lx: btTxRun runCommand "+ txRunCommand +"\n");
+        debug('lx: btTxRun runCommand ' + txRunCommand + '\n');
         var request = jrd.startUniversalCommand(txRunCommand, true);
         request.onsuccess = function(e) {
-          alert("success!");
+          alert('success!');
           $('btTxRun').disabled = false;
         };
         request.onerror = function(e) {
@@ -184,10 +196,10 @@ var JrdHwtest = {
       }
     });
     $('btTx-back').onclick = function() {
-       var btDisable="bttest disable";
+       var btDisable = 'bttest disable';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        console.log("lx: bluetooth-back "+btDisable+"\n");
+        console.log('lx: bluetooth-back ' + btDisable + '\n');
         var request = jrd.startUniversalCommand(btDisable, false);
       }
 
@@ -199,7 +211,7 @@ var JrdHwtest = {
       $('gpsTest1Stop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        debug("lx:gpsTest1Run runCommand "+runCommand+'\n');
+        debug('lx:gpsTest1Run runCommand ' + runCommand + '\n');
         var request = jrd.startUniversalCommand(runCommand, true);
       }
     });
@@ -207,7 +219,7 @@ var JrdHwtest = {
       this.disabled = true;
       var stopCommand = '/system/bin/wifitest stop';
       if (navigator.jrdExtension) {
-        debug("lx:gpsTest1Stop stopCommand "+stopCommand+'\n')
+        debug('lx:gpsTest1Stop stopCommand ' + stopCommand + '\n');
         navigator.jrdExtension.stopUniversalCommand();
       }
       $('gpsTest1Run').disabled = false;
@@ -216,12 +228,20 @@ var JrdHwtest = {
     $('btRadioTestRun').addEventListener('click', function() {
       this.disabled = true;
       $('btRadioTestStop').disabled = false;
-     // var runCommand = 'bttest disable;' + 'bttest enable;' + 'hcitool cmd 0x06 0x0003;' + 'hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' + 'hcitool cmd 0x03 0x001A 0x03;' + 'hcitool cmd 0x03 0x0020 0x00;' + 'hcitool cmd 0x03 0x0022 0x00';
-     //var runCommand = 'hcitool cmd 0x3F 0x0B 0x01 0x24 0x0C 0xFF 00 07 07 07 07 00 00 07 07 02 00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x03;' + '/system/bin/bt_radio hcitool cmd 0x06 0x0003;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' + '/system/bin/bt_radio hcitool cmd 0x03 0x001A 0x03;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0020 0x00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0022 0x00';
+     // var runCommand = 'bttest disable;' + 'bttest enable;' +
+     // 'hcitool cmd 0x06 0x0003;' +
+     // 'hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' +
+     // 'hcitool cmd 0x03 0x001A 0x03;' + 'hcitool cmd 0x03 0x0020 0x00;' +
+     // 'hcitool cmd 0x03 0x0022 0x00';
+     //var runCommand = 'hcitool cmd 0x3F 0x0B 0x01 0x24 0x0C 0xFF 00 07 07 07 07 00 00 07 07 02 00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x03;' +
+     // '/system/bin/bt_radio hcitool cmd 0x06 0x0003;' +
+     // '/system/bin/bt_radio hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' +
+     // '/system/bin/bt_radio hcitool cmd 0x03 0x001A 0x03;' +
+     // '/system/bin/bt_radio hcitool cmd 0x03 0x0020 0x00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0022 0x00';
       var bttestCommand = '/system/bin/bt_radio_run ' + ' > /data/bt_radio_run.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        debug("lx:btRadioTestRun runCommand "+ bttestCommand + "\n");
+        debug('lx:btRadioTestRun runCommand ' + bttestCommand + '\n');
         var request = jrd.startUniversalCommand(bttestCommand, true);
       }
     });
@@ -230,14 +250,14 @@ var JrdHwtest = {
       var stopCommand = '/system/bin/bt_radio_stop';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        debug("lx:btRadioTestStop stopCommand "+stopCommand+"\n");
+        debug('lx:btRadioTestStop stopCommand ' + stopCommand + '\n');
         var request = jrd.startUniversalCommand(stopCommand, true);
       }
       $('btRadioTestRun').disabled = false;
     });
     //BT RADIO TEST ENE
-    
-    var count,type;
+
+    var count, type;
     $('gpsTest2Cold').addEventListener('click', function() {
       disableButtonGPSTest2();
       count = 0;
@@ -256,6 +276,30 @@ var JrdHwtest = {
       type = 'warm';
       runTest();
     });
+
+    $('nfcEUTRun').addEventListener('click', function() {
+      var index = $('nfcRunTest').selectedIndex;
+      var value = $('nfcRunTest').options[index].value;
+      var nfcRunCommand = '/system/bin/test_pn547  ' + value;
+      this.disabled = true;
+      $('nfcEUTStop').disabled = false;
+      if (navigator.jrdExtension) {
+        var jrd = navigator.jrdExtension;
+        debug('lx:nfc Run  ' + nfcRunCommand + '\n');
+        var request = jrd.startUniversalCommand(nfcRunCommand, false);
+      }
+
+    });
+
+    $('nfcEUTStop').addEventListener('click', function() {
+      if (navigator.jrdExtension) {
+        debug('lx:nfcEUTStop \n');
+        navigator.jrdExtension.stopUniversalCommand();
+      }
+      this.disabled = true;
+      $('nfcEUTRun').disabled = false;
+    });
+
     function disableButtonGPSTest2() {
       $('rst_gpstest2').innerHTML = 'testing.....(0)';
       $('gpsTest2Cold').disabled = true;
@@ -280,13 +324,13 @@ var JrdHwtest = {
         'geolocation.enabled' : true
       });
     }
-    
+
     function closeShell() {
       try {
         navigator.jrdExtension.stopUniversalCommand();
-      } catch(e) {
+      } catch (e) {
       }
-    };
+    }
 
     var result = '';
     var result2 = '';
@@ -297,9 +341,9 @@ var JrdHwtest = {
     var timeBegin = 0;
     var timeEnd = 0;
     var options = {
-      enableHighAccuracy : true,
-      timeout : 60000,
-      maximumAge : 0
+      enableHighAccuracy: true,
+      timeout: 60000,
+      maximumAge: 0
     };
 
     function success(pos) {
@@ -309,25 +353,25 @@ var JrdHwtest = {
       }
       var crd = pos.coords;
       timeEnd = new Date().getTime();
-      dump("lx: timeEnd "+ timeEnd +"\n");
+      dump('lx: timeEnd ' + timeEnd + '\n');
       result = parseInt((timeEnd - timeBegin) / 1000);
       result2 = result;
       result = result + '\t' + crd.latitude + '\t' + crd.longitude;
-      dump("lx: result2 "+result2 +"\n");
+      dump('lx: result2 ' + result2 + '\n');
       result2 = '[' + id + ']' + result2 + '\t' + (crd.latitude + '').substr(0, 7) + '\t' + (crd.longitude + '').substr(0, 7);
       {
-        var filename = '/data/jrdhwtest-gps2-' + type + '.log';   
-        var wirteCommand = "echo \"" + result + "\" >> " + filename;
+        var filename = '/data/jrdhwtest-gps2-' + type + '.log';
+        var wirteCommand = 'echo \"' + result + '\" >> ' + filename;
         var request = navigator.jrdExtension.startUniversalCommand(wirteCommand, true);
       }
       $('gps2ResultPanel').innerHTML = result2 + '</br>' + $('gps2ResultPanel').innerHTML;
-      
+
       Log('geolocation.watchPosition success id = ' + id + ' result: ' + result);
 
       if (count < total) {
         $('rst_gpstest2').innerHTML = 'testing.....(' + count + ')';
         runTest();
-      } 
+      }
       else {
         $('rst_gpstest2').innerHTML = 'success';
         closeShell();
@@ -336,7 +380,7 @@ var JrdHwtest = {
         closeShell();
       }
 
-    };
+    }
 
     function error(err) {
       if (id != undefined) {
@@ -344,21 +388,21 @@ var JrdHwtest = {
         $('gps2ResultPanel').innerHTML = '[error]clear watch:[' + id + ']</br>' + $('gps2ResultPanel').innerHTML;
       }
       var msg = 'undefined error';
-      if ( typeof err == "object") {
+      if (typeof err == 'object') {
         if (err.code == 1) {
-          msg = "Error:Permission denied";
+          msg = 'Error:Permission denied';
         }
         if (err.code == 2) {
-          msg = "Error:Position unavailable";
+          msg = 'Error:Position unavailable';
         }
         if (err.code == 3) {
-          msg = "Error:Timed out";
+          msg = 'Error:Timed out';
         }
       }
       $('gps2ResultPanel').innerHTML = '[' + id + ']' + msg + '</br>' + $('gps2ResultPanel').innerHTML;
-      
+
       Log('geolocation.watchPosition error id = ' + id + ' msg: ' + msg);
-      
+
       // alert(msg + count);
       if (count < total) {
         $('rst_gpstest2').innerHTML = 'testing.....(' + count + ')';
@@ -369,25 +413,25 @@ var JrdHwtest = {
         result = '';
         closeShell();
       }
-    };
+    }
 
-    function runTest(){
+    function runTest() {
       Log('runTest :' + type);
-       debug("lx: Type "+type+"\n");
-      if(count > total) {
+       debug('lx: Type ' + type + '\n');
+      if (count > total) {
         return;
-      }   
+      }
       var request = window.navigator.mozSettings.createLock().set({'geolocation.enabled' : false});
       DomRequestResult(request, 'geolocation.enabled: false', _settingCallback);
 
-      function _settingCallback(){
+      function _settingCallback() {
         if (type != 'hot') {
           var request = navigator.jrdExtension.startUniversalCommand('gps_test ' + type, true);
-          DomRequestResult(request, 'gps_test ' + type, _callback);      
+          DomRequestResult(request, 'gps_test ' + type, _callback);
         }
-        else{
+        else {
           _callback();
-        }    
+        }
       }
 
       function _callback() {
@@ -396,13 +440,13 @@ var JrdHwtest = {
       }
 
       function testGPS() {
-        count ++;
+        count++;
         timeBegin = new Date().getTime();
-        
+
         id = geolocation.watchPosition(success, error, options);
         Log('geolocation.watchPosition id = ' + id);
       }
-    };
+    }
   },
   initWifiTxRateOptions : function initWifiTxOptions() {
     var rateIndex = $('wifiRateType').selectedIndex;

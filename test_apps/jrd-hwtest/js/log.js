@@ -1,39 +1,40 @@
-function _Time(){
+function _Time() {
   var date = new Date();
-  var time = date.toTimeString().replace(/\sGMT.*/, '(' + date.getMilliseconds() + ')');
+  var time = date.toTimeString().replace(/\sGMT.*/,
+    '(' + date.getMilliseconds() + ')');
 	return time;
 }
 
-function Log(text){
+function Log(text) {
 	_Log(text, true);
 }
 
-function _Log(text, debug){
-	var info = "";
-	var _text = sprintf("%-10s | %s", _Time(), text);
+function _Log(text, debug) {
+	var info = '';
+	var _text = sprintf('%-10s | %s', _Time(), text);
 
-	if(true === debug){
+	if (true === debug) {
 		var line = (new Error()).stack;
-		line = line.split("\n", 10);
-		info = sprintf("%-40s | %s\n", _text, line[2]);
+		line = line.split('\n', 10);
+		info = sprintf('%-40s | %s\n', _text, line[2]);
 	}
-	else{
-		info = sprintf("%-40s\n", _text);	
+	else {
+		info = sprintf('%-40s\n', _text);
 	}
-	
+
 	console.log(info);
 	dump(info);
-	
-	ALL_LOGS = sprintf("%s%s", ALL_LOGS, info);
+
+	ALL_LOGS = sprintf('%s%s', ALL_LOGS, info);
 }
 
-function Stack(){
+function Stack() {
 	var _text = (new Error()).stack;
-	
+
 	_Log((new Error()).stack, false);
 }
 
-function Dump(obj){
+function Dump(obj) {
 	_Log(JSON.stringify(obj), false);
 }
 
@@ -61,7 +62,7 @@ if (match[2]) { // keyword argument
 arg = argv[cursor];
 for (k = 0; k < match[2].length; k++) {
 if (!arg.hasOwnProperty(match[2][k])) {
-throw(sprintf('[sprintf] property "%s" does not exist', match[2][k]));
+throw (sprintf('[sprintf] property "%s" does not exist', match[2][k]));
 }
 arg = arg[match[2][k]];
 }
@@ -74,7 +75,7 @@ arg = argv[cursor++];
 }
 
 if (/[^s]/.test(match[8]) && (get_type(arg) != 'number')) {
-throw(sprintf('[sprintf] expecting number but found %s', get_type(arg)));
+throw (sprintf('[sprintf] expecting number but found %s', get_type(arg)));
 }
 switch (match[8]) {
 case 'b': arg = arg.toString(2); break;
@@ -88,7 +89,7 @@ case 'u': arg = arg >>> 0; break;
 case 'x': arg = arg.toString(16); break;
 case 'X': arg = arg.toString(16).toUpperCase(); break;
 }
-arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+'+ arg : arg);
+arg = (/[def]/.test(match[8]) && match[3] && arg >= 0 ? '+' + arg : arg);
 pad_character = match[4] ? match[4] == '0' ? '0' : match[4].charAt(1) : ' ';
 pad_length = match[6] - String(arg).length;
 pad = match[6] ? str_repeat(pad_character, pad_length) : '';
@@ -123,12 +124,12 @@ else if ((field_match = /^\[(\d+)\]/.exec(replacement_field)) !== null) {
 field_list.push(field_match[1]);
 }
 else {
-throw('[sprintf] huh?');
+throw ('[sprintf] huh?');
 }
 }
 }
 else {
-throw('[sprintf] huh?');
+throw ('[sprintf] huh?');
 }
 match[2] = field_list;
 }
@@ -136,12 +137,12 @@ else {
 arg_names |= 2;
 }
 if (arg_names === 3) {
-throw('[sprintf] mixing positional and named placeholders is not (yet) supported');
+throw ('[sprintf] mixing positional and named placeholders is not (yet) supported');
 }
 parse_tree.push(match);
 }
 else {
-throw('[sprintf] huh?');
+throw ('[sprintf] huh?');
 }
 _fmt = _fmt.substring(match[0].length);
 }
@@ -171,4 +172,4 @@ return output.join('');
 */
 ctx.sprintf = sprintf;
 ctx.vsprintf = vsprintf;
-})(typeof exports != "undefined" ? exports : window);
+})(typeof exports != 'undefined' ? exports : window);
