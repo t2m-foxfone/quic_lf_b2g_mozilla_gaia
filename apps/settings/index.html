@@ -60,6 +60,8 @@
 
     <!-- Screen layout watcher -->
     <script defer="" src="/shared/js/screen_layout.js"></script>
+    <!-- between Apps comunication -->
+    <script defer src="shared/js/iac_handler.js"></script>
 
     <!-- Specific code -->
     <script defer="" src="js/settings.js"></script>
@@ -145,6 +147,11 @@
     <link rel="import" href="/elements/improve_browser_os.html">
     <link rel="import" href="/elements/help.html">
     <link rel="import" href="/elements/icc.html">
+    <!-- Added by baijian 2014-01-21 FOTA Update begin-->
+    <link rel="import" href="/elements/fotaSetting.html">
+    <link rel="import" href="/elements/fotaHelp.html">
+    <link rel="import" href="/elements/systemUpdate.html">
+    <!--  Added by baijian 2014-01-21 FOTA Update end-->
   </head>
   <body class="skin-organic uninit">
     <!--
@@ -289,6 +296,14 @@
     <section is="about-source-code" role="region" id="about-source-code"></section>
     <!-- Device :: Information :: Legal -->
     <section is="about-legal" role="region" id="about-legal"></section>
+    <!--Added by baijian 2014-01-21 fota button begin-->
+    <!-- Device :: Information :: FotaSetting -->
+    <section is="fotaSetting" role="region" id="fotaSetting"></section>
+    <!-- Device :: Information :: FotaHelp -->
+    <section is="fotaHelp" role="region" id="fotaHelp"></section>
+    <!-- Device :: Information :: FotaSystemUpdate -->
+    <section is="systemUpdate" role="region" id="systemUpdate"></section>
+    <!--Added by baijian 2014-01-21 fota button end-->
     <!-- Device :: Information -->
     <section is="about" role="region" id="about"></section>
     <!-- Device :: Battery -->

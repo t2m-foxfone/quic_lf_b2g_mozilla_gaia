@@ -292,7 +292,13 @@ function execute(options) {
    'wifi.disabled_by_wakelock': false,
    'wifi.notification': false,
    'wifi.connect_via_settings': false,
-   'wap.push.enabled': true
+   'wap.push.enabled': true,
+   /*Added by baijian 2014-0310 Fota update key-value fixed bug:611045 begin*/
+   'fota.wifi-only.enabled': false,
+   'fota.daily-auto-check.enabled': true,
+   'fota.auto-check-interval.current': 168,
+   'fota.reminder-interval.current': 1
+   /*Added by baijian 2014-0310 Fota update key-value fixed bug:611045 end*/
   };
 
   if (config.TARGET_BUILD_VARIANT != 'user') {

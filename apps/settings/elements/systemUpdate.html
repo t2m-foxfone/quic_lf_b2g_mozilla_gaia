@@ -1,0 +1,51 @@
+<element name="systemUpdate" extends="section">
+    <template>
+      <header>
+        <a href="#about">
+          <span class="icon icon-back">back</span>
+        </a>
+        <h1 data-l10n-id="fota_mng_title2"> System Update </h1>
+      </header>
+      <div>
+        <ul>
+          <li>
+            <small id="check-update-desc"></small>
+            <a id="fota-menu-check-update" data-l10n-id="check_update">Check for updates</a>
+          </li>
+          <li>
+            <a id="fota-menu-setting" data-l10n-id="settings_and_help2" href="#fotaSetting">Settings</a>
+          </li>
+          <li>
+            <a id="fota-menu-help"  data-l10n-id="help" href="#fotaHelp">Help</a>
+          </li>
+        </ul>
+
+        <header id = "system-update-info-header" hidden>
+          <h2 data-l10n-id="update_category_title">Update information</h2>
+        </header>
+
+        <ul>
+          <li id="system-update-info">
+            <button id="button-download-action"></button>
+            <progress id="download-progress-bar"  max="100" value="0" ></progress>
+            <span id="system-update-version-desc" > svn/cvn </span>
+            <span id="download-percentage" class="download"> 0% </span>
+            <span id="file-size-desc" class="check" data-l10n-id="size">Size:</span>
+          </li>
+        </ul>
+
+        <p id="update-infomation-subline" class = "update-info-subline" hidden> </p>
+      </div>
+      <link rel="stylesheet" type="text/css" href="shared/style_unstable/progress_activity.css"/>
+      <link rel="stylesheet" type="text/css" href="shared/style/confirm.css"/>
+      <link rel="stylesheet" type="text/css" href="shared/style/buttons.css"/>
+      <link rel="stylesheet" type="text/css" href="style/custom_dialog.css">
+      <link rel="stylesheet" type="text/css" href="style/fota.css"/>
+      <script defer src="shared/js/settings_listener.js"></script>
+      <script defer src="shared/js/async_storage.js"></script>
+      <script defer src="shared/js/custom_dialog.js"></script>
+
+      <script type="application/javascript" src="js/fota_utils.js"></script>
+      <script type="application/javascript" src="js/fota_check.js"></script>
+    </template>
+</element>

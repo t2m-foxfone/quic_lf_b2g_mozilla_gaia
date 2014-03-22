@@ -610,9 +610,29 @@ var Settings = {
         }
 
         // Go to that section
+        /**
+         * Modified by tcl_baijian fix Bug#621986,FOTA update white screen
+         * before panel:root--> systemUpdate;
+         * now panel: root--> about --> systemUpdate
+         * 2014-03-18 begin
+         */
         setTimeout(function settings_goToSection() {
-          Settings.currentPanel = section;
+          if (section === 'systemUpdate') {
+              Settings.currentPanel = 'about';
+              setTimeout(function settings_goToEndSection() {
+                  Settings.currentPanel = section;
+              },200);
+          }
+          else {
+              Settings.currentPanel = section;
+          }
+
+
         });
+        /**
+         * Modified by tcl_baijian fix Bug#621986,FOTA update white screen
+         * 2014-03-18 end
+         */
         break;
       default:
         Settings._currentActivity = null;
@@ -670,8 +690,69 @@ var Settings = {
 
     var cset = {}; cset[key] = value;
     settings.createLock().set(cset);
+/*Added by baijian 2014-01-21 fota auto check intervally begin*/
+ //JRD_QlWang add for b2g_fota starts
+    if (key === 'fota.auto-check-interval.current' ||
+      key === 'fota.reminder-interval.current') {
+      this.setFotaSettingsDesc(key, value);
+    }
+   //JRD_QlWang add for b2g_fota ends
   },
 
+//JRD_QlWang add for b2g_fota starts
+  setFotaSettingsDesc: function settings_setFotaSettingsDesc(key, value) {
+    if (key != 'fota.auto-check-interval.current' &&
+      key != 'fota.reminder-interval.current') {
+      return;
+    }
+    var _ = navigator.mozL10n.get;
+    if (key === 'fota.auto-check-interval.current') {
+      var auto_check_interval_desc =
+          document.getElementById('auto-check-intervals-desc');
+
+      switch (Number(value)) {
+        case 0:
+          desc = _('auto_check_entries_manual');
+          break;
+        case 168:
+          desc = _('auto_check_entries_week');
+          break;
+        case 336:
+          desc = _('auto_check_entries_two_weeks');
+          break;
+        case 720:
+          desc = _('auto_check_entries_month');
+          break;
+      }
+      auto_check_interval_desc.textContent = desc;
+    }
+    if (key === 'fota.reminder-interval.current') {
+      var reminder_interval_desc =
+          document.getElementById('reminder-intervals-desc');
+      var desc;
+      switch (Number(value)) {
+        case 0:
+          desc = _('reminde_entries_5');
+          break;
+        case 1:
+          desc = _('reminde_entries_1');
+          break;
+
+        case 3:
+          desc = _('reminde_entries_2');
+          break;
+        case 6:
+          desc = _('reminde_entries_3');
+          break;
+        case 24:
+          desc = _('reminde_entries_4');
+          break;
+      }
+      reminder_interval_desc.textContent = desc;
+    }
+  },
+ //JRD_QlWang add for b2g_fota ends
+/*Added by baijian 2014-01-21 fota auto check intervally end*/
   openDialog: function settings_openDialog(dialogID) {
     var settings = this.mozSettings;
     var dialog = document.getElementById(dialogID);

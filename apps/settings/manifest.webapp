@@ -56,8 +56,15 @@
     "voicemail": {}, 
     "idle": {}, 
     "time": {},
-    "nfc":{ "access": "readonly" } 
-  }, 
+    "nfc":{ "access": "readonly" },
+    "jrdextension": {}
+  },
+  "connections": {
+    "fota-sys-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
+     }
+  },
   "type": "certified", 
   "locales": {
     "zh-TW": {
