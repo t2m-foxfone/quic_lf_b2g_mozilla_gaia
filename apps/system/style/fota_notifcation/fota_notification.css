@@ -1,0 +1,83 @@
+html, body {
+  font-family: 'MozTT', sans-serif;
+  font-size: 10px;
+  background:black;
+}
+
+#fota-manager-container {
+  display: none;
+}
+
+#fota-manager-container.displayed {
+  display: block;
+}
+
+#fota-manager-container > .fake-notification>.icon {
+  float: left;
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin: 18px 10px;
+}
+#fota-manager-container > .fake-notification > .icon,
+#fota-manager-toaster > .fake-notification > .icon {
+  background-image: url('images/iconindicator_download_24x24.png');
+}
+
+#fota-manager-container > .fake-notification > .title {
+  width: 19.5rem;
+  margin: 1rem 0 0 5rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  line-height: 1.9rem;
+  color: #FFFFFF;
+}
+
+#fota-manager-container >.fake-notification > .percentage {
+  float: right;
+  text-align: center;
+  display: none;
+  width: 40px;
+  height: 24px;
+  margin: 18px 10px;
+  color: #bfbfbf;
+}
+
+#fota-manager-container > .fake-notification > .message{
+  width:-moz-calc(100% - 65px);
+}
+
+#fota-manager-container > .fake-notification >  .progress > progress{
+  display: none;
+  height: 4px;
+  width:-moz-calc(100% - 65px);
+  border-bottom: 1px solid #b96100;
+  border-top: 2px solid #e67200;
+  background: url(../shared/progress.gif) #f2aa56;
+  margin:10px;
+}
+
+#fota-manager-container > .fake-notification > .message{
+  margin: 0 0 0 50px;
+  padding: 0;
+  width: -moz-calc(100% - 55px);
+  color: #bfbfbf;
+  font-size: 1.4rem;
+  line-height: 1.9rem;
+  min-height: 1.9rem;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#fota-manager-container.downloading > .fake-notification > .progress > progress,
+#fota-manager-container.downloading > .fake-notification > .percentage
+{
+  display: block;
+}
+
+#fota-manager-container.downloading > .fake-notification > .message
+{
+  display: none;
+}

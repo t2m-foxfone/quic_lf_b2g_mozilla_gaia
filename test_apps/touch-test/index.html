@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+    <meta charset="utf-8">
+    <title>FT Auto Test</title>
+    <!-- We don't need localization in this app -->
+    <link rel="stylesheet" type="text/css" href="style/ftautotest.css">
+    <link rel="stylesheet" type="text/css" href="style/configration.css">
+    <script type="text/javascript" src="js/TpInformation.js"></script>
+    <script type="text/javascript" src="js/ftautotest.js"></script>
+
+
+      <script type="text/javascript" src="js/utils.js"></script>
+      <script type="text/javascript" src="js/AccuratyView.js"></script>
+      <script type="text/javascript" src="js/VerLinearity.js"></script>
+      <script type="text/javascript" src="js/LineLinearity.js"></script>
+      <script type="text/javascript" src="js/DiagonalLine.js"></script>
+      <script type="text/javascript" src="js/Auto_Test.js"></script>
+  </head>
+
+  <body>
+    <section role="region" id="accuracyJitter">
+     <!--<a href="#root"><button class="back">back</button></a>-->
+   <canvas id="acc_canvas" width="320" height="569" ></canvas>
+   <a id="back_link"><button id="myButton" class="back">back</button></a>
+    </section>
+
+    <section role="region" id="configuration">
+      <header>
+        <a href="#root"><button class="back">back</button></a>
+        <h1> Configuration </h1>
+        <button id="configuration-set"> set </button>
+      </header>
+
+      <ul class="configuration-list" id="config-ul">
+        <li>LCD Length (mm):
+          <input id="lcd-length" name="lcd-length" type="number"  placeholder="75" />
+        </li>
+        <li>LCD Width (mm):
+          <input id="lcd-width" name="lcd-width" type="number"  placeholder="50" />
+        </li>
+        <li>LCD Size:
+          <input id="lcd-size" name="lcd-size" type="text" readonly disabled/>
+        </li>
+        <li>Accuracy total test time:
+          <input id="accuracy-total" name="accuracy-total" type="number"  placeholder="1" onfocus="clearvalue(this)"/>
+        </li>
+        <li>Linearity each line test time:
+          <input id="linearity-each-line" name="linearity-each-line" type="number"  placeholder="1"/>
+        </li>
+        <li>Linearity total test time:
+          <input id="linearity-total" name="linearity-total" type="number" placeholder="1"/>
+        </li>
+        <li>Accuracy Center-Threshold:
+          <input id="accuracy-center-threshold" name="accuracy-center-threshold" type="number" placeholder="1"/>
+        </li>
+        <li>Accuracy Edge-Threshold:
+          <input id="accuracy-edge-threshold" name="accuracy-edge-threshold" type="number" placeholder="2"/>
+        </li>
+        <li>Click Num:
+           <input id="click-num" name="click-num" type="number" placeholder="1"/>
+        </li>
+        <li>Lineaction Center-Threshold:
+          <input id="lineaction-center-threshold" name="lineaction-center-threshold" type="number" placeholder="1"/>
+        </li>
+        <li>Lineaction Edge-Threshold:
+          <input id="lineaction-edge-threshold" name="lineaction-edge-threshold" type="number" placeholder="2" />
+        </li>
+        <li>Test bar radius:
+          <input id="test-bar-radius" name="test-bar-radius" type="number" placeholder="4"/>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Main List -->
+    <section role="region" id="root" class="current">
+      <header>
+        <h1 id="main-title"> FT Auto Test </h1>
+      </header>
+
+      <div class="div-button div-button-top">
+        <button id="Start_auto_test"> Start Auto Test </button>
+      </div>
+      <ul class="list" id="test-list">
+        <li><a id="Accuracy" href="#accuracyJitter"> Accuracy/ Jitter </a></li>
+        <li><a id="Diagonal" href="#accuracyJitter"> Linearrity Diagonal </a></li>
+        <li><a id="Horizontal" href="#accuracyJitter"> Linearity Horizontal </a></li>
+        <li><a id="Vertical" href="#accuracyJitter"> Linearrity Vertical </a></li>
+      </ul>
+      <div class="div-button div-button-bottom">
+        <a href="#configuration"><button id="configuration-btn"> Configuration </button></a>
+      </div>
+    </section>
+  </body>
+</html>

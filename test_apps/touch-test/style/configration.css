@@ -1,0 +1,41 @@
+
+#configuration-set {
+  display: block;
+  position: absolute;
+  top: 11px;
+  right: 11px;
+  height:38px;
+  font-size: 18px;
+}
+
+.configuration-list {
+  position: absolute;
+  top: 6rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  -moz-user-select: none;
+  margin: 0;
+  padding: 0;
+}
+
+.configuration-list > li {
+  -moz-box-sizing: border-box;
+  height: 5rem;
+  padding: 5px 5px;
+
+  color: #fff;
+  font-size: 14px;
+  line-height: 40px;
+  font-weight: 400;
+}
+
+.configuration-list input {
+  float: right;
+  width: calc(100% / 4);
+  height: 4rem;
+  font-size: 16px;
+  text-align: right;
+}
+

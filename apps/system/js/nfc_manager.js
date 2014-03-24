@@ -528,7 +528,8 @@ var NfcManager = {
     this._debug('XXXX Handle Ndef URI type');
     var activityText = null;
     var prefix = NDEF.uris[record.payload[0]];
-    if (!prefix) {
+    //modify by liangxin for record.payload[0] is 0
+    if (!prefix && record.payload[0]) {
       return null;
     }
 

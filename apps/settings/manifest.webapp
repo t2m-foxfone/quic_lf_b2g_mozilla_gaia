@@ -1,73 +1,95 @@
 {
-  "name": "Settings",
-  "description": "Gaia Settings",
-  "type": "certified",
-  "launch_path": "/index.html#root",
-  "developer": {
-    "name": "The Gaia Team",
-    "url": "https://github.com/mozilla-b2g/gaia"
-  },
-  "permissions": {
-    "storage":{},
-    "mobileconnection":{},
-    "voicemail":{},
-    "bluetooth":{},
-    "device-storage:pictures":{ "access": "readonly" },
-    "device-storage:music":{ "access": "readonly" },
-    "device-storage:videos":{ "access": "readonly" },
-    "device-storage:sdcard":{ "access": "readonly" },
-    "device-storage:apps":{ "access": "readonly" },
-    "webapps-manage":{},
-    "open-remote-window":{},
-    "permissions":{},
-    "systemXHR": {},
-    "settings":{ "access": "readwrite" },
-    "wifi-manage":{},
-    "attention":{},
-    "time":{},
-    "desktop-notification":{},
-    "power":{},
-    "idle":{},
-    "telephony":{},
-    "audio-channel-notification":{}
-  },
   "activities": {
     "configure": {
+      "disposition": "window", 
       "filters": {
         "target": "device"
-       },
-      "disposition": "window"
+      }
     }
-  },
-  "messages": ["bluetooth-pairing-request",
-               "bluetooth-cancel"],
-  "locales": {
-    "ar": {
-      "name": "الضبط",
-      "description": "Gaia الضبط"
-    },
-    "en-US": {
-      "name": "Settings",
-      "description": "Gaia Settings"
-    },
-    "fr": {
-      "name": "Paramètres",
-      "description": "Paramètres Gaia"
-    },
-    "tr": {
-      "name": "Ayarlar",
-      "description": "Gaia Ayarları"
-    },
-    "zh-TW": {
-      "name": "設定",
-      "description": "Gaia 設定"
-    }
-  },
-  "default_locale": "en-US",
+  }, 
+  "name": "Settings", 
+  "default_locale": "en-US", 
   "icons": {
-    "60": "/style/icons/Settings_60.png",
-    "90": "/style/icons/Settings_90.png",
+    "60": "/style/icons/Settings_60.png", 
+    "90": "/style/icons/Settings_90.png", 
     "120": "/style/icons/Settings_120.png"
+  }, 
+  "orientation": "default", 
+  "description": "Gaia Settings", 
+  "messages": [
+    "bluetooth-pairing-request", 
+    "bluetooth-cancel"
+  ], 
+  "launch_path": "/index.html#root", 
+  "permissions": {
+    "device-storage:sdcard": {
+      "access": "readonly"
+    }, 
+    "device-storage:apps": {
+      "access": "readonly"
+    }, 
+    "bluetooth": {}, 
+    "telephony": {}, 
+    "audio-channel-notification": {}, 
+    "webapps-manage": {}, 
+    "device-storage:pictures": {
+      "access": "readonly"
+    }, 
+    "power": {}, 
+    "wifi-manage": {}, 
+    "storage": {}, 
+    "device-storage:music": {
+      "access": "readonly"
+    }, 
+    "desktop-notification": {}, 
+    "open-remote-window": {}, 
+    "attention": {}, 
+    "systemXHR": {}, 
+    "mobileconnection": {}, 
+    "permissions": {}, 
+    "settings": {
+      "access": "readwrite"
+    }, 
+    "device-storage:videos": {
+      "access": "readonly"
+    }, 
+    "voicemail": {}, 
+    "idle": {}, 
+    "time": {},
+    "nfc":{ "access": "readonly" },
+    "jrdextension": {}
   },
-  "orientation": "default"
+  "connections": {
+    "fota-sys-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
+     }
+  },
+  "type": "certified", 
+  "locales": {
+    "zh-TW": {
+      "name": "\u8a2d\u5b9a", 
+      "description": "Gaia \u8a2d\u5b9a"
+    }, 
+    "en-US": {
+      "name": "Settings", 
+      "description": "Gaia Settings"
+    }, 
+    "ar": {
+      "name": "\u0627\u0644\u0636\u0628\u0637", 
+      "description": "Gaia \u0627\u0644\u0636\u0628\u0637"
+    }, 
+    "tr": {
+      "name": "Ayarlar", 
+      "description": "Gaia Ayarlar\u0131"
+    }, 
+    "fr": {
+      "name": "Param\u00e8tres", 
+      "description": "Param\u00e8tres Gaia"
+    }
+  }, 
+  "developer": {
+    "url": "https://github.com/mozilla-b2g/gaia", 
+    "name": "The Gaia Team"
+  }
 }

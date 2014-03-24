@@ -1,0 +1,53 @@
+{
+  "fullscreen": true, 
+  "orientation": "portrait-primary", 
+  "default_locale": "en-US", 
+  "icons": {
+    "120": "/style/icons/auto.png", 
+    "60": "/style/icons/60/auto.png"
+  }, 
+  "messages": [
+    {
+      "nfc-manager-tech-discovered": "/index.html#nfc-pcd"
+    }
+  ], 
+  "name": "jrd-hwtest", 
+  "developer": {
+    "url": "https://github.com/mozilla-b2g/gaia", 
+    "name": "The Gaia Team"
+  }, 
+  "launch_path": "/index.html", 
+  "activities": {
+    "tag-discovered": {}, 
+    "nfc-tech-lost": {
+      "filters": {
+        "type": "info"
+      }
+    }, 
+    "nfc-tag-discovered": {}, 
+    "nfc-ndef-discovered": {}
+  }, 
+  "type": "certified", 
+  "permissions": {
+    "geolocation": {}, 
+    "device-storage:sdcard": {
+      "access": "readwrite"
+    }, 
+    "jrdextension": {}, 
+    "nfc": {
+      "access": "readwrite"
+    }, 
+    "settings": {
+      "access": "readwrite"
+    }, 
+    "nfc-manager": {}, 
+    "desktop-notification": {}
+  }, 
+  "locales": {
+    "en-US": {
+      "name": "jrd-hwtest", 
+      "description": "jrd-hwtest"
+    }
+  }, 
+  "description": "jrd-hwtest"
+}

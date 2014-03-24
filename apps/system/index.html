@@ -314,6 +314,12 @@
 
     <!-- Internet Sharing  -->
     <script defer src="js/internet_sharing.js"></script>
+    <!--Added by baijian 2014-01-21 JRD_Fota system notification begin-->
+    <link rel="stylesheet" type="text/css" href="style/fota_notifcation/fota_notification.css">
+    <script defer src="js/fota_utils.js"></script>
+    <script defer src="js/fota_notification.js"></script>
+    <script defer src="js/fota_system.js"></script>
+    <!--Added by baijian 2014-01-21 JRD_Fota system notification end-->
 
     <!-- z-indexes of all the overlays in the system -->
     <link rel="stylesheet" type="text/css" href="style/zindex.css">
@@ -496,6 +502,10 @@
           <!-- bluetooth transfer -->
           <div id="bluetooth-transfer-status-list">
           </div>
+          <!--Added by baijian 2014-01-21 Fota notification begin-->
+          <div id="fota-manager-container">
+          </div>
+          <!--Added by baijian 2014-01-21 Fota notification end-->
           <!-- Another entry to show IME list when the keyboard is activated -->
           <div id="keyboard-show-ime-list">
             <div class="fake-notification">

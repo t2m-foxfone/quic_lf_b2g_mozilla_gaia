@@ -1,0 +1,180 @@
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  font-family: "MozTT", sans-serif;
+  overflow: hidden;
+}
+
+/* full-size <section role="region"> blocks */
+section[role="region"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background-color: #000;
+  overflow: hidden;
+}
+
+/**
+ * Panel targets -- transitions
+ * the `.previous', '.current' and '.forward' classes are set by ftautotest.js
+ * we use the '.peek' class to force the rendering of the panel before
+ * starting the transition, thus avoiding an ugly flickering with gecko 18
+ */
+section[role="region"] {
+  transform: translateX(+100%);
+  transition: transform .4s ease;
+  height: 0;
+}
+/*section[role="region"].peek {*/
+  /*transition: transform 1ms linear;*/
+  /*transform: translateX(+0.1%);*/
+/*}*/
+
+section[role="region"].previous {
+  transform: translateX(-100%);
+  height: 100%;
+}
+/*section[role="region"].previous.peek {*/
+  /*transform: translateX(-0.1%);*/
+/*}*/
+
+section[role="region"].current {
+  transform: translateX(0);
+  overflow-y: scroll;
+  height: 100%;
+}
+/*section[role="region"].current.peek.forward {*/
+  /*transform: translateX(99.9%);*/
+/*}*/
+/*section[role="region"].current.peek {*/
+  /*transform: translateX(-99.9%);*/
+/*}*/
+
+header {
+  -moz-box-sizing: border-box;
+  position: absolute;
+  display: block;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 6rem;
+  background-color: #182026;
+  margin: 0;
+  padding: 0;
+}
+
+.div-button {
+  height: 6rem;
+  width: 100%;
+}
+
+.div-button-top {
+  position: absolute;
+  top: 6rem;
+}
+
+.div-button-bottom {
+  position: absolute;
+  top: 36rem;
+}
+
+#Start_auto_test,
+#configuration-btn {
+  display: block;
+  margin: auto;
+  position: relative;
+  top: 1rem;
+  font-size: 1.6rem;
+  line-height: 2rem;
+  width: -moz-calc(100% - 10rem);
+  /*6rem - 2rem*/
+  height: 4rem;
+}
+
+.list {
+  position: absolute;
+  top: 12rem;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-y: auto;
+  -moz-user-select: none;
+}
+
+header > h1 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  line-height: 6rem;
+  text-align: center;
+  color: #fff;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+#main-title {
+  font-size: 26px;
+}
+
+#test-list {
+  margin: 0;
+  padding: 0;
+}
+
+#test-list > li {
+  -moz-box-sizing: border-box;
+  height: 6rem;
+  padding: 4px 16px;
+
+  font-size: 24px;
+  line-height: 48px;
+  font-weight: 600;
+}
+
+#test-list > li > a {
+  display: block;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  text-decoration: none;
+}
+
+#test-list > li:active {
+  background: hsla(35,100%,50%,.2);
+}
+
+.back {
+  position: absolute;
+  font-size: 18px;
+  padding: 5px;
+  margin: 11px;
+  height:38px;
+}
+
+.div-button > a {
+  text-decoration: none;
+}
+
+ #acc_canvas{
+   position:absolute;
+   top:0;
+   margin:0;
+   background-color: gray
+ }
+ #myButton{
+   position:absolute;
+   top:0;
+   margin:0;
+   left:0;
+   z-index:50;
+ }

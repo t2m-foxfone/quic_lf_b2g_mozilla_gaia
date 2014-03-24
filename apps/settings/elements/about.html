@@ -13,14 +13,14 @@
           <span data-l10n-id="deviceInfo-MSISDN"> Phone number </span>
         </li>
         <li>
-          <small data-name="deviceinfo.hardware"></small>
+          <small data-name="deviceinfo.model"></small>
           <span id="model-name" data-l10n-id="model-name"> Model </span>
         </li>
         <li>
           <small data-name="deviceinfo.software"></small>
           <span id="os-version" data-l10n-id="software"> Software </span>
         </li>
-        <li>
+        <li hidden>
           <small id="last-update-date"></small>
           <span data-l10n-id="last-updated"> Last Updated </span>
         </li>
@@ -37,27 +37,10 @@
       </header>
       <ul>
         <li>
-          <p data-l10n-id="check-for-updates">Check for Updates</p>
-          <span class="button icon icon-dialog">
-            <select name="app.update.interval">
-              <option value="86400"   data-l10n-id="check-update-daily" selected>Daily</option>
-              <option value="604800"  data-l10n-id="check-update-weekly">Weekly</option>
-              <option value="2592000" data-l10n-id="check-update-monthly">Monthly</option>
-            </select>
-          </span>
-        </li>
-        <li>
           <label>
-            <button id="check-update-now"
-              data-l10n-id="check-update-now"> Check Now </button>
+            <button class="icon icon-view" id="check-system-update" data-l10n-id="fota_mng_title2"
+                          data-href="#systemUpdate"> System update </button>
           </label>
-        </li>
-        <li id="update-status" class="description update-status">
-          <p>
-            <span class="general-information"
-              data-l10n-id="checking-for-update">Checking for updates…</span>
-            <span class="system-update-status"></span>
-          </p>
         </li>
       </ul>
 

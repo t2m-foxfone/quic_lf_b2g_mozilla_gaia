@@ -42,7 +42,8 @@
     "input":{},
     "input-manage":{},
     "nfc":{ "access": "readonly" },
-    "nfc-manager":{}
+    "nfc-manager":{},
+    "jrdfota": {}
   },
   "locales": {
     "ar": {
@@ -89,6 +90,10 @@
     "bluetoothTransfercomms": {
       "description": "Communication with bluetooth apps for sending files info",
       "rules": {}
+    },
+    "fota-set-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
     }
   }
 }

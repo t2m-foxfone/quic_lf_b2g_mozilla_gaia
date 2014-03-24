@@ -1,0 +1,22 @@
+{
+  "fullscreen": true, 
+  "orientation": "portrait-primary", 
+  "default_locale": "en-US", 
+  "icons": {
+    "120": "/style/icons/Autotest.png"
+  }, 
+  "name": "Touch Test", 
+  "launch_path": "/index.html", 
+  "developer": {
+    "url": "https://github.com/mozilla-b2g/gaia", 
+    "name": "tct"
+  }, 
+  "type": "certified", 
+  "locales": {
+    "en-US": {
+      "name": "Touch Test", 
+      "description": "Touch Test"
+    }
+  }, 
+  "description": "Touch Test"
+}
