@@ -1,0 +1,29 @@
+{
+    "version": "0.1",
+    "name": "Compass",
+    "description": "Compass for Firefox OS",
+    "launch_path": "/index.html",
+    "icons": {
+        "16": "/img/icon-16.png",
+        "30": "/img/icon-30.png",
+        "48": "/img/icon-48.png",
+        "60": "/img/icon-60.png",
+        "128": "/img/icon-128.png"
+    },
+    "developer": {
+        "name": "Beardfu",
+        "url": "http://code.beardfu.com"
+    },
+    "installs_allowed_from": ["*"],
+    "locales": {
+        "en": {
+            "description": "Compass for Firefox OS",
+            "developer": {
+                "name": "Beardfu",
+                "url": "http://code.beardfu.com"
+            }
+        }
+    },
+    "default_locale": "en",
+    "orientation": ["portrait"]
+}

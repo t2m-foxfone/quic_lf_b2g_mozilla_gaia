@@ -22,3 +22,4 @@ test_apps/test-wappush
 test_apps/uitest
 test_apps/jrd-hwtest
 test_apps/touch-test
+test_apps/compass

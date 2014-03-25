@@ -1,0 +1,148 @@
+body,html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding:0;
+    overflow:hidden;
+}
+
+body {
+    background: url(../img/tweed.png) 0 0 repeat transparent;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+#compass {
+    visibility: hidden;
+    position: relative;
+
+    background: -webkit-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 223, 148) 35%, rgb(239, 174, 96) 100%);
+    background: -moz-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 223, 148) 35%, rgb(239, 174, 96) 100%);
+    background: -o-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 223, 148) 35%, rgb(239, 174, 96) 100%);
+    background: -ms-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 223, 148) 35%, rgb(239, 174, 96) 100%);
+    background: linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 223, 148) 35%, rgb(239, 174, 96) 100%);
+    margin: 0 auto;
+    border-radius: 50%;
+}
+
+#compass-inner {
+    padding-bottom: 100%;
+}
+
+#face {
+    width: 90%;
+    height: 90%;
+    position: relative;
+    top: 5%;
+    left: 5%;
+    border-radius: 50%;
+
+    background: -webkit-radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -moz-radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -o-radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: -ms-radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+    background: radial-gradient(ellipse at center, rgba(242,245,246,1) 0%,rgba(227,234,237,1) 37%,rgba(200,215,220,1) 100%);
+
+    -webkit-box-shadow: inset 0px 1px 3px rgba(50, 50, 50, 0.75);
+    box-shadow: inset 0px 1px 3px rgba(50, 50, 50, 0.75);
+
+    -webkit-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -ms-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+}
+
+#centre {
+    height: 5%;
+    width: 5%;
+
+    background: -webkit-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 243, 144) 35%, rgb(239, 207, 79) 100%);
+    background: -moz-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 243, 144) 35%, rgb(239, 207, 79) 100%);
+    background: -o-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 243, 144) 35%, rgb(239, 207, 79) 100%);
+    background: -ms-linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 243, 144) 35%, rgb(239, 207, 79) 100%);
+    background: linear-gradient(45deg, rgb(255, 242, 183) 0%, rgb(249, 243, 144) 35%, rgb(239, 207, 79) 100%);
+    position: absolute;
+    top: 47.5%;
+    left: 47.5%;
+    border-radius: 50%;
+
+    -webkit-box-shadow: 2px 2px 9px rgba(50, 50, 50, 0.75);
+    box-shadow: 2px 2px 9px rgba(50, 50, 50, 0.75);
+    z-index: 2;
+}
+
+.direction {
+    display: block;
+    width: 10%;
+    height: 46%;
+    position: absolute;
+    top: 5%;
+    left: 45%;
+    font-size: 2.5em;
+    font-family: Monaco, MonoSpace;
+
+    -webkit-transform-origin: 50% 100%;
+    -moz-transform-origin: 50% 100%;
+    -o-transform-origin: 50% 100%;
+    -ms-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.direction.small {
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.degree {
+    display: block;
+    width: 10%;
+    height: 26%;
+    position: absolute;
+    top: 25%;
+    left: 45%;
+    font-size: 0.7em;
+    font-family: Monaco, MonoSpace;
+
+    -webkit-transform-origin: 50% 100%;
+    -moz-transform-origin: 50% 100%;
+    -o-transform-origin: 50% 100%;
+    -ms-transform-origin: 50% 100%;
+    transform-origin: 50% 100%;
+    text-align: center;
+}
+
+.degree.small {
+    font-size: .6em;
+}
+
+#degrees {
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    font-size: 2em;
+    font-family: Monaco, MonoSpace;
+}
+
+#point {
+    position: absolute;
+    z-index: 2;
+    width: 1%;
+    height: 35%;
+    top: 10%;
+    left: 49.5%;
+    background: #ff6a60;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+    filter: alpha(opacity=80);
+    opacity: 0.8;
+}
+
+button{
+    display:block;
+    margin:10px auto;
+    padding:20px;
+}
