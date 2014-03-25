@@ -45,12 +45,20 @@ var JrdHwtest = {
               var initRequest = jrd.startUniversalCommand(initCommand, true);
              }
             break;
-//          case 'bt-radio-test':
-//            var initCommand = "system/bin/bt_radio bttest enable;" + "system/bin/bt_radio  bttest is_enabled "+" > /data/bt_radio.txt";
+          case 'nfc-eut':
+            var initCommand ='/system/bin/nfc_stop' + ' > /data/nfc_stop.txt';
+            if (navigator.jrdExtension) {
+              var jrd = navigator.jrdExtension;
+              debug('lx: nfc-eut  initCommand ' + initCommand + '\n');
+              var initRequest = jrd.startUniversalCommand(initCommand, true);
+            }
+            break;
+//          case 'nfc-pcd':
+//            var initCommand ='/system/bin/nfc_start' +' > /data/nfc_start.txt';
 //            if (navigator.jrdExtension) {
 //              var jrd = navigator.jrdExtension;
-//              debug("lx: bt-radio-test initCommand " + initCommand+"\n");
-//              var initRequest=jrd.startUniversalCommand(initCommand, true);
+//              debug('lx: nfc-pcd  initCommand ' + initCommand + '\n');
+//              var initRequest = jrd.startUniversalCommand(initCommand, true);
 //            }
 //            break;
           default :
