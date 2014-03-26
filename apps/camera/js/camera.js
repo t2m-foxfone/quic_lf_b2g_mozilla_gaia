@@ -105,7 +105,7 @@ var preventGalleryLaunch = false;
 var Camera = {
   _initialised: false,
   _cameras: null,
-  _cameraNumber: 1,
+  _cameraNumber: 0,
   _captureMode: null,
   _recording: false,
 
