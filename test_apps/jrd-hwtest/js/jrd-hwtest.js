@@ -94,15 +94,15 @@ var JrdHwtest = {
     });
 
     var _self = this;
-    $('wifi-back').onclick = function() {
-      var stopCommand = '/system/bin/wifitest tx stop' +
-        ' > /data/wifitext.txt';
-      if (navigator.jrdExtension) {
-        var jrd = navigator.jrdExtension;
-        console.log('lx: wifi-back ' + stopCommand + '\n');
-        var request = jrd.startUniversalCommand(stopCommand, false);
-      }
-    };
+//    $('wifi-back').onclick = function() {
+//      var stopCommand = '/system/bin/wifitest tx stop' +
+//        ' > /data/wifitext.txt';
+//      if (navigator.jrdExtension) {
+//        var jrd = navigator.jrdExtension;
+//        console.log('lx: wifi-back ' + stopCommand + '\n');
+//        var request = jrd.startUniversalCommand(stopCommand, false);
+//      }
+//    };
     $('wifiRateType').addEventListener('change', function() {
       _self.initWifiTxRateOptions();
     });
@@ -128,10 +128,10 @@ var JrdHwtest = {
     });
     $('wifiTxStop').addEventListener('click', function() {
       this.disabled = true;
-      var stopCommand = '/system/bin/wifitest tx stop' + ' > /data/wifitext.txt';
+      var stopCommand = '/system/bin/wifitest tx stop' + ' > /data/wifitext_stop.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
-        var request = jrd.startUniversalCommand(stopCommand, false);
+        var request = jrd.startUniversalCommand(stopCommand, true);
       }
       $('wifiTxRun').disabled = false;
     });
@@ -160,15 +160,15 @@ var JrdHwtest = {
       $('wifiRxRun').disabled = false;
     });
 
-    $('wifiRx-back').onclick = function() {
-      var stopCommand = '/system/bin/wifitest tx stop' +
-        ' > /data/wifitext.txt';
-      if (navigator.jrdExtension) {
-        var jrd = navigator.jrdExtension;
-        console.log('lx: wifi-back ' + stopCommand + '\n');
-        var request = jrd.startUniversalCommand(stopCommand, false);
-      }
-    };
+//    $('wifiRx-back').onclick = function() {
+//      var stopCommand = '/system/bin/wifitest tx stop' +
+//        ' > /data/wifitext.txt';
+//      if (navigator.jrdExtension) {
+//        var jrd = navigator.jrdExtension;
+//        console.log('lx: wifi-back ' + stopCommand + '\n');
+//        var request = jrd.startUniversalCommand(stopCommand, false);
+//      }
+//    };
     $('btTxRun').addEventListener('click', function() {
       var patternIndex = $('btTxPattern').selectedIndex;
       var btTxPattern = $('btTxPattern').options[patternIndex].value;
