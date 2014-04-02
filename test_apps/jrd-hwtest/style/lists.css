@@ -384,3 +384,7 @@ html[dir="rtl"] ul li > span {
   padding-right: 3rem;
 }
 
+input {
+font-size: 1.9rem;
+}
+

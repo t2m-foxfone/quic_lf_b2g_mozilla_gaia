@@ -324,12 +324,13 @@
                     </select>
                 </div>
             </li>
-            <li>
+            <li id="btChannelItem">
                 <div class="divItem">
                     Tx Channel
                 </div>
                 <div class="divItem">
                     <select id="btTxChannel">
+                        <option value="0x00">channel0</option>
                         <option value="0x01">channel1</option>
                         <option value="0x02">channel2</option>
                         <option value="0x03">channel3</option>
@@ -486,6 +487,17 @@
                     </select>
                 </div>
             </li>
+            <li>
+                <div class="divItem">
+                    Hop Array
+                </div>
+                <div class="divItem">
+                    <select id="btTxHop">
+                        <option value="0x00">Fixed</option>
+                        <option value="0x01">Hop</option>
+                    </select>
+                </div>
+            </li>
         </ul>
         <div class="divItem">
             <button id="btTxRun" style="width: 30%;">
@@ -595,16 +607,40 @@
             <h1>PCD test</h1>
         </header>
 
-        <button id="nfcClear" style="width: 20%;">
-           Clear
-        </button>
-
+        <li>
+            <div class="divItem">
+                Test Times
+            </div>
+        <div class="divItem">
+            <input type="number" id="inputTimes">
+        </div>
+        </li>
+        <li>
+            <div class="divItem">
+                Interval Time
+            </div>
+            <div class="divItem">
+                <input type="number" id="intervalTime">
+            </div>
+        </li>
         <!--<div class="nfcItem" id="totalTimes">-->
             <!--total times: 0-->
         <!--</div>-->
+        <li>
+            <button id="nfcStart" style="width: 20%;">
+                start
+            </button>
+            <button id="nfcClear" style="width: 20%;" disabled="true">
+                Clear
+            </button>
+        </li>
+
+        <li>
         <div class="nfcItem" id="successTimes">
             success times: 0
         </div>
+        </li>
+
     </section>
     <section id="nfc-eut" class="skin-organic" role="region" style="display: none;">
         <header>
@@ -619,7 +655,7 @@
             </div>
             <select id="nfcRunTest">
                 <option value="0">0</option>
-                <option value="1">1</option>
+                <!--<option value="1">1</option>-->
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>

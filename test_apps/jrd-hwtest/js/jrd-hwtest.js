@@ -45,7 +45,7 @@ var JrdHwtest = {
               var initRequest = jrd.startUniversalCommand(initCommand, true);
              }
             break;
-          case 'nfc-eut':
+          case 'nfc':
             var initCommand ='/system/bin/nfc_stop' + ' > /data/nfc_stop.txt';
             if (navigator.jrdExtension) {
               var jrd = navigator.jrdExtension;
@@ -169,6 +169,24 @@ var JrdHwtest = {
 //        var request = jrd.startUniversalCommand(stopCommand, false);
 //      }
 //    };
+    $('btTxHop').addEventListener('change',function() {
+
+      var btTxHopIndex =$('btTxHop').selectedIndex;
+      var btTxHop =$('btTxHop').options[btTxHopIndex].value;
+      dump('lx: btTxHopIndex '+btTxHopIndex+'btTxHop value ' + btTxHop +'\n');
+      if(btTxHop =='0x01') {
+        dump('lx:add disable');
+        $('btChannelItem').classList.add('disable');
+       // $('btChannel').classList.add('disable');
+        $('btTxChannel').selectedIndex = 0;
+      } else {
+        if($('btChannelItem').classList.contains('disable'))
+          $('btChannelItem').classList.remove('disable');
+        dump('lx:remove disable');
+//        if($('btChannel').classList.contains('disable'))
+//          $('btChannel').classList.remove('disable');
+      }
+    });
     $('btTxRun').addEventListener('click', function() {
       var patternIndex = $('btTxPattern').selectedIndex;
       var btTxPattern = $('btTxPattern').options[patternIndex].value;
@@ -182,12 +200,13 @@ var JrdHwtest = {
       var btTxPower = $('btTxPower').options[powerIndex].value;
       var rxGainIndex = $('btTxRxGain').selectedIndex;
       var btTxRxGain = $('btTxRxGain').options[rxGainIndex].value;
-      //var runCommand = _self.getTxBTRunCommand(btTxPattern,
-      // btTxChannel, btTxPacketType, btTxWhitening,
-      // btTxPower, btTxRxGain);
-      var txRunCommand = '/system/bin/btTx_run ' + btTxChannel + ' ' +
-        btTxPattern + ' ' + btTxPacketType + ' ' +
-        btTxWhitening + ' ' + btTxPower + ' ' + btTxRxGain;
+      var btTxHopIndex =$('btTxHop').selectedIndex;
+      var btTxHop =$('btTxHop').options[btTxHopIndex].value;
+
+
+
+      //var runCommand = _self.getTxBTRunCommand(btTxPattern, btTxChannel, btTxPacketType, btTxWhitening, btTxPower, btTxRxGain);
+      var  txRunCommand = '/system/bin/btTx_run ' + btTxChannel + ' ' + btTxPattern + ' ' + btTxPacketType + ' ' + btTxWhitening + ' ' + btTxPower + ' ' + btTxRxGain + ' ' + btTxHop;
       this.disabled = true;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
@@ -289,14 +308,14 @@ var JrdHwtest = {
       var index = $('nfcRunTest').selectedIndex;
       var value = $('nfcRunTest').options[index].value;
       var nfcRunCommand = '/system/bin/test_pn547  ' + value;
+
       this.disabled = true;
       $('nfcEUTStop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
         debug('lx:nfc Run  ' + nfcRunCommand + '\n');
-        var request = jrd.startUniversalCommand(nfcRunCommand, false);
+        var request = jrd.startUniversalCommand(nfcRunCommand, true);
       }
-
     });
 
     $('nfcEUTStop').addEventListener('click', function() {
