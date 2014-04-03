@@ -8,6 +8,13 @@ function $(id) {
 
 var JrdHwtest = {
   init: function jrdHwTestInit() {
+    var nfcStop = navigator.jrdExtension.fileRead('/system/bin/nfc_stop');
+    dump('lx:nfcStop ' + nfcStop +'\n');
+    var listItem = document.querySelector('#root ul');
+    var nfcItem =$('nfcItem');
+    if(nfcStop == ''||nfcStop == null) {
+      listItem.removeChild(nfcItem);
+    }
     this.pageChangeHandler();
     this.fireEvent();
   },
@@ -131,6 +138,7 @@ var JrdHwtest = {
       var stopCommand = '/system/bin/wifitest tx stop' + ' > /data/wifitext_stop.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
+        debug("lx: stopCommand "+ stopCommand + "\n");
         var request = jrd.startUniversalCommand(stopCommand, true);
       }
       $('wifiTxRun').disabled = false;
@@ -169,8 +177,8 @@ var JrdHwtest = {
 //        var request = jrd.startUniversalCommand(stopCommand, false);
 //      }
 //    };
-    $('btTxHop').addEventListener('change',function() {
 
+    $('btTxHop').addEventListener('change',function() {
       var btTxHopIndex =$('btTxHop').selectedIndex;
       var btTxHop =$('btTxHop').options[btTxHopIndex].value;
       dump('lx: btTxHopIndex '+btTxHopIndex+'btTxHop value ' + btTxHop +'\n');
@@ -234,7 +242,6 @@ var JrdHwtest = {
     $('gpsTest1Run').addEventListener('click', function() {
       this.disabled = true;
       var runCommand = '/system/bin/gps_test 1 0';
-     //var runCommand= '/system/bin/gps_run '+new Date().getTime();
       $('gpsTest1Stop').disabled = false;
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
@@ -254,17 +261,7 @@ var JrdHwtest = {
     //BT RADIO TEST BEGIN
     $('btRadioTestRun').addEventListener('click', function() {
       this.disabled = true;
-      $('btRadioTestStop').disabled = false;
-     // var runCommand = 'bttest disable;' + 'bttest enable;' +
-     // 'hcitool cmd 0x06 0x0003;' +
-     // 'hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' +
-     // 'hcitool cmd 0x03 0x001A 0x03;' + 'hcitool cmd 0x03 0x0020 0x00;' +
-     // 'hcitool cmd 0x03 0x0022 0x00';
-     //var runCommand = 'hcitool cmd 0x3F 0x0B 0x01 0x24 0x0C 0xFF 00 07 07 07 07 00 00 07 07 02 00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x03;' +
-     // '/system/bin/bt_radio hcitool cmd 0x06 0x0003;' +
-     // '/system/bin/bt_radio hcitool cmd 0x03 0x0005 0x02 0x00 0x02;' +
-     // '/system/bin/bt_radio hcitool cmd 0x03 0x001A 0x03;' +
-     // '/system/bin/bt_radio hcitool cmd 0x03 0x0020 0x00;' + '/system/bin/bt_radio hcitool cmd 0x03 0x0022 0x00';
+      $('btRadioTestStop').disabled = false;   
       var bttestCommand = '/system/bin/bt_radio_run ' + ' > /data/bt_radio_run.txt';
       if (navigator.jrdExtension) {
         var jrd = navigator.jrdExtension;
@@ -355,7 +352,7 @@ var JrdHwtest = {
     function closeShell() {
       try {
         navigator.jrdExtension.stopUniversalCommand();
-      } catch (e) {
+      } catch(e) {
       }
     }
 

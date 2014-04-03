@@ -23,9 +23,12 @@
         <li>
           <a id="menuItem-gps" class="menu-item" href="#gps">GPS</a>
         </li>
-          <li>
+          <li id="nfcItem">
               <a id="menuItem-nfc" class="menu-item" href="#nfc">NFC</a>
           </li>
+        <li>
+          <a id="menuItem-vibrator" class="menu-item" href="#vibrator">Vibrator Limited Test</a>
+        </li>
       </ul>
     </section>
     <section id="wifi" class="skin-organic" role="region" style="display: none;">
@@ -686,9 +689,94 @@
             </button>
         </div>
     </section>
+    <section id="vibrator" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>Vibrator Limited Test</h1>
+      </header>
+        <ul>
+          <li>
+            <div class="divItem">
+              Settings
+            </div>
+          </li>
+        </ul>
+
+        <ul>
+          <div class="divItem">
+            Times Left (hr) :
+          </div>
+          <div class="divItem" id = "lbdefaultTime">72</div>
+        </ul>
+        <li>
+          <div class="divItem">
+            <button id="btVibrateTimeAdd" style="width: 30%;">
+              +
+            </button>
+            <button id="btDefaultTimeaSubtract" style="width: 30%;">
+              -
+            </button>
+          </div>
+        </li>
+
+
+        <li>
+          <div class="divItem">
+            Duration:
+          </div>
+          <div class="divItem">
+            <select id="vbTimes" style="font-size: 2rem;">
+              <option value="50">0.05 s</option>
+              <option value="100">0.1 s</option>
+              <option value="300">0.3 s</option>
+              <option value="500">0.5 s </option>
+              <option value="1000">1 s</option>
+              <option value="2000">2 s</option>
+              <option value="5000">5 s</option>
+            </select>
+          </div>
+        </li>
+
+        <li>
+          <div class="divItem">Interval:</div>
+          <div class="divItem">
+            <select id="vbinvTimes" style="font-size: 2rem;">
+              <option value="50">0.05 s</option>
+              <option value="100">0.1 s</option>
+              <option value="300">0.3 s</option>
+              <option value="500">0.5 s </option>
+              <option value="1000">1 s</option>
+              <option value="2000">2 s</option>
+              <option value="5000">5 s</option>
+            </select>
+          </div>
+        </li>
+
+        <li>
+            <div class="divItem">
+              <button id="btVibrateRun" style="width: 30%;">
+                Run
+              </button>
+            </div>
+            <div class="divItem">
+              <button id="btVibrateStop" style="width: 30%;" disabled="true">
+                Stop
+              </button>
+            </div>
+          </li>
+      <li>
+      <div class="divItem">
+        <button id="btVibrateUnlimited" style="width: 45%;" >
+          Unlimited Run
+        </button>
+      </div>
+      </li>
+
+    </section>
     <script defer src="shared/js/settings_listener.js"></script>
     <script src="js/jrd-hwtest.js"></script>
     <script src="js/nfc.js"></script>
     <script src="js/log.js"></script>
+    <script src="js/vibrators.js"></script>
   </body>
 </html>
