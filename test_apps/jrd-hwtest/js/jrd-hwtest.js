@@ -365,18 +365,21 @@ var JrdHwtest = {
     var timeBegin = 0;
     var timeEnd = 0;
     var options = {
-      enableHighAccuracy: true,
-      timeout: 60000,
-      maximumAge: 0
+      enableHighAccuracy : true,
+      timeout : 50000,
+      maximumAge : 60000
     };
 
     function success(pos) {
       if (id != undefined) {
+        if(100 <= pos.coords.accuracy){
+          return;
+        }
         geolocation.clearWatch(id);
         $('gps2ResultPanel').innerHTML = '[success]clear watch:[' + id + ']</br>' + $('gps2ResultPanel').innerHTML;
       }
       var crd = pos.coords;
-      timeEnd = new Date().getTime();
+      timeEnd = Date.now();
       dump('lx: timeEnd ' + timeEnd + '\n');
       result = parseInt((timeEnd - timeBegin) / 1000);
       result2 = result;
@@ -465,7 +468,7 @@ var JrdHwtest = {
 
       function testGPS() {
         count++;
-        timeBegin = new Date().getTime();
+        timeEnd = Date.now();
 
         id = geolocation.watchPosition(success, error, options);
         Log('geolocation.watchPosition id = ' + id);
