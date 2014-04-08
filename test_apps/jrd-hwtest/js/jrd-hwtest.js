@@ -468,7 +468,7 @@ var JrdHwtest = {
 
       function testGPS() {
         count++;
-        timeEnd = Date.now();
+        timeBegin = Date.now();
 
         id = geolocation.watchPosition(success, error, options);
         Log('geolocation.watchPosition id = ' + id);
