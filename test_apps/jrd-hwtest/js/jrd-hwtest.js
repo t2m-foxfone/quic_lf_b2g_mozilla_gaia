@@ -60,14 +60,14 @@ var JrdHwtest = {
               var initRequest = jrd.startUniversalCommand(initCommand, true);
             }
             break;
-//          case 'nfc-pcd':
-//            var initCommand ='/system/bin/nfc_start' +' > /data/nfc_start.txt';
-//            if (navigator.jrdExtension) {
-//              var jrd = navigator.jrdExtension;
-//              debug('lx: nfc-pcd  initCommand ' + initCommand + '\n');
-//              var initRequest = jrd.startUniversalCommand(initCommand, true);
-//            }
-//            break;
+          case 'nfc-pcd':
+            var nfcStart ='/system/bin/nfc_start';
+            if (navigator.jrdExtension) {
+              var jrd = navigator.jrdExtension;
+              debug('lx: nfc-pcd  initCommand ' + nfcStart + '\n');
+              var initRequest = jrd.startUniversalCommand(nfcStart, true);
+            }
+            break;
           default :
             break;
         }
