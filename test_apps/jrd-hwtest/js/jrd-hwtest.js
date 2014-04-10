@@ -283,22 +283,24 @@ var JrdHwtest = {
 
     var count, type;
     $('gpsTest2Cold').addEventListener('click', function() {
-      disableButtonGPSTest2();
+
       count = 0;
       type = 'cold';
       runTest();
+      disableButtonGPSTest2();
     });
     $('gpsTest2Hot').addEventListener('click', function() {
-      disableButtonGPSTest2();
+
       count = 0;
       type = 'hot';
       runTest();
+      disableButtonGPSTest2();
     });
     $('gpsTest2Warm').addEventListener('click', function() {
-      disableButtonGPSTest2();
       count = 0;
       type = 'warm';
       runTest();
+      disableButtonGPSTest2();
     });
 
     $('nfcEUTRun').addEventListener('click', function() {
@@ -325,7 +327,7 @@ var JrdHwtest = {
     });
 
     function disableButtonGPSTest2() {
-      $('rst_gpstest2').innerHTML = 'testing.....(0)';
+      $('rst_gpstest2').innerHTML = type + '  testing.....(0)';
       $('gpsTest2Cold').disabled = true;
       $('gpsTest2Warm').disabled = true;
       $('gpsTest2Hot').disabled = true;
@@ -367,12 +369,12 @@ var JrdHwtest = {
     var options = {
       enableHighAccuracy : true,
       timeout : 50000,
-      maximumAge : 60000
+      maximumAge : 0
     };
 
     function success(pos) {
       if (id != undefined) {
-        if(100 <= pos.coords.accuracy){
+        if(30 <= pos.coords.accuracy){
           return;
         }
         geolocation.clearWatch(id);
@@ -396,7 +398,7 @@ var JrdHwtest = {
       Log('geolocation.watchPosition success id = ' + id + ' result: ' + result);
 
       if (count < total) {
-        $('rst_gpstest2').innerHTML = 'testing.....(' + count + ')';
+        $('rst_gpstest2').innerHTML = type + '  testing.....(' + count + ')';
         runTest();
       }
       else {
@@ -432,7 +434,7 @@ var JrdHwtest = {
 
       // alert(msg + count);
       if (count < total) {
-        $('rst_gpstest2').innerHTML = 'testing.....(' + count + ')';
+        $('rst_gpstest2').innerHTML = type + '  testing.....(' + count + ')';
         runTest();
       } else {
         $('rst_gpstest2').innerHTML = 'success';
@@ -449,12 +451,12 @@ var JrdHwtest = {
         return;
       }
       var request = window.navigator.mozSettings.createLock().set({'geolocation.enabled' : false});
-      DomRequestResult(request, 'geolocation.enabled: false', _settingCallback);
+      DomRequestResult(request, 'geolocation.enabled: false', window.setTimeout(_settingCallback, 10000));
 
-      function _settingCallback() {
+      function _settingCallback(){
         if (type != 'hot') {
           var request = navigator.jrdExtension.startUniversalCommand('gps_test ' + type, true);
-          DomRequestResult(request, 'gps_test ' + type, _callback);
+          DomRequestResult(request, 'gps_test ' + type, window.setTimeout(_callback, 10000));
         }
         else {
           _callback();
@@ -463,7 +465,7 @@ var JrdHwtest = {
 
       function _callback() {
         var request = window.navigator.mozSettings.createLock().set({'geolocation.enabled' : true});
-        DomRequestResult(request, 'geolocation.enabled: true', testGPS);
+        DomRequestResult(request, 'geolocation.enabled: true', window.setTimeout(testGPS, 10000));
       }
 
       function testGPS() {
