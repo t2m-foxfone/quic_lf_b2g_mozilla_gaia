@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="pragma" content="no-cache"/>
+    <title>Settings</title>
+
+    <!-- Common style -->
+    <link rel="stylesheet" type="text/css" href="shared/style/headers.css"/>
+    <link rel="stylesheet" type="text/css" href="shared/style/switches.css"/>
+
+    <!-- Specific style -->
+    <link rel="stylesheet" type="text/css" href="style/lists.css"/>
+    <link rel="stylesheet" type="text/css" href="style/icons.css"/>
+    <link rel="stylesheet" type="text/css" href="style/settings.css"/>
+
+    <!-- Shared resources
+    <link rel="resource" type="application/json" href="shared/resources/tz.json"/>
+    <link rel="resource" type="application/json" href="shared/resources/apn.json"/>
+    <link rel="resource" type="application/json" href="shared/resources/languages.json"/>
+    <link rel="resource" type="application/json" href="shared/resources/media/ringtones/"/>
+    <link rel="resource" type="application/json" href="shared/resources/media/notifications/"/>
+    -->
+
+    <!-- Localization -->
+    <link rel="resource" type="application/l10n" href="shared/locales/branding.ini"/>
+    <link rel="resource" type="application/l10n" href="shared/locales/date.ini"/>
+    <link rel="resource" type="application/l10n" href="shared/locales/permissions.ini"/>
+    <link rel="resource" type="application/l10n" href="shared/locales/tz.ini"/>
+    <link rel="resource" type="application/l10n" href="locales/locales.ini"/>
+    <script defer src="shared/js/l10n.js"></script>
+    <script defer src="shared/js/l10n_date.js"></script>
+
+    <!-- Specific code -->
+    <script defer src="js/settings.js"></script>
+
+    <!-- shared helper library -->
+
+    <!--<script defer src="shared/js/mobile_operator.js"></script>-->
+
+    <!-- all non-#root panels will lazy-load their own scripts -->
+</head>
+<body class="skin-organic uninit">
+
+<!--
+  - Lazy-Loading: to avoid parsing all settings panels before necessary, the
+  - HTML markup is included in a comment node and applied with `.innerHTML'
+  - when the sub-panel is loaded.
+  -
+  - When a panel includes <script> nodes, these scripts might require all
+  - sub-panels to be loaded to work properly. We rely on the panel ID to get
+  - its dependencies, e.g. the #wifi panel depends on all panels matching
+  - the « section[id^="wifi-"] » selector.
+  -
+  - Long story short: BE VERY CAREFUL WHEN CHANGING A SECTION ID!
+  -->
+
+<!--
+  - Note: the panels are stacked in reverse order on purpose - the main
+  - panel always comes last.  With this order, no 'z-index' rule is required
+  - to handle the panel transitions.
+  -->
+
+<!-- Connectivity :: Wi-Fi -->
+<section role="region" id="root" class="current">
+    <!--
+    <header>
+        <h1 data-l10n-id="settings"> Available Networks </h1>
+    </header>
+    <ul>
+      <li>
+        <label>
+          <button id="countAverage">start</button>
+        </label>
+      </li>
+    </ul>
+
+    <ul id="wifi-availableNetworks-test" data-state="off">
+      <li class="explanation" data-state="off" data-l10n-id="wifi-disabled">
+        Turn Wi-Fi on to view available networks.
+      </li>
+      <li class="explanation" data-state="on" data-l10n-id="scanning">
+        Searching…
+      </li>
+    </ul>
+
+    <script src="js/wifi_test.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="shared/style/buttons.css"/>
+    -->
+</section>
+
+
+</body>
+</html>
+

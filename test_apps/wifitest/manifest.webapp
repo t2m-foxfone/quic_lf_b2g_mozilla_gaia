@@ -1,0 +1,78 @@
+{
+  "name": "wifiTest", 
+  "default_locale": "en-US", 
+  "icons": {
+    "120": "/style/icons/checked.png", 
+    "60": "/style/icons/60/checked.png"
+  }, 
+  "description": "wifiTest", 
+  "messages": [
+    "bluetooth-requestconfirmation", 
+    "bluetooth-requestpasskey", 
+    "bluetooth-requestpincode", 
+    "bluetooth-authorize", 
+    "bluetooth-cancel", 
+    "bluetooth-pairedstatuschanged", 
+    "bluetooth-hfp-status-changed"
+  ], 
+  "launch_path": "/index.html#root", 
+  "developer": {
+    "url": "https://github.com/mozilla-b2g/gaia", 
+    "name": "The Gaia Team"
+  }, 
+  "type": "certified", 
+  "permissions": {
+    "device-storage:pictures": {
+      "access": "readonly"
+    }, 
+    "desktop-notification": {}, 
+    "power": {}, 
+    "wifi-manage": {}, 
+    "device-storage:apps": {
+      "access": "readonly"
+    }, 
+    "device-storage:videos": {
+      "access": "readonly"
+    }, 
+    "attention": {}, 
+    "storage": {}, 
+    "device-storage:sdcard": {
+      "access": "readonly"
+    }, 
+    "telephony": {}, 
+    "idle": {}, 
+    "device-storage:music": {
+      "access": "readonly"
+    }, 
+    "time": {}, 
+    "mobileconnection": {}, 
+    "settings": {
+      "access": "readwrite"
+    }, 
+    "webapps-manage": {}, 
+    "permissions": {}
+  }, 
+  "locales": {
+    "zh-TW": {
+      "name": "wifiTest", 
+      "description": "wifiTest"
+    }, 
+    "fr": {
+      "name": "wifiTest", 
+      "description": "wifiTest"
+    }, 
+    "en-US": {
+      "name": "wifiTest", 
+      "description": "wifiTest"
+    }, 
+    "ar": {
+      "name": "wifiTest", 
+      "description": "wifiTest \u0627\u0644\u0636\u0628\u0637"
+    }, 
+    "tr": {
+      "name": "wifiTest", 
+      "description": "wifiTest\u0131"
+    }
+  }, 
+  "orientation": "portrait-primary"
+}

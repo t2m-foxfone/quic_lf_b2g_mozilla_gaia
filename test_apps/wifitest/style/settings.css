@@ -1,0 +1,313 @@
+/**
+ * Settings style & layout
+ * note: `lists.css' must be loaded before this stylesheet
+ */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-size: 10px;
+  font-family: "MozTT", sans-serif;
+  overflow: hidden;
+}
+
+
+/******************************************************************************
+ * Setting panels: full-size <section role="region"> blocks
+ */
+
+/* Setting panels: full-size <section role="region"> blocks */
+section[role="region"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: url(images/document_bg.png);
+  overflow: hidden;
+}
+
+
+/**
+ * Panel targets -- transitions
+ * the `.previous', '.current' and '.forward' classes are set by settings.js
+ * we use the '.peek' class to force the rendering of the panel before
+ * starting the transition, thus avoiding an ugly flickering with gecko 18
+ */
+
+section[role="region"] {
+  transform: translateX(+100%);
+  transition: transform .4s ease;
+}
+section[role="region"].peek {
+  transition: transform 1ms linear;
+  transform: translateX(+0.1%);
+}
+
+section[role="region"].previous {
+  transform: translateX(-100%);
+}
+section[role="region"].previous.peek {
+  transform: translateX(-0.1%);
+}
+
+section[role="region"].current {
+  transform: translateX(0);
+  overflow-y: scroll;
+}
+section[role="region"].current.peek.forward {
+  transform: translateX(99.9%);
+}
+section[role="region"].current.peek {
+  transform: translateX(-99.9%);
+}
+
+/**
+ * Headers should not scroll with the rest of the page, except for #root.
+ */
+section[role="region"] > header:first-child {
+  position: fixed;
+  width: 100%;
+}
+
+section[role="region"] > header:first-child + * {
+  margin-top: 5rem;
+}
+
+
+/******************************************************************************
+ * Explanation texts
+ */
+
+.explanation {
+  padding: 0.5rem 3rem;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: #505859;
+}
+
+.description {
+  padding: 1rem 3rem;
+  font-size: 1.4rem;
+  white-space: normal;
+}
+
+.link-text, .tel-text a {
+  font-size: 1.4rem;
+  color: #336699;
+  text-decoration: underline;
+}
+
+
+/******************************************************************************
+ * Wi-Fi settings
+ */
+
+/* three-state items: on|off|ready */
+
+ul[data-state="off"] ~ *,
+ul[data-state] li[data-state] {
+  display: none;
+}
+
+ul[data-state="on"]    li[data-state="on"],
+ul[data-state="off"]   li[data-state="off"],
+ul[data-state="ready"] li[data-state="ready"] {
+  display: block;
+}
+
+/**
+ * Wi-Fi authentication fields:
+ *   - hide password field on open networks
+ *   - hide identifier field on non-EAP networks
+ */
+
+section li.password,
+section li.identity {
+  display: none;
+}
+
+section[data-security*="WEP"] li.password,
+section[data-security*="WPA"] li.password,
+section[data-security*="EAP"] li.identity {
+  display: block;
+}
+
+section li.password {
+  display: block; /*asf*/
+  height: 12rem;
+  padding-right: 0;
+}
+
+section li.password > label {
+  top: 8.6rem;
+  left: 3rem;
+  width: calc(100% - 6rem);
+  height: 3rem;
+  z-index: 1;
+}
+
+section li.password > label > span {
+  left: 1.1rem;
+  right: auto;
+}
+
+section li.password > span {
+  position: absolute;
+  top: 8.6rem;
+  left: 6rem;
+  padding: 0;
+  height: 3rem;
+  color: #848484;
+  font-size: 1.7rem;
+  line-height: 3rem;
+}
+
+section li.password > p {
+  padding: 0 3rem;
+  line-height: 4.4rem;
+}
+
+
+/******************************************************************************
+* Media Storage settings
+*/
+ 
+#mediaStorage #space-stackedbar {
+  border: solid 0px green;
+  display: inline-block;
+  height: 30px;
+  margin: 0.8rem 5%;
+  padding: 0;
+  width: 90%;
+}
+
+#mediaStorage #space-stackedbar .stackedbar-item {
+  display: inline-block;
+  height: 30px;
+}
+
+#mediaStorage #space-stackedbar .stackedbar-item#stackedbar-item-music, #mediaStorage #music-space .stackedbar-color {
+  background-color: #ff7517;
+}
+
+#mediaStorage #space-stackedbar .stackedbar-item#stackedbar-item-pictures, #mediaStorage #pictures-space .stackedbar-color {
+  background-color: #5da31d;
+}
+
+#mediaStorage #space-stackedbar .stackedbar-item#stackedbar-item-videos, #mediaStorage #videos-space .stackedbar-color {
+  background-color: #5917ba;
+}
+
+#mediaStorage #space-stackedbar .stackedbar-item#stackedbar-item-free, #mediaStorage #media-free-space .stackedbar-color {
+  background-color: #fff;
+}
+
+#mediaStorage .stackedbar-color {
+  display: inline-block;
+  height: 2rem;
+  left: 0.5rem;
+  padding: 0px;
+  position: absolute;
+  top: 2.1rem;
+  width: 2rem;
+}
+
+
+/******************************************************************************
+ * Call settings
+ */
+
+.call-settings-disabled a {
+  opacity: 0.6;
+  color: #797e80;
+}
+
+#call .cw-alert .cw-alert-sub-p {
+  border-top: none;
+}
+
+#call .cw-alert .cw-alert-checkbox-label {
+  position: absolute;
+  right: 0;
+  height: 2.7rem;
+}
+
+
+/******************************************************************************
+ * Cellular and Data
+ */
+
+.carrier-disabled a {
+  opacity: 0.6;
+  color: #797e80;
+}
+
+
+/******************************************************************************
+ * APN settings
+ */
+
+.apnSettings-custom {
+  font-style: italic;
+}
+
+.apnSettings-advanced {
+  padding-bottom: 1em;
+}
+
+
+/******************************************************************************
+ * Wallpaper snapshot
+ */
+
+#wallpaper-header { border: none; }
+
+#wallpaper {
+  position: relative;
+  overflow: hidden;
+  height: 17rem;
+}
+
+#screen-timeout {
+  height: auto !important;
+}
+
+#display li {
+  height: 6.2rem;
+}
+#display li:last-child {
+  border-bottom: none;
+}
+
+.multiline_title {
+  text-overflow: clip;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+/******************************************************************************
+ * Right-To-Left layout
+ */
+
+html[dir="rtl"] section[role="region"] {
+  transform: translateX(-100%);
+}
+
+html[dir="rtl"] section[role="region"].previous  {
+  transform: translateX(+100%);
+}
+
+html[dir="rtl"] section[role="region"].current {
+  transform: translateX(0);
+}
+
+/* 'show password' checkboxes */
+html[dir="rtl"] label[for^="pwd"] {
+  padding-left: inherit;
+  padding-right: 3rem;
+}
+
