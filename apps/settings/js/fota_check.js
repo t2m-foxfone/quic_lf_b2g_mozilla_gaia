@@ -6,6 +6,7 @@ var menu_check_update = $('fota-menu-check-update');
 var check_update_desc = $('check-update-desc');
 
 var button_download_action = $('button-download-action');
+var button_delete_action = $('button-delete-action');
 var update_infomation_subline = $('update-infomation-subline');
 var system_update_info = $('system-update-info');
 var system_update_version_desc = $('system-update-version-desc');
@@ -13,6 +14,8 @@ var system_update_file_size_desc = $('file-size-desc');
 var system_update_process_bar = $('download-progress-bar');
 var system_update_download_percentage = $('download-percentage');
 var system_update_info_head = $('system-update-info-header');
+var action_button = $('action-button');
+
 var Fota = {
 
   _settingCache: null,
@@ -236,6 +239,7 @@ var Fota = {
   updateInfoPanelEx: function fota_updateInfoPanel(result) {
 
     system_update_info_head.hidden = false;
+    action_button.hidden = false;
     system_update_process_bar.value = 0;
     system_update_download_percentage.textContent = '0%';
     button_download_action.innerHTML = _('download');
@@ -249,8 +253,9 @@ var Fota = {
       if (result.percentage === 100) {
         button_download_action.innerHTML = _('install');//'install';
         button_download_action.onclick = this.preInstall.bind(this);
-        update_infomation_subline.textContent = _('msg_delete_package_new');
-        update_infomation_subline.hidden = false;
+        button_delete_action.disabled = false;
+        //update_infomation_subline.textContent = _('msg_delete_package_new');
+        //update_infomation_subline.hidden = false;
         this._status = 'check';/*update the action status*/
       }
       system_update_process_bar.value = result.percentage;
@@ -265,8 +270,11 @@ var Fota = {
   },
 
   getMobileDataStatus: function fota_getMobileDataStatus(callback) {
-
-    var mobileManager = window.navigator.mozMobileConnection;
+    //tcl_WCL modified for pr635733 begin
+    var mobileManager = window.navigator.mozMobileConnection ||
+        window.navigator.mozMobileConnections &&
+            window.navigator.mozMobileConnections[0];
+    //tcl_WCL modified for pr635733 end
     /*some time the mobileManager is null*/
     if (!mobileManager || !mobileManager.data.connected) {
       debug('getMobileDataStatus:: The status: disconnected');
@@ -316,7 +324,11 @@ var Fota = {
         this._status = action;/*update the action status*/
         this.pauseDisplay();
       } else {
-        var mobileManager = window.navigator.mozMobileConnection;
+        //tcl_WCL modified for pr635733 begin
+        var mobileManager = window.navigator.mozMobileConnection ||
+            window.navigator.mozMobileConnections &&
+                window.navigator.mozMobileConnections[0];
+        //tcl_WCL modified for pr635733 end
         if (!mobileManager || !mobileManager.data.connected) {
            this._status = action;/*update the action status*/
            this.pauseDisplay();
@@ -417,8 +429,10 @@ var Fota = {
 
     menu_check_update.addEventListener('click',
         this.checkBeforeGetPackage.bind(this));
+        button_delete_action.addEventListener('click',
+          this.touchCallback.bind(this));
     /*Added by tcl-baijian 2014-03-11 real time sync the action status begin*/
-    system_update_info.addEventListener('touchstart', function() {
+    /*system_update_info.addEventListener('touchstart', function() {
       debug('delayedInit:: touchstart');
       self.sendFotaCommand('common', 'GetAction');
       self._callback = self.touchCallback.bind(self);
@@ -427,7 +441,7 @@ var Fota = {
     system_update_info.addEventListener('touchend', function() {
       debug('delayedInit:: touchend entry.');
       window.clearTimeout(self._longPressTimeout);
-    });
+    });*/
     /*Added by tcl-baijian 2014-03-11 real time sync the action status end*/
     //When the language changed,we need to reinit this page.
     var isFirst = true;
@@ -468,8 +482,9 @@ var Fota = {
           if (this._versionInfo.startDownload &&
               this._versionInfo.percentage === 100) {
               button_download_action.innerHTML = _('install');
-              update_infomation_subline.textContent =
-                                  _('msg_delete_package_new');
+              button_delete_action.disabled = false;
+              //update_infomation_subline.textContent =
+              //                   _('msg_delete_package_new');
           } else {
               button_download_action.innerHTML = _('download');
           }
@@ -718,6 +733,7 @@ var Fota = {
     }else {
       system_update_download_percentage.textContent = '99%';
       system_update_process_bar.value = 99;
+      //button_delete_action.disabled = false;
       update_infomation_subline.hidden = false;
       update_infomation_subline.textContent = _('msg_checking_ongoing');
       button_download_action.innerHTML = _('install');
@@ -766,15 +782,18 @@ var Fota = {
 
   handleFirewarmCheckSuccess: function fota_handleFirewarmCheckSuccess() {
     button_download_action.disabled = false;
-    update_infomation_subline.hidden = false;
+    button_delete_action.disabled = false;
+    update_infomation_subline.hidden = true;
     system_update_process_bar.value = 100;
     system_update_download_percentage.textContent = '100%';
     button_download_action.onclick = this.preInstall.bind(this);
-    update_infomation_subline.textContent = _('msg_delete_package_new');
+    //update_infomation_subline.textContent = _('msg_delete_package_new');
   },
 
   handleFirewarmCheckFailed: function fotaFireWarmCheckSFailed(error) {
     button_download_action.disabled = false;
+    button_delete_action.disabled = false;
+    update_infomation_subline.hidden = true;
     button_download_action.innerHTML = _('download');
     button_download_action.onclick = this.checkBeforeDownload.bind(this);
   },
@@ -856,6 +875,7 @@ var Fota = {
      }
      this.saveVersionInfo(this._versionInfo);
    }
+   button_delete_action.disabled = true;
    update_infomation_subline.hidden = true;
   },
 
@@ -869,6 +889,7 @@ var Fota = {
           this._versionInfo.version_number != result.version_number) {
           this.saveVersionInfo(result);
           this.updateInfoPanelEx(result);
+          button_delete_action.disabled = true;
           update_infomation_subline.hidden = true;
         }
     } else {
@@ -948,6 +969,7 @@ var Fota = {
     button_download_action.innerHTML = _('btn_pause');
     button_download_action.disabled = true;
     button_download_action.onclick = this.pause.bind(this);
+    button_delete_action.disabled = true;
     update_infomation_subline.hidden = true;
     /*Modified by tcl_baijian 2014-03-04  send command to system begin*/
     /*navigator.mozJrdFota.download(this.onDownloadProgressCb.bind(this),

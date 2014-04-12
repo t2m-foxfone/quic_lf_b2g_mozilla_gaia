@@ -110,13 +110,33 @@ var systemUpdate = {
 
     //Here when we handle the alarm message,we will create a custom
     //event and dispatch to other modules
-    navigator.mozSetMessageHandler('alarm', function(message) {
-      var evt = document.createEvent('CustomEvent');
-      evt.initCustomEvent('alarmFired', true, true, { message: message });
-      debug('Dispatch an alarm fire event.');
-      window.dispatchEvent(evt);
+    /*Modified by baijian use new interface for two or above alarm listener
+    * 2014-04-11 begin
+    */
+    TCL_Alarm.add(function(message) {
+        /*only handle check and remind*/
+        if (message.data.fotaAlarmType === 'check' ||
+            message.data.fotaAlarmType === 'remind') {
+          var evt = document.createEvent('CustomEvent');
+          evt.initCustomEvent('alarmFired', true, true, { message: message });
+          debug('Dispatch an alarm fire event.');
+          window.dispatchEvent(evt);
+        }
     });
-
+    /*
+    navigator.mozSetMessageHandler('alarm', function(message) {
+      if (message.data.fotaAlarmType === 'check' ||
+          message.data.fotaAlarmType === 'remind') {
+        var evt = document.createEvent('CustomEvent');
+        evt.initCustomEvent('alarmFired', true, true, { message: message });
+        debug('Dispatch an alarm fire event.');
+        window.dispatchEvent(evt);
+      }
+    });
+    */
+    /*Modified by baijian use new interface for two or above alarm listener
+    * 2014-04-11 end
+    */
     window.addEventListener('alarmFired', function(event) {
       debug('The alarm is land now and its type: ' + event.type);
       if (event.type === 'alarmFired') {
@@ -244,7 +264,11 @@ var systemUpdate = {
             if (this._isWifiOnly) {
                 navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
             } else {
-                var mobileManager = window.navigator.mozMobileConnection;
+                //tcl_WCL modified for pr635733 begin
+                var mobileManager = window.navigator.mozMobileConnection ||
+                    window.navigator.mozMobileConnections &&
+                        window.navigator.mozMobileConnections[0];
+                //tcl_WCL modified for pr635733 end
                 if (!mobileManager || !mobileManager.data.connected) {
                     navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
                 }
@@ -515,10 +539,15 @@ var systemUpdate = {
 
     var isMobileConnected = false;
     var isWifiConnected = false;
+    //tcl_WCL modified for pr635733 begin
+    var mobile = window.navigator.mozMobileConnection ||
+      window.navigator.mozMobileConnections &&
+      window.navigator.mozMobileConnections[0];
 
-    if (window.navigator.mozMobileConnection &&
-      window.navigator.mozMobileConnection.data &&
-      window.navigator.mozMobileConnection.data.connected === true) {
+    if (mobile &&
+        mobile.data &&
+        mobile.data.connected === true) {
+    //tcl_WCL modified for pr635733 end
       isMobileConnected = true;
     }
     if (window.navigator.mozWifiManager &&

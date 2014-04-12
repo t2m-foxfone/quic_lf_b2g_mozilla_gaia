@@ -26,15 +26,18 @@
 
         <ul>
           <li id="system-update-info">
-            <button id="button-download-action"></button>
             <progress id="download-progress-bar"  max="100" value="0" ></progress>
             <span id="system-update-version-desc" > svn/cvn </span>
             <span id="download-percentage" class="download"> 0% </span>
             <span id="file-size-desc" class="check" data-l10n-id="size">Size:</span>
           </li>
         </ul>
-
         <p id="update-infomation-subline" class = "update-info-subline" hidden> </p>
+        <div id="action-button" hidden>
+           <button id="button-download-action"></button>
+           <button id="button-delete-action" data-l10n-id="delete" disabled="true">delete</button>
+        </div>
+
       </div>
       <link rel="stylesheet" type="text/css" href="shared/style_unstable/progress_activity.css"/>
       <link rel="stylesheet" type="text/css" href="shared/style/confirm.css"/>

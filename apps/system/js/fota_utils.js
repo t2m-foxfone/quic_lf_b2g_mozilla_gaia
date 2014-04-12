@@ -209,6 +209,11 @@ function showAttention(params) {
     }
   };
   Fota_CustomDialog.show(params.title, params.msg, btnObject);
+
+  window.addEventListener('home', function toCancelPrompt() {
+     window.removeEventListener('home', toCancelPrompt);
+     btnObject.callback();
+  });
 }
 
 function showDialog(title, msg, cb) {
@@ -223,6 +228,12 @@ function showDialog(title, msg, cb) {
     }
   };
   Fota_CustomDialog.show(title, msg, btnObject);
+
+  window.addEventListener('home', function toCancelPrompt() {
+    window.removeEventListener('home', toCancelPrompt);
+    btnObject.callback();
+  });
+
 }
 /*
 function isBatteryLevelAvailable() {
