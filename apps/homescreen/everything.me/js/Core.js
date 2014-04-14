@@ -61,7 +61,35 @@ window.Evme = new function Evme_Core() {
   this.onHomeButtonPress = function onHomeButtonPress() {
     Evme.Searchbar.blur();
 
+    // tcl_longxiuping add for bug 642657 begin.
+    function hideLoading() {
+      var flag = false;
+
+      // hide loading-dialog if open.
+      // the loading-dialog is show in function triggerActivate but
+      // the loading-dialog has not been removed in hideLoading.
+      // usually happen the first time to trigger add smart collections.
+      var elLoading = document.getElementById('loading-dialog');
+      if (elLoading && elLoading.style.display === 'block') {
+        EverythingME.hideLoading();
+        EverythingME.pendingEvent = null;
+        flag = true;
+      }
+
+      // hide loading if open.
+      // this situation is the loading-dialog has been removed in hideLoading.
+      if (document.body.classList.contains(
+        'evme-suggest-collections-loading')) {
+        Evme.Brain.CollectionsSuggest.loadingCancel();
+        flag = true;
+      }
+
+      return flag;
+    }
+    // tcl_longxiuping add for bug 642657 end.
+
     if (
+    hideLoading() ||
     // hide suggested collections list if open
     Evme.CollectionsSuggest && Evme.CollectionsSuggest.hide() ||
     // stop editing if active

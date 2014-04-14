@@ -43,8 +43,16 @@ var Homescreen = (function() {
           return;
         }
 
+        // tcl_longxiuping add for bug 642657
+        var dialog = document.getElementById('contextmenu-dialog');
+
         // this happens when the user presses the 'home' button
-        if (Homescreen.didEvmePreventHomeButton()) {
+        // tcl_longxiuping add for bug 642657.
+        if (dialog.classList.contains('visible') &&
+          dialog.classList.contains('show')) {
+          ContextMenuDialog.hide();
+          // tcl_longxiuping modified for bug 642657.
+        } else if (Homescreen.didEvmePreventHomeButton()) {
           // nothing to do here, just prevent any other actions
         } else if (Homescreen.isInEditMode()) {
           exitFromEditMode();
