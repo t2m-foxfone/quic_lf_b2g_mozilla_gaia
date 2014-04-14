@@ -26,6 +26,62 @@
     }
   });
 
+  // addeded by tcl_chenguoqiang for EU certification PR 618412
+  // add bluetooth enable listener
+  SettingsListener.observe('bluetooth.enabled', false,
+    function sb_settingUpdate(value) {
+      if (value == false) {
+        if (!navigator.mozAudioChannelManager.headphones &&
+          isHeadsetConnected == true) {
+          isHeadsetConnected = false;
+          CustomDialog.hide();
+          if (currentVolume['content'] >= CEWarningVol - 1) {
+            CEAccumulatorTime = 0; // reset time
+            CETimestamp = 0; // reset timestamp
+            SettingsListener.getSettingsLock().set({
+              'audio.volume.content': CEWarningVol - 1
+            });
+          }
+          ceAccumulator();
+        }
+      }
+    }
+  );
+
+  // addeded by tcl_chenguoqiang for EU certification PR 618412
+  window.addEventListener('bluetoothprofileconnectionchange', function() {
+    var blueHead = Bluetooth.isProfileConnected(Bluetooth.Profiles.A2DP);
+    if (!navigator.mozAudioChannelManager.headphones &&
+        isHeadsetConnected != blueHead) {
+      isHeadsetConnected = blueHead;
+      if (!isHeadsetConnected) {
+        CustomDialog.hide();
+        if (currentVolume['content'] >= CEWarningVol - 1) {
+          CEAccumulatorTime = 0; // reset time
+          CETimestamp = 0; // reset timestamp
+          SettingsListener.getSettingsLock().set({
+            'audio.volume.content': CEWarningVol - 1
+          });
+        }
+      }
+      ceAccumulator();
+    }
+
+  });
+
+  //start tcl_zmm PR_600762 press power/volume key stop ringtone
+  function stopIncomingTelRingerTone() {
+    var req = navigator.mozSettings.createLock().get('ringertone-stop');
+    req.onsuccess = function ringerToneStop() {
+      if (!req.result['ringertone-stop']) {
+        navigator.mozSettings.createLock().set({'ringertone-stop' : true});
+      }
+    };
+    req.onerror = function() {
+      console.log('zmm:can not get ringertone-stop');
+    };
+  } //end
+
   /**
    * The mute event is dispatched from sleep menu.
    * But if we have a mute hardware button or virtual button,
@@ -138,6 +194,15 @@
   // * unknown
   var defaultVolumeControlChannel = 'unknown';
 
+  // added by tcl_chenguoqiang PR 587585
+  // mozChromeEvent fired from Gecko is earlier been loaded,
+  // so we use mozAudioChannelManager to
+  // check the headphone plugged or not when booting up
+  var acm = navigator.mozAudioChannelManager;
+  if (acm) {
+    isHeadsetConnected = acm.headphones;
+  }
+
   // This event is generated in shell.js in response to bluetooth headset.
   // Bluetooth headset always assign audio volume to a specific value when
   // pressing its volume-up/volume-down buttons.
@@ -149,8 +214,20 @@
       currentChannel = e.detail.channel;
       ceAccumulator();
     } else if (type == 'headphones-status-changed') {
-      isHeadsetConnected = (e.detail.state != 'off');
+      isHeadsetConnected = (e.detail.state != 'off') || Bluetooth.connected;
       ceAccumulator();
+      // addeded by tcl_chenguoqiang for EU certification PR 618412
+      if (!isHeadsetConnected) {
+        CustomDialog.hide();
+        if (currentVolume['content'] >= CEWarningVol - 1) {
+          CEAccumulatorTime = 0; // reset time
+          CETimestamp = 0; // reset timestamp
+          SettingsListener.getSettingsLock().set({
+            'audio.volume.content': CEWarningVol - 1
+          });
+        }
+      }
+      // end added
     } else if (type == 'default-volume-channel-changed') {
       defaultVolumeControlChannel = e.detail.channel;
       // Do not accumulate CE time here because this event
@@ -180,7 +257,16 @@
     if (isHeadsetConnected && getChannel() == 'content' &&
       currentVolume[currentChannel] >= CEWarningVol) {
       if (CEAccumulatorTime == 0) {
-        resetToCEMaxVolume();
+        // modified by tcl_chenguoqiang for EU certification PR 618412
+        var backValue = currentVolume['content'];
+        var okfn = function() {
+           var settingObject = {};
+           settingObject['audio.volume.content'] = backValue;
+           SettingsListener.getSettingsLock().set(settingObject);
+           startAccumulator();
+        };
+        resetToCEMaxVolume(okfn);
+        // end modify
       } else {
         startAccumulator();
       }
@@ -217,24 +303,60 @@
       'title': _('ceWarningtitle')
     };
     var ceMsg = _('ceWarningcontent');
-
-    var cancel = {
-      'title': _('ok')
+    // modified by tcl_chenguoqiang PR 587585
+    var confirm = {
+      'title': _('continue')
     };
 
     if (okfn instanceof Function) {
-      cancel.callback = function onCancel() {
+      confirm.callback = function onCancel() {
         okfn();
         CustomDialog.hide();
       };
     } else {
-      cancel.callback = function onCancel() {
+      confirm.callback = function onCancel() {
         startAccumulator();
         CustomDialog.hide();
       };
     }
 
-    CustomDialog.show(ceTitle, ceMsg, cancel);
+    var cancel = {
+      'title': _('cancel')
+    };
+
+    if (okfn instanceof Function) {
+      cancel.callback = function onCancel() {
+        CustomDialog.hide();
+      };
+    } else {
+      cancel.callback = function onCancel() {
+        CustomDialog.hide();
+      };
+    }
+
+    // dingp@tcl.com Add for mmitest at 2014-03-24 02:01:15 PM
+    // Do not display this dialog in fm & headset test of mmitest test.
+    var displayedApp = WindowManager.getDisplayedApp();
+    if ('homescreen' === displayedApp) {
+      var lock = navigator.mozSettings.createLock();
+      var setting = lock.get('homescreen.manifestURL');
+      setting.onsuccess = function() {
+        var app = Applications.getByManifestURL(
+          this.result['homescreen.manifestURL']);
+        if (app.origin.search('mmitest') > 0) {
+          return;
+        } else {
+          CustomDialog.show(ceTitle, ceMsg, cancel, confirm);
+          CustomDialog.adjustZIndex();
+        }
+      };
+      return;
+    }
+
+    CustomDialog.show(ceTitle, ceMsg, cancel, confirm);
+    // Added by tcl_chenguoqiang PR 605247
+    CustomDialog.adjustZIndex();
+    // end modify
   }
 
   function startAccumulator() {
@@ -246,11 +368,20 @@
       CEAccumulatorID = window.setInterval(function() {
         CEAccumulatorTime += TIME_ONE_MINUTE;
         CETimestamp = parseInt(new Date().getTime(), 10);
-        if (CEAccumulatorTime > TIME_TEST_HOURS) {
+        if (CEAccumulatorTime > TIME_TWENTY_HOURS) {
           CEAccumulatorTime = 0; // reset time
           CETimestamp = 0; // reset timestamp
           stopAccumulator();
-          resetToCEMaxVolume();
+          // modified by tcl_chenguoqiang for EU certification PR 618412
+          var backValue = currentVolume['content'];
+          var okfn = function() {
+             var settingObject = {};
+             settingObject['audio.volume.content'] = backValue;
+             SettingsListener.getSettingsLock().set(settingObject);
+             startAccumulator();
+          };
+          resetToCEMaxVolume(okfn);
+          // ended
         }
       }, TIME_ONE_MINUTE);
     }
@@ -302,6 +433,21 @@
     homescreenVisible = true;
     CustomDialog.hide();
   });
+
+  //added by tcl_chenguoqiang for PR 599435
+  var reqSound = SettingsListener.getSettingsLock().get('audio.volume.content');
+  reqSound.onsuccess = function onSuccess() {
+     if (reqSound.result['audio.volume.content'] >= CEWarningVol) {
+       var settingObject = {};
+       settingObject['audio.volume.content'] = CEWarningVol - 1;
+       SettingsListener.getSettingsLock().set(settingObject);
+       CEAccumulatorTime = 0; // reset time
+       CETimestamp = 0; // reset timestamp
+       stopAccumulator();
+     }
+  };
+  reqSound.onerror = function onError() {};
+  //end added
 
   function onCall() {
     if (currentChannel == 'telephony')

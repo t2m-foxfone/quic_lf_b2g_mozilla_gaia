@@ -22,6 +22,11 @@ form[role="dialog"][data-type="confirm"] {
   text-align: left;
 }
 
+/* Added by tcl_chenguoqiang PR 605247 619480*/
+form[role="dialog"][data-type="confirm"].volume-warning {
+  z-index: 2147483647;
+}
+
 form[role="dialog"][data-type="confirm"]:before {
   content: "";
   display: inline-block;
