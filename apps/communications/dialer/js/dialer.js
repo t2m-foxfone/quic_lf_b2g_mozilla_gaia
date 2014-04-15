@@ -386,6 +386,7 @@ if (MmiManager.isMMI(number)) {
         var system = 'System: ' + jrd.fileRead('/system/system.ver');
         var boot = 'Boot: ' + jrd.fileRead('/boot.ver');
         var data = 'Data: ' + jrd.fileRead('/data/userdata.ver');
+        var study = 'Study: ' + jrd.fileRead('/data/study.ver');
         var recovery = 'Recovery: ' + jrd.fileRead('/data/recovery.ver');
         var modem = 'Modem: ' + jrd.fileRead('/data/modem.ver') + '\n';
         var sbl1 = 'SBL1: ' + jrd.fileRead('/proc/modem_sbl');
@@ -396,11 +397,11 @@ if (MmiManager.isMMI(number)) {
         var version = line[1].substring(0, 12);
         var bootloader = 'Bootloader: ' + version + '\n';
         alert(system + boot + data + recovery + modem +
-bootloader + sbl1 + tz + rpm);
+          bootloader + sbl1 + tz + rpm + study);
         dump(system + boot + data + bootloader + modem + recovery + '\n');
-       }else {
+      } else {
         alert('error');
-       }
+      }
       return true;
     default:
       return false;
