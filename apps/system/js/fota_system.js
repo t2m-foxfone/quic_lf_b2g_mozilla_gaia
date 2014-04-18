@@ -410,10 +410,10 @@ var systemUpdate = {
               background: true, description: description}});
       }
     };
-      /*add by baijian*,when get fota.version.info error,give us a tip*/
-      req.onerror = function fota_getSettingFail() {
-          debug('fota.version.info error');
-      };
+    /*add by baijian*,when get fota.version.info error,give us a tip*/
+    req.onerror = function fota_getSettingFail() {
+        debug('fota.version.info error');
+    };
     /*End Time:2013-11-14 resolute bug#531419 author:baijian*/
     notification = '=GnpRes=' + _('notify_reminder_download');
     settings.set({'fota.notification.value': notification});
@@ -575,8 +575,13 @@ var systemUpdate = {
    *popup the dialog begin*/
   onGetNewPackageCmnCb: function fs_GetNewPackageCmnCb(actionType, isSuccess,
                                                        errorType) {
-    debug('onCommonCb::' + 'actionType: ' + actionType + 'isSuccess: ' +
-      isSuccess + 'errorType: ' + errorType + '\n');
+    debug('onGetNewPackageCmnCb::' + 'actionType: ' + actionType +
+       ' isSuccess: ' + isSuccess + ' errorType: ' + errorType + '\n');
+    if (actionType == 'GetNewPackage' &&
+        errorType == 'NotFoundUpdatePackageError') {
+      var settings = window.navigator.mozSettings.createLock();
+      settings.set({'fota.last-finished.date': Date.now()});
+    }
   },
   /*Added by tcl_baijian 2014-03-14 fixed bug#621637 background get new package
    *popup the dialog end*/
@@ -916,9 +921,11 @@ var systemUpdate = {
 if (navigator.mozL10n.readyState == 'complete' ||
     navigator.mozL10n.readyState == 'interactive') {
   systemUpdate.init();
-} else {
-  window.addEventListener('localized', systemUpdate.init.bind(systemUpdate));
 }
+/* This is nothings to localization.
+else {
+  window.addEventListener('localized', systemUpdate.init.bind(systemUpdate));
+}*/
 /*Added by tcl_baijian 2014-03-04 received from setting begin*/
 window.addEventListener('iac-fota-set-comms', function(evt) {
   if (evt != null) {

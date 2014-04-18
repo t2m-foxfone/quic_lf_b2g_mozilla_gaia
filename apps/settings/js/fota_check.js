@@ -496,48 +496,11 @@ var Fota = {
           check_update_desc.textContent = _('notify_new_version');
       }
 
-      var ck_interval_desc =
-          document.getElementById('auto-check-intervals-desc');
       var value = this._settingCache['fota.auto-check-interval.current'];
-      var desc = '';
-      switch (Number(value)) {
-          case 0:
-              desc = _('auto_check_entries_manual');
-              break;
-          case 168:
-              desc = _('auto_check_entries_week');
-              break;
-          case 336:
-              desc = _('auto_check_entries_two_weeks');
-              break;
-          case 720:
-              desc = _('auto_check_entries_month');
-              break;
-      }
+      Settings.setFotaSettingsDesc('fota.auto-check-interval.current', value);
 
-      ck_interval_desc.textContent = desc;
-      var rem_interval_desc = document.getElementById(
-                                         'reminder-intervals-desc');
       var rem_value = this._settingCache['fota.reminder-interval.current'];
-      switch (Number(rem_value)) {
-          case 0:
-              desc = _('reminde_entries_5');
-              break;
-          case 1:
-              desc = _('reminde_entries_1');
-              break;
-
-          case 3:
-              desc = _('reminde_entries_2');
-              break;
-          case 6:
-              desc = _('reminde_entries_3');
-              break;
-          case 24:
-              desc = _('reminde_entries_4');
-              break;
-      }
-      rem_interval_desc.textContent = desc;
+      Settings.setFotaSettingsDesc('fota.reminder-interval.current', rem_value);
   },
 
   handleLanguageChange: function fota_handleLanguageChange() {
