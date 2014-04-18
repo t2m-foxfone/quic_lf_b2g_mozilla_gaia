@@ -189,7 +189,8 @@ function updateFreqUI() {
 function updatePowerUI() {
   console.log('Power status: ' + (mozFMRadio.enabled ? 'on' : 'off'));
   var powerSwitch = $('power-switch');
-  powerSwitch.dataset.enabled = mozFMRadio.enabled;
+  powerSwitch.dataset.enabled =
+       mozFMRadio.enabled && mozFMRadio.isPlay;//Added by T2Mobile to fix bug 615847
   powerSwitch.dataset.enabling = enabling;
 }
 
@@ -764,7 +765,14 @@ function init() {
 
   $('power-switch').addEventListener('click', function toggle_fm() {
     if (mozFMRadio.enabled) {
-      mozFMRadio.disable();
+      //Added by T2Mobile to fix bug 615847
+      if (mozFMRadio.isPlay) {
+        mozFMRadio.setFMRadioPause();
+      } else {
+        mozFMRadio.setFMRadioPlay();
+      }
+      updatePowerUI();
+      //Added end
     } else {
       enableFMRadio(frequencyDialer.getFrequency());
     }
@@ -809,6 +817,10 @@ function init() {
       // Remember the current state of the FM radio
       window._previousFMRadioState = mozFMRadio.enabled;
       window._previousEnablingState = enabling;
+      if (!mozFMRadio.isPlay) {
+        mozFMRadio.setFMRadioPlay();
+      }
+      //Added end
       mozFMRadio.disable();
     }
   };
