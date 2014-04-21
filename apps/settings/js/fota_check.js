@@ -718,6 +718,14 @@ var Fota = {
     this.handleGetNewPackageSuccess({version_number: versionName, size: size,
       startDownload: false, percentage: 0, description: description });
   },
+  /*When press pause,then press download*/
+  startDownloadAgain: function fota_DownloadAgain() {
+    /*fixed Bug:656132 check network again when the last action is pause*/
+    if (this.checkNetworkAvailable() == false) {
+        return;
+    }
+    this.startDownload();
+  },
 
   handleStopDownloadSuccess: function fota_handleStopDownloadSuccess() {
     /*Added by tcl_baijian change state*/
@@ -727,13 +735,13 @@ var Fota = {
         this.disableCheckUpdateMenu();
     }
     button_download_action.disabled = false;
-    button_download_action.onclick = this.startDownload.bind(this);
+    button_download_action.onclick = this.startDownloadAgain.bind(this);
   },
 
   handleDownloadFailed: function fota_handleDownloadFailed(error) {
 
     button_download_action.innerHTML = _('download');
-    button_download_action.onclick = this.startDownload.bind(this);
+    button_download_action.onclick = this.startDownloadAgain.bind(this);
     button_download_action.disabled = false;
   },
 

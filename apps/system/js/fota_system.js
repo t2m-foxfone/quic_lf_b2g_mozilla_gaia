@@ -917,15 +917,16 @@ var systemUpdate = {
      return errorStr;
   }
 };
-
+/* sometimes The systemUpdate.init don't be call
 if (navigator.mozL10n.readyState == 'complete' ||
     navigator.mozL10n.readyState == 'interactive') {
   systemUpdate.init();
 }
-/* This is nothings to localization.
+ This is nothings to localization.
 else {
   window.addEventListener('localized', systemUpdate.init.bind(systemUpdate));
 }*/
+systemUpdate.init();
 /*Added by tcl_baijian 2014-03-04 received from setting begin*/
 window.addEventListener('iac-fota-set-comms', function(evt) {
   if (evt != null) {
