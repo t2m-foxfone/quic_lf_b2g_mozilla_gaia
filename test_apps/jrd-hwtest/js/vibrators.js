@@ -3,159 +3,137 @@
  */
 'use strict';
 function $(id) {
-	return document.getElementById(id);
+  return document.getElementById(id);
 }
+$('menuItem-vibrator').addEventListener('click', function(){
+	vibrators.init();
+});
+
 var vibrateInterval;
 var vCanncelTimer;
-var _Self;
+var _self;
 var isRunning;
 
-var vTimerCheckDuration = (1000*60);
 var vOneHour = (1000*60*60);
 var vDefaultTime = (1000*60*60)*72;
 var vStarTime = 0; // Frome  1970/01/01 util now (ms)
 var vEndTime = 0; // = vStarTime + (1000*60*60)*vDefaultTime;
-var vRunningTimes = 0;
 var lbbtVibrateTimeAdd;
 
 var vibrators = {
-	init : function vibratorsInit()
-	{
-		this.vAddListener();
-		lbbtVibrateTimeAdd = document.getElementById('lbdefaultTime')
-		_Self = this;
+	init : function vibratorsInit(){
+		_self = this;
+		_self.vAddListeners();
+		lbbtVibrateTimeAdd = $('lbdefaultTime');
 	},
-
-	vStartVibrate : function vVibratorsStartVibrate(vbTimes)
-	{
+	vStartVibrate : function vVibratorsStartVibrate(vbTimes){
 		navigator.vibrate(vbTimes);
 	},
-
-	vStopVibrate : function vVibratorsStopVibrate()
-	{
+	vStopVibrate : function vVibratorsStopVibrate(){
 		isRunning = false;
 
-		if(vibrateInterval)
-		{
+		if(vibrateInterval){
 			clearInterval(vibrateInterval);
 			vibrateInterval = null;
 		}
 
-		if(vCanncelTimer)
-		{
+		if(vCanncelTimer){
 			clearInterval(vCanncelTimer);
 			vCanncelTimer = null;
 		}
 		navigator.vibrate(0);
-		_Self.vSetbtState();
-		//Timer.vReset();
+		_self.vSetbtState();
 	},
-
-	vToRun : function vVibrateToRun(vbTimes, vbinvTimes)
-	{
-		Timer.init();
-		navigator.vibrate(vbTimes);
-		vibrateInterval = setInterval(function() {
-				_Self.vStartVibrate(vbTimes);
-		}, (parseInt(vbTimes) + parseInt(vbinvTimes)));
+	vToRun : function vVibrateToRun(vbTimes, vbinvTimes){
+		_self.vStartVibrate(vbTimes);
+		vibrateInterval =  window.setInterval(function() {
+			_self.vStartVibrate(vbTimes);
+		}, (vbTimes + vbinvTimes));
 		isRunning = true;
-		_Self.vSetCanncelTimer();
-		_Self.vSetbtState();
+		_self.vSetCanncelTimer();
+		_self.vSetbtState();
 	},
-
-	vSetCanncelTimer : function vVibratorSetCanncelTimer()
-	{
-		if(Timer.vIsSetTimeOut())
-		{
-			vCanncelTimer = setInterval(function() {
-				_Self.vStopVibrate();
-			}, 0);
+	vSetCanncelTimer : function vVibratorSetCanncelTimer(){
+		if(Timer.vIsSetTimeOut()){
+			vCanncelTimer = window.setTimeout(function() {
+				_self.vStopVibrate();
+			}, 1000*1);
 		}
-		else
-		{
-			vCanncelTimer = setInterval(function() {
-				_Self.vSetCanncelTimer();
-			}, vTimerCheckDuration);
+		else{
+			vCanncelTimer = window.setTimeout(function() {
+				_self.vSetCanncelTimer();
+			}, 1000*60 );
 		}
 		lbbtVibrateTimeAdd.textContent = Timer.vGetLeftTimeByHrMin();
 	},
-
-	vAddListener : function vVibratoraddListener() //add Listenner
-	{
-		$('btVibrateRun').addEventListener('click', function()
-		{
-			var vbtimesIndex = $('vbTimes').selectedIndex;
-			var vbTimes = $('vbTimes').options[vbtimesIndex].value;
-			var vbinvTimesIndex = $('vbinvTimes').selectedIndex;
-			var vbinvTimes = $('vbinvTimes').options[vbinvTimesIndex].value;
-			_Self.vToRun(vbTimes, vbinvTimes);
-		});
-
-		$('btVibrateStop').addEventListener('click', function()
-		{
-			_Self.vStopVibrate();
-			lbbtVibrateTimeAdd.textContent = Timer.vGetTimeDefaultByHour();
-		});
-
-		$('btVibrateTimeAdd').addEventListener('click', function()
-		{
-
-			if(0 <= vDefaultTime)
-			{
-				vDefaultTime += vOneHour;
-			}
-
-			lbbtVibrateTimeAdd.textContent = Timer.vGetTimeDefaultByHour();
-		});
-		$('btDefaultTimeaSubtract').addEventListener('click', function()
-		{
-			if(0 <= vDefaultTime)
-			{
-				vDefaultTime -= vOneHour;
-			}
-			lbbtVibrateTimeAdd.textContent = Timer.vGetTimeDefaultByHour();
-		});
-
-		$('btVibrateUnlimited').addEventListener('click', function()
-		{
+	vAddListeners : function vVibratoraddListeners(){
+		$('btVibrateRun').addEventListener('click', function(){
 			Timer.init();
 			var vbtimesIndex = $('vbTimes').selectedIndex;
-			var vbTimes = $('vbTimes').options[vbtimesIndex].value;
+			var vbTimes = parseInt($('vbTimes').options[vbtimesIndex].value);
 			var vbinvTimesIndex = $('vbinvTimes').selectedIndex;
-			var vbinvTimes = $('vbinvTimes').options[vbinvTimesIndex].value;
+			var vbinvTimes = parseInt($('vbinvTimes').options[vbinvTimesIndex].value);
+			_self.vToRun(vbTimes, vbinvTimes);
+		});
 
-			navigator.vibrate(vbTimes);
-			vibrateInterval = setInterval(function() {
-				_Self.vStartVibrate(vbTimes);
-			}, (parseInt(vbTimes) + parseInt(vbinvTimes)));
+		$('btVibrateStop').addEventListener('click', function(){
+			_self.vStopVibrate();
+			lbbtVibrateTimeAdd.textContent = _self.vGetDefaultByHour();
+		});
+
+		$('btVibrateTimeAdd').addEventListener('click', function(){
+			if(vOneHour <= vDefaultTime){
+				vDefaultTime += vOneHour;
+			}
+			lbbtVibrateTimeAdd.textContent = _self.vGetDefaultByHour();
+		});
+		$('btDefaultTimeaSubtract').addEventListener('click', function(){
+			if(vOneHour < vDefaultTime){
+				vDefaultTime -= vOneHour;
+			}
+			lbbtVibrateTimeAdd.textContent = _self.vGetDefaultByHour();
+		});
+
+		$('btVibrateUnlimited').addEventListener('click', function(){
+			Timer.init();
+			var vbtimesIndex = $('vbTimes').selectedIndex;
+			var vbTimes = parseInt($('vbTimes').options[vbtimesIndex].value);
+			var vbinvTimesIndex = $('vbinvTimes').selectedIndex;
+			var vbinvTimes = parseInt($('vbinvTimes').options[vbinvTimesIndex].value);
+			_self.vStartVibrate(vbTimes);
+			vibrateInterval = window.setInterval(function() {
+				_self.vStartVibrate(vbTimes);
+			}, (vbTimes + vbinvTimes));
 
 			isRunning = true;
-			_Self.vSetbtState();
+			_self.vSetbtState();
 			lbbtVibrateTimeAdd.textContent = 'Unlimited';
 		});
 	},
-	vSetbtState : function vVibrateSetbtDisable()
-	{
+	vSetbtState : function vVibrateSetbtDisable(){
 		var vmState = false;
 
-		if(true == isRunning)
-		{
-			document.getElementById('btVibrateRun').disabled = true;
-			document.getElementById('btVibrateUnlimited').disabled = true;
-			document.getElementById('btVibrateStop').disabled = false;
+		if(true == isRunning){
+			$('btVibrateRun').disabled = true;
+			$('btVibrateUnlimited').disabled = true;
+			$('btVibrateStop').disabled = false;
 			vmState = true;
 		}
-		else
-		{
-			document.getElementById('btVibrateRun').disabled = false;
-			document.getElementById('btVibrateUnlimited').disabled = false;
-			document.getElementById('btVibrateStop').disabled = true;
+		else{
+			$('btVibrateRun').disabled = false;
+			$('btVibrateUnlimited').disabled = false;
+			$('btVibrateStop').disabled = true;
 			vmState = false;
 		}
-		document.getElementById('vbTimes').disabled = vmState;
-		document.getElementById('vbinvTimes').disabled = vmState;
-		document.getElementById('btVibrateTimeAdd').disabled = vmState;
-		document.getElementById('btDefaultTimeaSubtract').disabled = vmState;
+		$('vbTimes').disabled = vmState;
+		$('vbinvTimes').disabled = vmState;
+		$('btVibrateTimeAdd').disabled = vmState;
+		$('btDefaultTimeaSubtract').disabled = vmState;
+	},
+
+	vGetDefaultByHour : function vGetDefaultByHour(){
+		var vmDefaultHours = vDefaultTime / vOneHour;
+		return vmDefaultHours;
 	}
 };
 
@@ -164,70 +142,33 @@ var Timer = {
 		this.vSetStartTime();
 		this.vSetEndTime();
 	},
-
-	vReset : function vTimevReset()
-	{
+	vReset : function vTimevReset(){
 		vStarTime = 0;
 		vEndTime = 0;
-		vRunningTimes = 0;
 	},
 
-	vGetStartTime : function vTimerGetGetStartTime()
-	{
-		return vStarTime;
-	},
-
-	vSetStartTime : function vTimerGetGetStartTime()
-	{
+	vSetStartTime : function vTimerGetGetStartTime(){
 		vStarTime = Date.now();
 	},
 
-	vGetEndTime : function vTimerGetGetStartTime()
-	{
-		return vEndTime;
-	},
-
-	vSetEndTime : function vTimerGetGetStartTime()
-	{
+	vSetEndTime : function vTimerGetGetStartTime(){
 		vEndTime = vStarTime + vDefaultTime;
 	},
 
-	vRunningTime : function vTimerRunningTime()
-	{
-		vRunningTimes = Date.now() - vStarTime;
-		return vRunningTimes;
-	},
-
-	vIsSetTimeOut : function vTimerIsSetTimeOut()
-	{
-		if(this.vRunningTime > vDefaultTime)
-		{
-			return true;
-		}
-		else
-		{
+	vIsSetTimeOut : function vTimerIsSetTimeOut(){
+		if((vEndTime - Date.now()) > 1000*60){
 			return false;
 		}
+		else{
+			return true;
+		}
 	},
-
-	vGetLeftTimeByHrMin : function vTimevGetRunningTimeByHrMin()
-	{
-		var vNowTime = Date.now();
-		var vleftTime = vEndTime - vNowTime;
+	vGetLeftTimeByHrMin : function vTimevGetRunningTimeByHrMin(){
+		var vleftTime = vEndTime - Date.now();
 		var hours = vleftTime / vOneHour;
 		var hoursRound = Math.floor(hours);
 		var minutes = (vleftTime - (vOneHour *hoursRound )) / (1000 * 60);
 		var minutesRound = Math.floor(minutes);
-		dump("jrd-Vibrator hoursRound = " + hoursRound + "minutesRound" +minutesRound);
-		dump("jrd-Vibrator hoursRound = " + minutesRound);
 		return hoursRound + ':' + minutesRound;
-	},
-
-	vGetTimeDefaultByHour : function vGetTimeTimeDefaultByHour()
-	{
-		var vmDefaultDays = vDefaultTime / vOneHour;
-		return vmDefaultDays;
 	}
 };
-
-vibrators.init();
