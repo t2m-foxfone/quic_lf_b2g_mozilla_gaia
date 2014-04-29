@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html>
+  <head id="head_id">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+    <meta http-equiv="pragma" content="no-cache"/>
+    <meta charset="UTF-8"/>
+    <title>Testbox</title>
+    <link rel="stylesheet" type="text/css" href="shared/style/headers.css">
+    <link rel="stylesheet" type="text/css" href="shared/style/buttons.css">
+    <link rel="stylesheet" type="text/css" href="shared/style/switches.css">
+    <link rel="stylesheet" type="text/css" href="style/lists.css">
+    <link rel="stylesheet" type="text/css" href="style/testbox.css">
+    <link rel="resource" type="application/l10n" href="locales/locales.ini">
+    <link rel="resource" type="application/l10n" href="shared/locales/tz.ini">
+    <link rel="resource" type="application/l10n" href="shared/locales/branding.ini">
+    <link rel="resource" type="application/l10n" href="shared/locales/permissions.ini">
+    <link rel="resource" type="application/l10n" href="shared/locales/date.ini">
+    <script defer="" src="shared/js/settings_listener.js"></script>
+    <script defer="" src="shared/js/l10n.js"></script>
+    <script defer="" src="shared/js/wifi_helper.js"></script>
+    <script defer="" src="shared/js/mobile_operator.js"></script>
+    <script defer="" src="shared/js/l10n_date.js"></script>
+    <script defer="" src="js/local_log.js"></script>
+    <script defer="" src="js/local_settings.js"></script>
+    <script defer="" src="js/local_utils.js"></script>
+    <script defer="" src="js/local_eng_dsds_settings.js"></script>
+    <script defer="" src="js/local_simslot.js"></script>
+    <script defer="" src="js/local_simslot_manager.js"></script>
+  </head>
+  <body role="application" id="body_id">
+    <section id="root" class="skin-organic" role="region">
+      <header>
+        <h1>HardWare Test</h1>
+      </header>
+      <ul>
+        <li>
+          <a id="menuItem-wifi" class="menu-item" href="#wifi">Wifi</a>
+        </li>
+        <li>
+          <a id="menuItem-bluetooth" class="menu-item" href="#bluetooth">Bluetooth</a>
+        </li>
+        <li>
+          <a id="menuItem-gps" class="menu-item" href="#gps">GPS</a>
+        </li>
+        <li id="nfcItem">
+          <a id="menuItem-nfc" class="menu-item" href="#nfc">NFC</a>
+        </li>
+        <li>
+          <a id="menuItem-setting" class="menu-item" href="#setting">setting</a>
+        </li>
+        <li>
+          <a id="menuItem-vibrator" class="menu-item" href="#vibrator">Vibrator Limited Test</a>
+        </li>
+        <li>
+          <a id="menuItem-radioInfo" class="menu-item" href="#radio_info">Radio Info</a>
+        </li>
+      </ul>
+    </section>
+    <section id="wifi" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>Wifi</h1>
+      </header>
+      <ul>
+        <li>
+          <a id="wifi-tx" class="menu-item" href="#wifiTx">Tx</a>
+        </li>
+        <li>
+          <a id="wifi-rx" class="menu-item" href="#wifiRx">Rx</a>
+        </li>
+        <li>
+          <a id="wifiavailablenetworks" class="menu-item" href="#wifi-available-networks">Available Networks</a>
+        </li>
+        <li>
+          <a id="wifiCheckings" class="menu-item" data-l10-id="wifiChenking" href="#wifi-Checkings">Wifi Checking</a>
+        </li>
+      </ul>
+    </section>
+    <section id="wifiTx" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a id="wifi-back" href="#wifi"><span class="icon icon-back">back</span></a>
+        <h1>Tx</h1>
+      </header>
+      <ul>
+        <li>
+          <div class="divItem">
+            Channel
+          </div>
+          <div class="divItem">
+            <select id="channelSelect">
+              <option value="1">Channel 1</option>
+              <option value="2">Channel 2</option>
+              <option value="3">Channel 3</option>
+              <option value="4">Channel 4</option>
+              <option value="5">Channel 5</option>
+              <option value="6">Channel 6</option>
+              <option value="7">Channel 7</option>
+              <option value="8">Channel 8</option>
+              <option value="9">Channel 9</option>
+              <option value="10">Channel 10</option>
+              <option value="11">Channel 11</option>
+              <option value="12">Channel 12</option>
+              <option value="13">Channel 13</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">
+            Tx Power
+          </div>
+          <div class="divItem">
+            <select id="txPowerSelect">
+              <option value="9">9dBm</option>
+              <option value="10">10dBm</option>
+              <option value="11">11dBm</option>
+              <option value="12">12dBm</option>
+              <option value="13">13dBm</option>
+              <option value="14">14dBm</option>
+              <option value="15">15dBm</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">
+            Rate
+          </div>
+          <div class="divItem">
+            <select id="wifiRateType">
+              <option>11b</option>
+              <option>11g</option>
+              <option>11n</option>
+            </select>
+            <select id="wifiRate">
+            </select>
+          </div>
+        </li>
+      </ul>
+      <div class="divItem">
+        <button id="wifiTxRun" style="width: 30%;">
+          Run
+        </button>
+      </div>
+      <div class="divItem">
+        <button id="wifiTxStop" style="width: 30%;" disabled="true">
+          Stop
+        </button>
+      </div>
+    </section>
+
+    <section id="wifiRx" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a id="wifiRx-back" href="#wifi"><span class="icon icon-back">back</span></a>
+            <h1>Rx</h1>
+        </header>
+        <ul>
+            <li>
+                <div class="divItem">
+                    Channel
+                </div>
+                <div class="divItem">
+                    <select id="rxChannelSelect">
+                        <option value="1">Channel 1</option>
+                        <option value="2">Channel 2</option>
+                        <option value="3">Channel 3</option>
+                        <option value="4">Channel 4</option>
+                        <option value="5">Channel 5</option>
+                        <option value="6">Channel 6</option>
+                        <option value="7">Channel 7</option>
+                        <option value="8">Channel 8</option>
+                        <option value="9">Channel 9</option>
+                        <option value="10">Channel 10</option>
+                        <option value="11">Channel 11</option>
+                        <option value="12">Channel 12</option>
+                        <option value="13">Channel 13</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+      <li>
+        <div class="divItem">
+            <button id="wifiRxRun" style="width: 30%;">
+                Run
+            </button>
+        </div>
+        <div class="divItem">
+            <button id="wifiRxStop" style="width: 30%;" disabled="true">
+                Stop
+            </button>
+        </div>
+      </li>
+      <li>
+        <div class="divItem">
+            <button id="wifiRxReport" style="width: 30%;">
+                Report
+            </button>
+        </div>
+        <div class="divItem">
+            <button id="wifiRxClear" style="width: 30%;">
+                clear
+            </button>
+        </div>
+      </li>
+        <div class="textItem">
+            receive pkt count:
+        </div>
+    </section>
+
+    <section id="wifi-available-networks" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a id="wifiavailablenetworks-back" href="#wifi"><span class="icon icon-back">back</span></a>
+        <h1 data-l10n-id="settings"> Available Networks </h1>
+      </header>
+      <ul>
+        <li>
+          <label>
+            <button id="countAverage">stop</button>
+          </label>
+        </li>
+      </ul>
+
+      <ul id="wifi-availableNetworks-test" data-state="off">
+        <li class="explanation" data-state="off" data-l10n-id="wifi-disabled">
+          Turn Wi-Fi on to view available networks.
+        </li>
+        <li class="explanation" data-state="on" data-l10n-id="scanning">
+          Searching…
+        </li>
+      </ul>
+    </section>
+
+    <section id="wifi-Checkings" class="skin-organic" role="region" style="display: none;">
+        <header>
+          <a id="wificheckinggoback" href="#wifi"><span class="icon icon-back">back</span></a>
+            <menu type="toolbar">
+              <a id="wificheckingok" href="#wifi"><span class="gobackok">OK</span></a>
+            </menu>
+            <h1 data-l10n-id="wifiChecking">Wifi Checking</h1>
+        </header>
+
+        <ul>
+            <li>
+                <label class="pack-switch">
+                    <input id="wifiSleep-input" type="checkbox">
+                    <span id="menuItem-wifiSleep" class="menu-itembtcheck" data-l10-id="wifiSleep">Wifi Sleep</span>
+                </label>
+            </li>
+            <li>
+                <label class="pack-switch">
+                    <input id="staticMode-input" checked="" type="checkbox">
+                    <span id="menuItem-staticMode" class="menu-itembtcheck" data-l10-id="staticMode">Static Mode</span>
+                </label>
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="staticIP">Static IP</p>
+                <input id="ip-input" class="ipInput" maxlength="63" x-inputmode="verbatim" placeholder="">
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="proxy">Proxy</p>
+                <input id="proxy-input" class="ipInput" maxlength="63" x-inputmode="verbatim" placeholder="">
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="maskLength">Mask Length</p>
+                <input id="maskLength-input" maxlength="63" x-inputmode="verbatim" placeholder="" type="number">
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="gateway">gateWay </p>
+                <input id="gateway-input" class="ipInput" maxlength="63" x-inputmode="verbatim" placeholder="">
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="dns1">DNS1 </p>
+                <input id="dns1-input" class="ipInput" maxlength="63" x-inputmode="verbatim" placeholder="">
+            </li>
+            <li class="inputNumber">
+                <p data-l10n-id="dns2">DNS2 </p>
+                <input id="dns2-input" class="ipInput" maxlength="63" x-inputmode="verbatim" placeholder="">
+            </li>
+            <li style="height: 0.3rem;">&nbsp;&nbsp;&nbsp;</li>
+        </ul>
+    </section>
+
+    <section id="bluetooth" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>Bluetooth</h1>
+      </header>
+      <ul>
+        <li>
+          <a id="bluetooth-tx" class="menu-item" href="#bluetoothTx">Tx</a>
+        </li>
+        <li>
+              <a id="bluetooth-rx" class="menu-item" href="#bluetoothRx">Rx</a>
+        </li>
+        <li>
+          <a id="menuItem-gt-radio-test" class="menu-item" href="#bt-radio-test">Radio Test</a>
+        </li>
+        <li>
+          <label class="pack-switch">
+            <input id="btVTA-input" name="btVTADisplay.enabled" type="checkbox">
+               <span id="menuItem-btVTADisplay" class="menu-itembtcheck"
+                     data-l10n-id="btVTA">visible to all(2 Hr)</span>
+          </label>
+        </li>
+      </ul>
+    </section>
+    <section id="bluetoothRx" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a id="btRx-back" href="#bluetooth"><span class="icon icon-back">back</span></a>
+        <h1>Rx</h1>
+      </header>
+      <ul>
+        <li>
+          <div class="divItem">
+            Tx Pattern
+          </div>
+          <div class="divItem">
+            <select id="btRxPattern">
+              <option value="0x00">0000</option>
+              <option value="0x01">1111</option>
+              <option value="0x02">1010</option>
+              <option value="0x03">Pseudorandom</option>
+              <option value="0x04">11110000</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">
+            Tx Channel
+          </div>
+          <div class="divItem">
+            <select id="btRxChannel">
+              <option value="0x01">channel1</option>
+              <option value="0x02">channel2</option>
+              <option value="0x03">channel3</option>
+              <option value="0x04">channel4</option>
+              <option value="0x05">channel5</option>
+              <option value="0x06">channel6</option>
+              <option value="0x07">channel7</option>
+              <option value="0x08">channel8</option>
+              <option value="0x09">channel9</option>
+              <option value="0x0A">channel10</option>
+              <option value="0x0B">channel11</option>
+              <option value="0x0C">channel12</option>
+              <option value="0x0D">channel13</option>
+              <option value="0x0E">channel14</option>
+              <option value="0x0F">channel15</option>
+              <option value="0x10">channel16</option>
+              <option value="0x11">channel17</option>
+              <option value="0x12">channel18</option>
+              <option value="0x13">channel19</option>
+              <option value="0x14">channel20</option>
+              <option value="0x15">channel21</option>
+              <option value="0x16">channel22</option>
+              <option value="0x17">channel23</option>
+              <option value="0x18">channel24</option>
+              <option value="0x19">channel25</option>
+              <option value="0x1A">channel26</option>
+              <option value="0x1B">channel27</option>
+              <option value="0x1C">channel28</option>
+              <option value="0x1D">channel29</option>
+              <option value="0x1E">channel30</option>
+              <option value="0x1F">channel31</option>
+              <option value="0x20">channel32</option>
+              <option value="0x21">channel33</option>
+              <option value="0x22">channel34</option>
+              <option value="0x23">channel35</option>
+              <option value="0x24">channel36</option>
+              <option value="0x25">channel37</option>
+              <option value="0x26">channel38</option>
+              <option value="0x27">channel39</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">
+            Packet Type
+          </div>
+          <div class="divItem">
+            <select id="btRxPacketType">
+              <option value="0x00">NULL(0x00)</option>
+              <option value="0x01">POLL(0x01)</option>
+              <option value="0x02">FHS(0x02)</option>
+              <option value="0x03">DM1(0x03)</option>
+              <option value="0x04">DH1(0x04)</option>
+              <option value="0x05">HV1(0x05)</option>
+              <option value="0x06">HV2(0x06)</option>
+              <option value="0x07">HV3(0x07)</option>
+              <option value="0x08">DV(0x08)</option>
+              <option value="0x09">AUX(0x09)</option>
+              <option value="0x0A">DM3(0x0A)</option>
+              <option value="0x0E">DM5(0x0E)</option>
+              <option value="0x0F">DH5(0x0F)</option>
+              <option value="0x17">EV3(0x17)</option>
+              <option value="0x1C">EV4(0x1C)</option>
+              <option value="0x1D">EV5(0x1D)</option>
+              <option value="0x24">2-DH1(0x24)</option>
+              <option value="0x28">3-DH1(0x28)</option>
+              <option value="0x2A">2-DH3(0x2A)</option>
+              <option value="0x2B">3-DH3(0x2B)</option>
+              <option value="0x2E">2-DH5(0x2E)</option>
+              <option value="0x2F">3-DH5(0x2F)</option>
+              <option value="0x36">2-EV3(0x36)</option>
+              <option value="0x37">3-EV3(0x37)</option>
+              <option value="0x3C">2-EV5(0x3C)</option>
+              <option value="0x3D">3-EV5(0x3D)</option>
+            </select>
+          </div>
+        </li>
+
+        <li>
+          <div class="divItem">
+             Tester Address
+          </div>
+          <div class="divItem">
+            <input data-type="text">
+          </div>
+        </li>
+      </ul>
+      <div class="divItem">
+        <button id="btRxRun" style="width: 30%;">
+          Run
+        </button>
+      </div>
+    </section>
+
+
+    <section id="bluetoothTx" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a id="btTx-back" href="#bluetooth"><span class="icon icon-back">back</span></a>
+            <h1>Tx</h1>
+        </header>
+        <ul>
+            <li>
+                <div class="divItem">
+                    Tx Pattern
+                </div>
+                <div class="divItem">
+                    <select id="btTxPattern">
+                        <option value="0x00">0000</option>
+                        <option value="0x01">1111</option>
+                        <option value="0x02">1010</option>
+                        <option value="0x03">Pseudorandom</option>
+                        <option value="0x04">11110000</option>
+                    </select>
+                </div>
+            </li>
+            <li id="btChannelItem">
+                <div class="divItem">
+                    Tx Channel
+                </div>
+                <div class="divItem">
+                    <select id="btTxChannel">
+                        <option value="0x00">channel0</option>
+                        <option value="0x01">channel1</option>
+                        <option value="0x02">channel2</option>
+                        <option value="0x03">channel3</option>
+                        <option value="0x04">channel4</option>
+                        <option value="0x05">channel5</option>
+                        <option value="0x06">channel6</option>
+                        <option value="0x07">channel7</option>
+                        <option value="0x08">channel8</option>
+                        <option value="0x09">channel9</option>
+                        <option value="0x0A">channel10</option>
+                        <option value="0x0B">channel11</option>
+                        <option value="0x0C">channel12</option>
+                        <option value="0x0D">channel13</option>
+                        <option value="0x0E">channel14</option>
+                        <option value="0x0F">channel15</option>
+                        <option value="0x10">channel16</option>
+                        <option value="0x11">channel17</option>
+                        <option value="0x12">channel18</option>
+                        <option value="0x13">channel19</option>
+                        <option value="0x14">channel20</option>
+                        <option value="0x15">channel21</option>
+                        <option value="0x16">channel22</option>
+                        <option value="0x17">channel23</option>
+                        <option value="0x18">channel24</option>
+                        <option value="0x19">channel25</option>
+                        <option value="0x1A">channel26</option>
+                        <option value="0x1B">channel27</option>
+                        <option value="0x1C">channel28</option>
+                        <option value="0x1D">channel29</option>
+                        <option value="0x1E">channel30</option>
+                        <option value="0x1F">channel31</option>
+                        <option value="0x20">channel32</option>
+                        <option value="0x21">channel33</option>
+                        <option value="0x22">channel34</option>
+                        <option value="0x23">channel35</option>
+                        <option value="0x24">channel36</option>
+                        <option value="0x25">channel37</option>
+                        <option value="0x26">channel38</option>
+                        <option value="0x27">channel39</option>
+                        <option value="0x28">channel40</option>
+                        <option value="0x29">channel41</option>
+                        <option value="0x2A">channel42</option>
+                        <option value="0x2B">channel43</option>
+                        <option value="0x2C">channel44</option>
+                        <option value="0x2D">channel45</option>
+                        <option value="0x2E">channel46</option>
+                        <option value="0x2F">channel47</option>
+                        <option value="0x30">channel48</option>
+                        <option value="0x31">channel49</option>
+                        <option value="0x32">channel50</option>
+                        <option value="0x33">channel51</option>
+                        <option value="0x34">channel52</option>
+                        <option value="0x35">channel53</option>
+                        <option value="0x36">channel54</option>
+                        <option value="0x37">channel55</option>
+                        <option value="0x38">channel56</option>
+                        <option value="0x39">channel57</option>
+                        <option value="0x3A">channel58</option>
+                        <option value="0x3B">channel59</option>
+                        <option value="0x3C">channel60</option>
+                        <option value="0x3D">channel61</option>
+                        <option value="0x3E">channel62</option>
+                        <option value="0x3F">channel63</option>
+                        <option value="0x40">channel64</option>
+                        <option value="0x41">channel65</option>
+                        <option value="0x42">channel66</option>
+                        <option value="0x43">channel67</option>
+                        <option value="0x44">channel68</option>
+                        <option value="0x45">channel69</option>
+                        <option value="0x46">channel70</option>
+                        <option value="0x47">channel71</option>
+                        <option value="0x48">channel72</option>
+                        <option value="0x49">channel73</option>
+                        <option value="0x4A">channel74</option>
+                        <option value="0x4B">channel75</option>
+                        <option value="0x4C">channel76</option>
+                        <option value="0x4D">channel77</option>
+                        <option value="0x4E">channel78</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="divItem">
+                    Packet Type
+                </div>
+                <div class="divItem">
+                    <select id="btTxPacketType">
+                        <option value="0x00">NULL(0x00)</option>
+                        <option value="0x01">POLL(0x01)</option>
+                        <option value="0x02">FHS(0x02)</option>
+                        <option value="0x03">DM1(0x03)</option>
+                        <option value="0x04">DH1(0x04)</option>
+                        <option value="0x05">HV1(0x05)</option>
+                        <option value="0x06">HV2(0x06)</option>
+                        <option value="0x07">HV3(0x07)</option>
+                        <option value="0x08">DV(0x08)</option>
+                        <option value="0x09">AUX(0x09)</option>
+                        <option value="0x0A">DM3(0x0A)</option>
+                        <option value="0x0E">DM5(0x0E)</option>
+                        <option value="0x0F">DH5(0x0F)</option>
+                        <option value="0x17">EV3(0x17)</option>
+                        <option value="0x1C">EV4(0x1C)</option>
+                        <option value="0x1D">EV5(0x1D)</option>
+                        <option value="0x24">2-DH1(0x24)</option>
+                        <option value="0x28">3-DH1(0x28)</option>
+                        <option value="0x2A">2-DH3(0x2A)</option>
+                        <option value="0x2B">3-DH3(0x2B)</option>
+                        <option value="0x2E">2-DH5(0x2E)</option>
+                        <option value="0x2F">3-DH5(0x2F)</option>
+                        <option value="0x36">2-EV3(0x36)</option>
+                        <option value="0x37">3-EV3(0x37)</option>
+                        <option value="0x3C">2-EV5(0x3C)</option>
+                        <option value="0x3D">3-EV5(0x3D)</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="divItem">
+                    Whitening
+                </div>
+                <div class="divItem">
+                    <select id="btTxWhitening">
+                        <option value="0x00">Off</option>
+                        <option value="0x01">On</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="divItem">
+                    Power
+                </div>
+                <div class="divItem">
+                    <select id="btTxPower">
+                        <option value="0x01">1</option>
+                        <option value="0x02">2</option>
+                        <option value="0x03">3</option>
+                        <option value="0x04">4</option>
+                        <option value="0x05">5</option>
+                        <!--<option value="0x06">6</option>-->
+                        <!--<option value="0x07">7</option>-->
+                        <!--<option value="0x08">8</option>-->
+                        <!--<option value="0x09">9</option>-->
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="divItem">
+                    Rx Gain
+                </div>
+                <div class="divItem">
+                    <select id="btTxRxGain">
+                        <option value="0x00">Low</option>
+                        <option value="0x01">High</option>
+                    </select>
+                </div>
+            </li>
+            <li>
+                <div class="divItem">
+                    Hop Array
+                </div>
+                <div class="divItem">
+                    <select id="btTxHop">
+                        <option value="0x00">Fixed</option>
+                        <option value="0x01">Hop</option>
+                    </select>
+                </div>
+            </li>
+        </ul>
+        <div class="divItem">
+            <button id="btTxRun" style="width: 30%;">
+                Run
+            </button>
+        </div>
+    </section>
+    <section id="bt-radio-test" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#bluetooth"><span class="icon icon-back">back</span></a>
+        <h1>BT Radio Test</h1>
+      </header>
+      <div class="divItem">
+        <button id="btRadioTestRun" style="width: 30%;">
+          Run
+        </button>
+      </div>
+      <div class="divItem">
+        <button id="btRadioTestStop" style="width: 30%;" disabled="true">
+          Stop
+        </button>
+      </div>
+    </section>
+    <section id="gps" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>GPS</h1>
+      </header>
+      <ul>
+        <li>
+          <a id="menuItem-gpst-test1" class="menu-item" href="#gps-test1">GPS Test1</a>
+        </li>
+        <li>
+          <a id="menuItem-gpst-test2" class="menu-item" href="#gps-test2">GPS Test2</a>
+        </li>
+        <li>
+          <a id="menuItem-AGPS" class="menu-item" href="#AGPS">AGPS</a>
+        </li>
+      </ul>
+    </section>
+    <section id="gps-test1" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#gps"><span class="icon icon-back">back</span></a>
+        <h1>GPS Test1</h1>
+      </header>
+      <div class="divItem">
+        <button id="gpsTest1Run" style="width: 30%;">
+          Run
+        </button>
+      </div>
+      <div class="divItem">
+        <button id="gpsTest1Stop" style="width: 30%;" disabled="true">
+          Stop
+        </button>
+      </div>
+    </section>
+    <section id="gps-test2" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#gps"><span class="icon icon-back">back</span></a>
+        <h1>GPS Test2</h1>
+      </header>
+      <li>
+      <div class="divItem">
+        <button id="gpsTest2Cold" style="width: 20%;">
+          Cold
+        </button>
+      </div>
+      <div class="divItem">
+        <button id="gpsTest2Hot" style="width: 20%;">
+          Hot
+        </button>
+      </div>
+      <div class="divItem">
+        <button id="gpsTest2Warm" style="width: 20%;">
+          Warm
+        </button>
+      </div>
+      </li>
+      <li>
+        <div class="divItem">
+          <button id="save" style="width: 20%;">
+            save
+          </button>
+        </div>
+      </li>
+      <ul>
+        <li><span id="rst_gpstest2"></span></li>
+      </ul>
+      <div id="gps2ResultPanel" class="resultItem">
+      </div>
+    </section>
+    <section id="AGPS" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#gps"><span class="icon icon-back">back</span></a>
+        <h1>AGPS</h1>
+      </header>
+      <ul>
+        <li>
+          <div id="AGPSStatus" class="menu-itembtcheck">
+            Closed!
+          </div>
+        </li>
+        <li>
+          <label class="pack-switch">
+            <input id="AGPSDisplay-input" name="agpsdisplay.enabled" type="checkbox">
+              <span id="menuItem-AGPSDisplay" class="menu-itembtcheck"
+                    data-l10n-id="agps">AGPS</span>
+          </label>
+        </li>
+      </ul>
+    </section>
+    <section id="nfc" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a href="#root"><span class="icon icon-back">back</span></a>
+            <h1>NFC</h1>
+        </header>
+        <ul>
+            <li>
+                <a id="menuItem-nfc-pcd" class="menu-item" href="#nfc-pcd">PCD Test</a>
+            </li>
+            <li>
+                <a id="menuItem-nfc-eut" class="menu-item" href="#nfc-eut">EUT Test</a>
+            </li>
+        </ul>
+    </section>
+    <section id="nfc-pcd" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a href="#nfc"><span class="icon icon-back">back</span></a>
+            <h1>PCD test</h1>
+        </header>
+        <li>
+            <div class="divItem">
+                Test Times
+            </div>
+        <div class="divItem">
+            <input id="inputTimes" type="number">
+        </div>
+        </li>
+        <li>
+            <div class="divItem">
+                Interval Time
+            </div>
+            <div class="divItem">
+                <input id="intervalTime" type="number">
+            </div>
+        </li>
+        <!--<div class="nfcItem" id="totalTimes">-->
+            <!--total times: 0-->
+        <!--</div>-->
+        <li>
+            <button id="nfcStart" style="width: 20%;">
+                start
+            </button>
+            <button id="nfcClear" style="width: 20%;" disabled="true">
+                Clear
+            </button>
+        </li>
+
+        <li>
+        <div class="nfcItem" id="successTimes">
+            success times: 0
+        </div>
+        </li>
+
+    </section>
+    <section id="nfc-eut" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a href="#nfc"><span class="icon icon-back">back</span></a>
+            <h1>EUT test</h1>
+        </header>
+        <ul>
+            <li>
+        <div class="divItem">
+            <div class="divItem">
+                NFC
+            </div>
+            <select id="nfcRunTest">
+                <option value="0">0</option>
+                <!--<option value="1">1</option>-->
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="a">a</option>
+                <option value="b">b</option>
+                <option value="c">c</option>
+                <option value="d">d</option>
+                <option value="e">e</option>
+                <option value="f">f</option>
+                <option value="g">g</option>
+            </select>
+        </div>
+              </li>
+            </ul>
+        <div class="divItem">
+            <button id="nfcEUTRun" style="width: 30%;">
+                Run
+            </button>
+        </div>
+        <div class="divItem">
+            <button id="nfcEUTStop" style="width: 30%;" disabled="true">
+                Stop
+            </button>
+        </div>
+    </section>
+    <section id="setting" class="skin-organic" role="region" style="display: none;">
+        <header>
+            <a href="#root"><span class="icon icon-back">back</span></a>
+            <h1>setting</h1>
+        </header>
+        <ul>
+          <li>
+            <a id="menuItem-networkSelect" class="menu-item" data-l10n-id="networkSetting" href="#networkPrefer">Network Setting</a>
+          </li>
+          <li>
+            <label class="pack-switch">
+              <input id="callWaiting-input" type="checkbox" >
+                    <span id="menuItem-callWaiting" class="menu-itembtcheck"
+                          data-l10-id="autoAnswer"> Call waiting</span>
+            </label>
+          </li>
+          <li>
+            <label class="pack-switch">
+              <input id="autoAnswer-input" type="checkbox" >
+                    <span id="menuItem-autoAnswer" class="menu-itembtcheck"
+                          data-l10-id="open-automatic-answer"> Auto Answer</span>
+            </label>
+          </li>
+        </ul>
+    </section>
+
+    <section id="networkPrefer" class="skin-organic" role="region" style="display: none;">
+        <header>
+          <a href="#setting"><span class="icon icon-back">back</span></a>
+          <h1 data-l10n-id="networkSelect">Network Select</h1>
+        </header>
+        <div>
+          <ul class="compact">
+            <li>
+              <label data-l10n-id="security">Network Select</label>
+            </li>
+            <li>
+              <span class="button icon icon-dialog">
+              <select id="network-select">
+
+              </select>
+            </span>
+            </li>
+          </ul>
+      </div>
+    </section>
+
+    <section id="vibrator" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>Vibrator Limited Test</h1>
+      </header>
+        <ul>
+          <li>
+            <div class="divItem">
+              Settings
+            </div>
+          </li>
+        </ul>
+        <ul>
+          <div class="divItem">
+            Times Left (hr) :
+          </div>
+          <div class="divItem" id = "lbdefaultTime">72</div>
+        </ul>
+        <li>
+          <div class="divItem">
+            <button id="btVibrateTimeAdd" style="width: 30%;">
+              +
+            </button>
+            <button id="btDefaultTimeaSubtract" style="width: 30%;">
+              -
+            </button>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">
+            Duration:
+          </div>
+          <div class="divItem">
+            <select id="vbTimes" style="font-size: 2rem;">
+              <option value="50">0.05 s</option>
+              <option value="100">0.1 s</option>
+              <option value="300">0.3 s</option>
+              <option value="500">0.5 s </option>
+              <option value="1000">1 s</option>
+              <option value="2000">2 s</option>
+              <option value="5000">5 s</option>
+            </select>
+          </div>
+        </li>
+        <li>
+          <div class="divItem">Interval:</div>
+          <div class="divItem">
+            <select id="vbinvTimes" style="font-size: 2rem;">
+              <option value="50">0.05 s</option>
+              <option value="100">0.1 s</option>
+              <option value="300">0.3 s</option>
+              <option value="500">0.5 s </option>
+              <option value="1000">1 s</option>
+              <option value="2000">2 s</option>
+              <option value="5000">5 s</option>
+            </select>
+          </div>
+        </li>
+        <li>
+            <div class="divItem">
+              <button id="btVibrateRun" style="width: 30%;">
+                Run
+              </button>
+            </div>
+            <div class="divItem">
+              <button id="btVibrateStop" style="width: 30%;" disabled="true">
+                Stop
+              </button>
+            </div>
+          </li>
+      <li>
+      <div class="divItem">
+        <button id="btVibrateUnlimited" style="width: 45%;">
+          Unlimited Run
+        </button>
+      </div>
+      </li>
+
+    </section>
+    <section id="radio_info" class="skin-organic" role="region" style="display: none;">
+      <header>
+        <a href="#root"><span class="icon icon-back">back</span></a>
+        <h1>Radio Info</h1>
+      </header>
+      <ul>
+          <li id="radio_infoModeChange">
+          <div id="radio_infoMode" class="divItem">(Less Info Mode)</div>
+          <div id="radio_infoStatus" class="divItem">Info: null</div>
+          </li>
+          <div id="radio_infoResultPanel" class="radioinforesultItem"></div>
+      </ul>
+    </section>
+
+    <script src="js/em_Main_Testbox.js"></script>
+    <script src="js/em_Settings.js"></script>
+    <script src="js/em_WifiChecking.js"></script>
+    <script src="js/em_wifitests.js"></script>
+    <script src="js/em_NFC.js"></script>
+    <script src="js/em_Vibrators.js"></script>
+    <script src="js/em_RadioInfo.js"></script>
+
+  </body>
+</html>

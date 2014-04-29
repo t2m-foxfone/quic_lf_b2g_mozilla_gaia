@@ -1,0 +1,82 @@
+{
+  "activities": {
+    "tag-discovered": {}, 
+    "nfc-tech-lost": {
+      "filters": {
+        "type": "info"
+      }
+    }, 
+    "nfc-tag-discovered": {}, 
+    "nfc-ndef-discovered": {}
+  }, 
+  "name": "TestBox", 
+  "default_locale": "en-US", 
+  "icons": {
+    "120": "/style/icons/auto.png", 
+    "60": "/style/icons/60/auto.png"
+  }, 
+  "orientation": "portrait-primary", 
+  "description": "TestBox", 
+  "messages": [
+    "bluetooth-requestconfirmation", 
+    "bluetooth-requestpasskey", 
+    "bluetooth-requestpincode", 
+    "bluetooth-authorize", 
+    "bluetooth-cancel", 
+    "bluetooth-pairedstatuschanged", 
+    "bluetooth-hfp-status-changed", 
+    {
+      "nfc-manager-tech-discovered": "/index.html#nfc-pcd"
+    }
+  ], 
+  "launch_path": "/index.html", 
+  "permissions": {
+    "geolocation": {}, 
+    "device-storage:sdcard": {
+      "access": "readwrite"
+    }, 
+    "device-storage:apps": {
+      "access": "readonly"
+    }, 
+    "bluetooth": {}, 
+    "telephony": {}, 
+    "webapps-manage": {}, 
+    "device-storage:pictures": {
+      "access": "readonly"
+    }, 
+    "wifi-manage": {}, 
+    "storage": {}, 
+    "device-storage:music": {
+      "access": "readonly"
+    }, 
+    "nfc-manager": {}, 
+    "desktop-notification": {}, 
+    "power": {}, 
+    "attention": {}, 
+    "mobileconnection": {}, 
+    "permissions": {}, 
+    "jrdextension": {}, 
+    "nfc": {
+      "access": "readwrite"
+    }, 
+    "settings": {
+      "access": "readwrite"
+    }, 
+    "device-storage:videos": {
+      "access": "readonly"
+    }, 
+    "idle": {}, 
+    "time": {}
+  }, 
+  "type": "certified", 
+  "locales": {
+    "en-US": {
+      "name": "TestBox", 
+      "description": "TestBox"
+    }
+  }, 
+  "developer": {
+    "url": "https://github.com/mozilla-b2g/gaia", 
+    "name": "The Gaia Team"
+  }
+}

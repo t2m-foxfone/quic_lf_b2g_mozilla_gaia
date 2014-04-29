@@ -1,0 +1,48 @@
+#menuItem-wifi::before {
+  background-position: -60px 0;
+}
+
+/******************************************************************************
+ * Wi-Fi icons
+ */
+
+/* signal levels */
+#wifi-availableNetworks > li {
+  background-repeat: no-repeat;
+  background-position: right 3rem top 50%;
+  padding-right: 3rem;
+}
+
+/* secured networks */
+.wifi-secure {
+  background-repeat: no-repeat;
+  background-position: right 1.8rem top 50%;
+
+}
+
+/* #root icons */
+
+html[dir="rtl"] #root li a[data-l10n-id] {
+  background-position: right 1.4rem top 50%;
+}
+
+html[dir="rtl"] #root ul a {
+  padding-left: inherit;
+  padding-right: 5.5rem;
+}
+
+html[dir="rtl"] #root li small {
+  left: auto;
+  right: 5.5rem;
+}
+
+/* other icons */
+
+html[dir="rtl"] #wifi-availableNetworks li {
+  background-position: left 3rem top 50%;
+}
+
+html[dir="rtl"] #wifi-availableNetworks a.wifi-secure {
+  background-position: left center;
+}
+
