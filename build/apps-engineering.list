@@ -15,12 +15,10 @@ test_apps/test-agent
 test_apps/test-container
 test_apps/test-keyboard-app
 test_apps/test-otasp
-test_apps/test-receiver-1
-test_apps/test-receiver-2
-test_apps/test-receiver-inline
 test_apps/test-wappush
 test_apps/uitest
-test_apps/jrd-hwtest
 test_apps/touch-test
+test_apps/jrd-hwtest
 test_apps/compass
 test_apps/wifitest
+test_apps/testbox
