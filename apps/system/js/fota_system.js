@@ -23,13 +23,18 @@ var systemUpdate = {
   _ports: null,
 /*Added by tcl_baijian 2014-03-04 use apps communication end*/
   _isSend2Setting: false,/*now should send msg to settings ?*/
+/*make sure init do once added by baijian 2014-04-29*/
+  _Init: false,
+
   init: function fs_init() {
 
     var self = this;
     var reboot = true;
     var intervals = 0;
     var percentage = 0;
-
+    /*make sure init do once added by baijian 2014-04-29*/
+    if (self._Init == true)
+      return;
     // Track the wifi.enabled mozSettings value
     debug('init entry.');
 
@@ -145,6 +150,7 @@ var systemUpdate = {
     });
 
     navigator.mozJrdFota.checkInstallResult(this.onCommonCb.bind(this));
+    self._Init = true;
   },
 
   //To check whether the given type alarm is exist.
@@ -917,16 +923,17 @@ var systemUpdate = {
      return errorStr;
   }
 };
-/* sometimes The systemUpdate.init don't be call
+
 if (navigator.mozL10n.readyState == 'complete' ||
     navigator.mozL10n.readyState == 'interactive') {
   systemUpdate.init();
 }
- This is nothings to localization.
 else {
-  window.addEventListener('localized', systemUpdate.init.bind(systemUpdate));
-}*/
-systemUpdate.init();
+  window.addEventListener('localized', function(evt) {
+      window.removeEventListener('localized', null);
+      systemUpdate.init();
+  });
+}
 /*Added by tcl_baijian 2014-03-04 received from setting begin*/
 window.addEventListener('iac-fota-set-comms', function(evt) {
   if (evt != null) {
