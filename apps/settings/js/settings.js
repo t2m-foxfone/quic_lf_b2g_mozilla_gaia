@@ -67,8 +67,24 @@ var Settings = {
     oneColumn: function one_column(oldPanel, newPanel, callback) {
       var self = this;
       // switch previous/current classes
-      oldPanel.className = newPanel.className ? '' : 'previous';
-      newPanel.className = 'current';
+        //* added by TCL_guirw, pr-656040 */
+        if (((oldPanel.id == 'root') ||
+            (oldPanel.id == 'wifi' && newPanel.id != 'root') ||
+            (oldPanel.id == 'wifi-manageNetworks' && newPanel.id != 'wifi') ||
+            (oldPanel.id == 'keyboard' && newPanel.id != 'root') ||
+            (oldPanel.id == 'about' && newPanel.id != 'root') ||
+            (oldPanel.id == 'about-moreInfo' && newPanel.id != 'about') ||
+            (oldPanel.id == 'systemUpdate' && newPanel.id != 'about') ||
+            (oldPanel.id == 'improveBrowserOS' && newPanel.id != 'root')))
+        {
+            oldPanel.className = 'previous';
+            newPanel.className = 'current';
+        }
+        else {
+            oldPanel.className = newPanel.className ? '' : 'previous';
+            newPanel.className = 'current';
+        }
+        /* end added */
 
       /**
        * Most browsers now scroll content into view taking CSS transforms into
@@ -941,10 +957,14 @@ window.addEventListener('load', function loadSettings() {
 
   // startup
   document.addEventListener('click', function settings_backButtonClick(e) {
+  /* added by TCL_guirw, pr-656040 */
+  setTimeout(function goto_ss() {
     var target = e.target;
     if (target.classList.contains('icon-back')) {
       Settings.currentPanel = target.parentNode.getAttribute('href');
     }
+  },10);
+  /* end added */
   });
   document.addEventListener('click', function settings_sectionOpenClick(e) {
     var target = e.target;
