@@ -117,8 +117,12 @@
           widgetFrame.setVisible(false);
         });
       } else {
-        _ensureWidget();
-        widgetFrame.setVisible(false);
+        //Added by TCL_RLL for PR 624839
+        setTimeout(function enabledUsage() {
+          _ensureWidget();
+          widgetFrame.setVisible(false);
+        }, 3000);
+        //Added end
       }
     });
   });
