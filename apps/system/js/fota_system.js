@@ -929,8 +929,9 @@ if (navigator.mozL10n.readyState == 'complete' ||
   systemUpdate.init();
 }
 else {
-  window.addEventListener('localized', function(evt) {
-      window.removeEventListener('localized', null);
+  window.addEventListener('localized', function FotaUpdateInit(evt) {
+      /*If the parament is null, there will be a crase*/
+      window.removeEventListener('localized', FotaUpdateInit);
       systemUpdate.init();
   });
 }
