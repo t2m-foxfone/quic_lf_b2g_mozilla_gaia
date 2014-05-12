@@ -1029,7 +1029,7 @@ var Fota = {
           'and now isWifiConnected: ' + this._isWifiConnected);
     }
   },
-
+/* Deleted by baijian Those function is nothing to so in setting
   handleInstallSuccess: function fota_handleInstallSuccess() {
     var notification = '';
     SettingsListener.getSettingsLock().set({'fota.version.info': null});
@@ -1048,7 +1048,7 @@ var Fota = {
     SettingsListener.getSettingsLock().set(
         {'fota.notification.value': notification});
   },
-
+*/
   disableCheckUpdateMenu: function fot_diableCheckMenu() {
     menu_check_update.className = 'menu-item-disabled';
     check_update_desc.className = 'menu-item-disabled';

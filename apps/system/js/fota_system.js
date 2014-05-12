@@ -630,19 +630,29 @@ var systemUpdate = {
   },
 
   handleInstallSuccess: function fs_handleInstallSuccess() {
-    var notification = '';
-
     //When we handle the upgrade is success, we need to remove the remind
     //alarm.
     this.removeExistAlarm('remind', function() {
       debug('Remove all remind alarm success.');
     });
     SettingsListener.getSettingsLock().set({'fota.version.info': null});
+    /*
+     *Added by baijian,add firmare revision into upgrade successed notification
+     */
+    var settings = window.navigator.mozSettings.createLock();
+    var req = settings.get('deviceinfo.firmware_revision');
+    req.onsuccess = function fota_getSettingSuccess() {
+      var result = req.result['deviceinfo.firmware_revision'];
+      var notification = '=InsRes=' + _('notify_upgrade_successed');
+      var fota_notify = notification.replace('%1$d', result);
 
-    notification = '=InsRes=' + _('notify_upgrade_successed');
-    SettingsListener.getSettingsLock().set({
-      'fota.notification.value': notification
-    });
+      SettingsListener.getSettingsLock().set({
+        'fota.notification.value': fota_notify
+      });
+    };
+    req.onerror = function() {
+       debug('Get deviceinfo.firmware_revision error');
+    };
   },
 
   handleInstallFailed: function fs_handleInstallFailed() {
