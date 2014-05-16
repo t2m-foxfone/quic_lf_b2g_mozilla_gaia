@@ -25,6 +25,9 @@ var systemUpdate = {
   _isSend2Setting: false,/*now should send msg to settings ?*/
 /*make sure init do once added by baijian 2014-04-29*/
   _Init: false,
+  /*When startup we set default value:false*/
+  _isDataConnected: false,
+  _isWifiConnected: false,
 
   init: function fs_init() {
 
@@ -53,12 +56,33 @@ var systemUpdate = {
       self.handleWifiStatusChange();
     });
    */
+    var mobileManager = window.navigator.mozMobileConnection ||
+          window.navigator.mozMobileConnections &&
+              window.navigator.mozMobileConnections[0];
+     if (mobileManager)
+        mobileManager.addEventListener('datachange',
+            this.handleDataChange.bind(this));
     //To track the wifi-only-enabled.
     SettingsListener.observe('fota.wifi-only.enabled', true, function(value) {
       debug('Handle fota.wifi-only.enabled changed success and now its' +
             'value: ' + value);
       self._isWifiOnly = value;
-    });
+      /*
+      * fixed bug#676138 when data links connected and the wifi-only selected,
+      * should stop and resume the download if the download is going
+      * */
+       if (self._isWifiConnected == true)
+          return;/*when wifi connected,just go back*/
+       if (self._isDataConnected == true) {
+         if (self._isWifiOnly == true) {
+            if (navigator.mozJrdFota.JrdFotaActionStatus === 'Download') {
+               navigator.mozJrdFota.pause(self.onCommonCb.bind(self));
+            }
+         } else {
+            self.fota_DownloadContinue();
+         }
+      }
+     });
 
     //To track the wifi-only-enabled.
     SettingsListener.observe('fota.daily-auto-check.enabled', true,
@@ -115,9 +139,9 @@ var systemUpdate = {
 
     //Here when we handle the alarm message,we will create a custom
     //event and dispatch to other modules
-    /*Modified by baijian use new interface for two or above alarm listener
-    * 2014-04-11 begin
-    */
+     /*Modified by baijian use new interface for two or above alarm listener
+      * 2014-04-11 begin
+      * */
     TCL_Alarm.add(function(message) {
         /*only handle check and remind*/
         if (message.data.fotaAlarmType === 'check' ||
@@ -140,8 +164,8 @@ var systemUpdate = {
     });
     */
     /*Modified by baijian use new interface for two or above alarm listener
-    * 2014-04-11 end
-    */
+     * 2014-04-11 end
+     * */
     window.addEventListener('alarmFired', function(event) {
       debug('The alarm is land now and its type: ' + event.type);
       if (event.type === 'alarmFired') {
@@ -248,38 +272,134 @@ var systemUpdate = {
     };
   },
 
+  handleDataChange: function fota_dataChange() {
+    var self = this;
+
+    debug('Handle Mobile data change');
+    var mobileManager = window.navigator.mozMobileConnection ||
+          window.navigator.mozMobileConnections &&
+              window.navigator.mozMobileConnections[0];
+
+    if (self._isWifiOnly === true || !mobileManager ||
+        mobileManager.data.state !== 'registered') {
+        self._isDataConnected = mobileManager.data.connected;
+        return;
+    }
+
+    debug('Handle Mobile data connected:' + mobileManager.data.connected);
+    /*wifi is First Priority*/
+    if (self._isWifiConnected === true) {
+        self._isDataConnected = mobileManager.data.connected;
+        return;
+    }
+
+    if (self._isDataConnected === mobileManager.data.connected) {
+       return;/*data contected not change,just go back*/
+    } else {
+       self._isDataConnected = mobileManager.data.connected;
+    }
+    debug('Handle Mobile data changed, go on ...');
+    if (self._isDataConnected === true) {
+       self.fota_DownloadContinue();
+    } else {
+       if (navigator.mozJrdFota.JrdFotaActionStatus === 'Download' &&
+           self._isWifiConnected === false) {
+           navigator.mozJrdFota.pause(self.onCommonCb.bind(self));
+       }
+    }
+  },
+
+  fota_DownloadContinue: function fota_download_continue() {
+
+    var self = this;
+    var settings = window.navigator.mozSettings.createLock();
+    var req = settings.get('fota.download.continue');
+    req.onsuccess = function fota_getSettingSuccess() {
+       var result = req.result['fota.download.continue'];
+       if (navigator.mozJrdFota.JrdFotaActionStatus != 'Download' &&
+           result == true) {
+           /*The last download is interrupted,just go again*/
+           navigator.mozJrdFota.download(
+            self.onFotaDownloadProgressCb.bind(self),
+            self.onCommonCb.bind(self));
+           /*display notification*/
+           var request = settings.get('fota.version.info');
+           request.onsuccess = function() {
+             var res = request.result['fota.version.info'];
+             var notification = '=DwnRes=' + res.percentage;
+             settings.set({'fota.notification.value': notification });
+           };
+       }
+    };
+    req.onerror = function() {
+      debug('Mobile data Get fota.download.continue error!!');
+    };
+  },
+
   handleWifiStatusChange: function fs_handleWifiStatusChange(event) {
 
     var wifiManager = window.navigator.mozWifiManager;
+    var self = this;
     if (!wifiManager)
       return;
-
+    debug('handleWifiStatusChange:' + wifiManager.connection.status);
     if (wifiManager.connection.status === 'connected') {
-      if (this._firstRun === true || this._dailyCheckEnabled === true) {
-        this.handleWifiConnected();
-        this._firstRun = false;
-      }
+      var settings = window.navigator.mozSettings.createLock();
+      var req = settings.get('fota.download.continue');
+
+      self._isWifiConnected = true;
+      req.onsuccess = function fota_getSettingSuccess() {
+        var result = req.result['fota.download.continue'];
+        if (navigator.mozJrdFota.JrdFotaActionStatus != 'Download') {
+           /*The last download is interrupted,just go again*/
+            if (result == true) {
+               navigator.mozJrdFota.download(
+                  self.onFotaDownloadProgressCb.bind(self),
+                  self.onCommonCb.bind(self));
+               /*display notification*/
+               var request = settings.get('fota.version.info');
+               request.onsuccess = function() {
+                 var res = request.result['fota.version.info'];
+                 var notification = '=DwnRes=' + res.percentage;
+                 settings.set({'fota.notification.value': notification });
+               };
+           }
+           else {
+             if (self._firstRun === true || self._dailyCheckEnabled === true) {
+                 self.handleWifiConnected();
+             }
+           }
+        }
+        if (self._firstRun === true) {
+            self._firstRun = false;
+        }
+      };
+      req.onerror = function() {
+         debug('Wifi Get fota.download.continue error!!');
+         if (self._firstRun === true || self._dailyCheckEnabled === true) {
+            self.handleWifiConnected();
+            self._firstRun = false;
+         }
+      };
     }
     /*Added by_baijian bug#625710:when wifi is closed,
      *we need pause the process of download.2014-03-20
      */
     else if (wifiManager.connection.status === 'disconnected') {
-        debug('handleWifiStatusChange:' + wifiManager.connection.status);
+        self._isWifiConnected = false;
         if (navigator.mozJrdFota.JrdFotaActionStatus === 'Download')
         {
             if (this._isWifiOnly) {
                 navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
             } else {
-                //tcl_WCL modified for pr635733 begin
-                var mobileManager = window.navigator.mozMobileConnection ||
-                    window.navigator.mozMobileConnections &&
-                        window.navigator.mozMobileConnections[0];
-                //tcl_WCL modified for pr635733 end
-                if (!mobileManager || !mobileManager.data.connected) {
+                if (this._isDataConnected === false) {
                     navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
                 }
             }
         }
+    }
+    else {
+       self._isWifiConnected = false;
     }
   },
 
@@ -312,12 +432,16 @@ var systemUpdate = {
        break;
      case 'Download':
        if (!isSuccess) {
+           SettingsListener.getSettingsLock().set({'fota.download.continue':
+               false });
            this.handleDownloadFailed(errorType);
        }
        this.onFotaCommonCb(actionType, isSuccess, errorType);
        break;
      case 'Pause':
        if (!isSuccess) {
+           SettingsListener.getSettingsLock().set({'fota.download.continue':
+               true });
            this.handleStopDownloadFailed(errorType);
        }
        this.onFotaCommonCb(actionType, isSuccess, errorType);
@@ -374,6 +498,7 @@ var systemUpdate = {
       }
       if (completionRate > 99) {
           notification = '=FwcRes=' + _('msg_checking_ongoing');
+          settings.set({'fota.download.continue': false });
       }
 
       settings.set({'fota.notification.value': notification });
@@ -397,6 +522,8 @@ var systemUpdate = {
                background: true, description: description}});
            /*added by baijian*/
            debug('fota.version.info is different,so reset it');
+           /*version different, so download from begin*/
+           settings.createLock().set({'fota.download.continue': false });
         }
         else/*added by baijian,when fota.version.info is not changed*/
         {
@@ -542,31 +669,14 @@ var systemUpdate = {
       debug('getNewPackage::Other action is running');
       return false;
     }
-
-    var isMobileConnected = false;
-    var isWifiConnected = false;
-    //tcl_WCL modified for pr635733 begin
-    var mobile = window.navigator.mozMobileConnection ||
-      window.navigator.mozMobileConnections &&
-      window.navigator.mozMobileConnections[0];
-
-    if (mobile &&
-        mobile.data &&
-        mobile.data.connected === true) {
-    //tcl_WCL modified for pr635733 end
-      isMobileConnected = true;
-    }
-    if (window.navigator.mozWifiManager &&
-      window.navigator.mozWifiManager.connection &&
-      window.navigator.mozWifiManager.connection.status === 'connected') {
-      isWifiConnected = true;
-    }
+    /*_isDataConnected and _isWifiConnected is realtime changed*/
     debug('check:: isWifiOnly: ' + this._isWifiOnly + ' isMobileConnected: ' +
-          isMobileConnected + ' isWifiConnected: ' + isWifiConnected);
-    if (this._isWifiOnly && !isWifiConnected) {
+        this._isDataConnected + ' isWifiConnected: ' + this._isWifiConnected);
+    if (this._isWifiOnly && !this._isWifiConnected) {
       return false;
     }
-    if (!this._isWifiOnly && !(isMobileConnected || isWifiConnected)) {
+    if (!this._isWifiOnly && !(this._isDataConnected ||
+        this._isWifiConnected)) {
       return false;
     }
     /*Modified by tcl_baijian 2014-03-14 fixed bug#621637 background get new
@@ -701,6 +811,8 @@ var systemUpdate = {
                   break;
               case 'pause':
                   navigator.mozJrdFota.pause(self.onCommonCb.bind(self));
+                  SettingsListener.getSettingsLock().set(
+                      {'fota.download.continue': false });
                   break;
               case 'exit':
                   self._ports = null;
@@ -729,6 +841,8 @@ var systemUpdate = {
       }
       else if (category == 'download') {
           if (actionType == 'download') {
+              SettingsListener.getSettingsLock().set({'fota.download.continue':
+                  true });
               navigator.mozJrdFota.download(
                   self.onFotaDownloadProgressCb.bind(self),
                   self.onCommonCb.bind(self));

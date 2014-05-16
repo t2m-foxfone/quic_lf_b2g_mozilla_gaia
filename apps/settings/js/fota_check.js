@@ -321,7 +321,7 @@ var Fota = {
     */
     if (actionStatus === 'Download' || actionStatus === 'Pause') {
       if (this._isWifiOnly) {
-        this._status = action;/*update the action status*/
+        this._status = actionStatus;/*update the action status*/
         this.pauseDisplay();
       } else {
         //tcl_WCL modified for pr635733 begin
@@ -330,7 +330,7 @@ var Fota = {
                 window.navigator.mozMobileConnections[0];
         //tcl_WCL modified for pr635733 end
         if (!mobileManager || !mobileManager.data.connected) {
-           this._status = action;/*update the action status*/
+           this._status = actionStatus;/*update the action status*/
            this.pauseDisplay();
         }
        }
@@ -349,8 +349,8 @@ var Fota = {
         //we need to stop the download when the wifi is disconnected.
         /*Modified by tcl_baijian 2014-03-11 get action and
         change synchronous to asynchronous begin*/
-        this.sendFotaCommand('common', 'GetAction');
-        this._callback = this.wifiDisconnectedCb;
+       // this.sendFotaCommand('common', 'GetAction');
+       // this._callback = this.wifiDisconnectedCb;
         /*Modified by tcl_baijian 2014-03-11 get action and
           change synchronous to asynchronous end*/
 
@@ -367,10 +367,22 @@ var Fota = {
               msg: _('popup_text_warn_wifi_download'), acceptCb: null});
           return;
         }
-        var result = this.getMobileDataStatus();
-        if (result === 'disconnected') {
-          showAttention({title: _('popup_dialog_title_attention'),
-              msg: _('popup_text_ConnectionFailed'), acceptCb: null});
+        var self = this;
+        if (self._settingCache['ril.data.enabled'] === true) {
+            /*wait for 3s for data links contected*/
+            window.setTimeout(function() {
+                var result = self.getMobileDataStatus();
+                if (result === 'disconnected') {
+                    showAttention({title: _('popup_dialog_title_attention'),
+                        msg: _('popup_text_ConnectionFailed'), acceptCb: null});
+                }
+            }, 3000);
+        } else {
+            var result = self.getMobileDataStatus();
+            if (result === 'disconnected') {
+                showAttention({title: _('popup_dialog_title_attention'),
+                    msg: _('popup_text_ConnectionFailed'), acceptCb: null});
+            }
         }
       }
       this._isWifiConnected = false;
@@ -693,6 +705,14 @@ var Fota = {
       system_update_download_percentage.textContent = completionRate + '%';
       system_update_process_bar.value = completionRate;
       button_download_action.disabled = false;
+      /*when auto download,the button status not change*/
+      var pause_info = _('btn_pause');
+      if (button_download_action.innerHTML != pause_info) {
+          button_download_action.innerHTML = pause_info;
+          button_download_action.onclick = this.pause.bind(this);
+          button_delete_action.disabled = true;
+          update_infomation_subline.hidden = true;
+      }
     }else {
       system_update_download_percentage.textContent = '99%';
       system_update_process_bar.value = 99;
