@@ -181,7 +181,8 @@ var ScreenManager = {
     // If nothing changed, we're done.
     if (clampedBrightness === currentBrightness)
       return;
-    if (Math.abs(clampedBrightness - currentBrightness) >= 0.4)
+    // added by tcl_chenguoqiang
+    if (Math.abs(clampedBrightness - currentBrightness) >= 0.2)
       this.setScreenBrightness(clampedBrightness, false);
   },
 
