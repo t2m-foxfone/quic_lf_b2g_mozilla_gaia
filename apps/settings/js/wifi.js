@@ -354,6 +354,11 @@ navigator.mozL10n.ready(function wifiSettings() {
         var allNetworks = req.result;
         for (var i = 0; i < allNetworks.length; ++i) {
           var network = allNetworks[i];
+          //Added for PR 600765 by TCL_RLL
+          if (WifiHelper.getSecurity(network) == 'WPA-EAP') {
+            continue;
+          }
+          //Added end
           // use ssid + security as a composited key
           var key = network.ssid + '+' +
             WifiHelper.getSecurity(network).join('+');
@@ -508,6 +513,11 @@ navigator.mozL10n.ready(function wifiSettings() {
         var networks = {};
         for (var i = 0; i < allNetworks.length; ++i) {
           var network = allNetworks[i];
+          //Added for PR 600765 by TCL_RLL
+          if (WifiHelper.getSecurity(network) == 'WPA-EAP') {
+            continue;
+          }
+          //Added end
           // use ssid + capabilities as a composited key
           var key = network.ssid + '+' +
             WifiHelper.getSecurity(network).join('+');

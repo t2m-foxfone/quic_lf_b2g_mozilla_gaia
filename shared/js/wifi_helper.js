@@ -100,20 +100,22 @@ var WifiHelper = {
 
   isValidInput: function(key, password, identity, eap) {
     function isValidWepKey(password) {
+      //Removed by TCL_RLL for PR 607808
       switch (password.length) {
         case 5:
         case 13:
-        case 16:
-        case 29:
+        //case 16:
+        //case 29:
           return true;
         case 10:
         case 26:
-        case 32:
-        case 58:
+        //case 32:
+        //case 58:
           return !/[^a-fA-F0-9]/.test(password);
         default:
           return false;
       }
+      //Removed end
     }
 
     switch (key) {
