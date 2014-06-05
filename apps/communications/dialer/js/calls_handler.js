@@ -157,7 +157,8 @@ var CallsHandler = (function callsHandler() {
     }
 
     // No more room
-    if (telephony.calls.length > CALLS_LIMIT) {
+    //TCL_ZhaoLingling for CR 666436
+    if (telephony.calls.length > CALLS_LIMIT + 1) {
       new HandledCall(call);
       call.hangUp();
       return;
@@ -223,6 +224,18 @@ var CallsHandler = (function callsHandler() {
       CallScreen.hideIncoming();
 
       var remainingCall = handledCalls[0];
+      //TCL_ZhaoLingling for CR 666436 --start
+      var groupLength = telephony.conferenceGroup.calls.length;
+      if (telephony.calls.length == 2 ||
+        (telephony.calls.length == 1 && groupLength != 0)) {
+        var lastCall = handledCalls[handledCalls.length - 1];
+        if (lastCall.call.state != 'incoming') {
+          return;
+        } else {
+          remainingCall = lastCall;
+        }
+      }
+      //TCL_ZhaoLingling for CR 666436 --end
       if (remainingCall.call.state == 'incoming') {
         // The active call ended, showing the incoming call
         remainingCall.show();
@@ -303,6 +316,18 @@ var CallsHandler = (function callsHandler() {
         CallScreen.incomingNumber.textContent = number;
         CallScreen.incomingNumberAdditionalInfo.textContent = '';
       });
+      //TCL_ZhaoLingling for CR 666436--start
+      var isDisabled;
+      var groupLength = telephony.conferenceGroup.calls.length;
+      isDisabled = CallScreen.incomingAnswer.classList.contains('disabled');
+      if (isDisabled) {
+        CallScreen.incomingAnswer.classList.remove('disabled');
+      }
+      if (telephony.calls.length > 2 ||
+         (telephony.calls.length == 2 && groupLength != 0)) {
+        CallScreen.incomingAnswer.classList.add('disabled');
+      }
+      //TCL_ZhaoLingling for CR 666436--end
     });
 
     if (cdmaCallWaiting()) {
@@ -476,8 +501,14 @@ var CallsHandler = (function callsHandler() {
     if (!handledCalls.length) {
       return;
     }
-
-    handledCalls[0].call.answer();
+    //TCL_ZhaoLingling for CR 666436--start
+    if (handledCalls.length >= 2) {
+      var lastCall = handledCalls[handledCalls.length - 1];
+      lastCall.call.answer();
+    }else {
+      handledCalls[0].call.answer();
+    }
+    //TCL_ZhaoLingling for CR 666436--end
 
     CallScreen.render('connected');
   }
@@ -488,6 +519,13 @@ var CallsHandler = (function callsHandler() {
     }
 
     if (telephony.active) {
+      //TCL_ZhaoLingling for CR 666436--start
+      var groupLength = telephony.conferenceGroup.calls.length;
+      if (telephony.calls.length > 2 ||
+         (telephony.calls.length == 2 && groupLength != 0)) {
+        return;
+      }
+      //TCL_ZhaoLingling for CR 666436---end
       // connected, incoming
       telephony.active.hold(); // the incoming call is answered by gecko
 

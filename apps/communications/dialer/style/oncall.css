@@ -661,6 +661,12 @@
     margin-right: 1.5rem;
   }
 
+  /*TCL_ZhaoLingling for CR 666436*/
+  #incoming-answer.disabled {
+    background-image: url('images/ActionIcon_40x40_hold.png'),
+                      url('images/btn_generic.png');
+  }
+
   #incoming-end {
     background: url('images/ActionIcon_40x40_hangup.png'),
                 url('images/btn_hang_up.png');
