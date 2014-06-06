@@ -139,6 +139,17 @@ var FtuLauncher = {
         self.skip();
         return;
       }
+      // added by tcl_chenguoqiang for format internal sdcard PR 629285
+      var storages = navigator.getDeviceStorages('sdcard');
+      if (storages.length > 1) {
+        storages.forEach(function(storage) {
+          var name = storage.storageName;
+          if (storage.storageName == 'sdcard') {
+            storage.format();
+          }
+        });
+      }
+
       var lock = navigator.mozSettings.createLock();
       var req = lock.get('ftu.manifestURL');
       req.onsuccess = function() {
