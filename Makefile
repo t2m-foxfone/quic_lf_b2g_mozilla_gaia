@@ -304,7 +304,7 @@ GAIA_INLINE_LOCALES?=1
 GAIA_CONCAT_LOCALES?=1
 
 # This variable is for customizing the keyboard layouts in a build.
-GAIA_KEYBOARD_LAYOUTS?=en,pt-BR,es,de,fr,pl
+GAIA_KEYBOARD_LAYOUTS?=cs,de,en,es,fr,pt-BR,hr,hu,pl,ro,sk,sr-Latn,el,it,tr-F,nl,mk,bg-BDS,ca,ru,zh-Hans-Pinyin,bn-Probhat
 
 ifeq ($(SYS),Darwin)
 MD5SUM = md5 -r
