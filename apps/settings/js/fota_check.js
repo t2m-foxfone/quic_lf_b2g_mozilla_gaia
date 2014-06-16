@@ -590,7 +590,7 @@ var Fota = {
   },
   /*Added by tcl_baijian 2014-03-11 get action status and call begin*/
   exceptionPauseCb: function fota_exceptionPaus(actionStatus) {
-    if (actionStatus === 'Donwload') {
+    if (actionStatus === 'Download') {
        this.pause();
     }
   },
