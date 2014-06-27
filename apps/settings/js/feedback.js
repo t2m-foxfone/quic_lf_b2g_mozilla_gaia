@@ -128,8 +128,9 @@ var Feedback = {
     var feedbackUrl = currentSetting['feedback.url'];
     this.feedbackObj.version =
       currentSetting['deviceinfo.os'];
-    this.feedbackObj.device =
-      currentSetting['deviceinfo.hardware'];
+    //Modifed by TCL_RLL for Mozilla's requirement
+    this.feedbackObj.device = currentSetting['deviceinfo.model'] +
+      '_' + currentSetting['deviceinfo.hardware'];
     this.feedbackObj.locale =
       currentSetting['language.current'];
     this.xhr = new XMLHttpRequest({mozSystem: true});
@@ -141,6 +142,7 @@ var Feedback = {
     this.xhr.ontimeout = function() {
       self.messageHandler('timeout');
     };
+    dump('Send feedback:' + JSON.stringify(this.feedbackObj));
     this.xhr.send(JSON.stringify(this.feedbackObj));
   },
 
