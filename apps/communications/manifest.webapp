@@ -71,6 +71,7 @@
     }
   },
   "permissions": {
+    "jrdextension": {},
     "telephony":{},
     "bluetooth":{},
     "voicemail":{},
