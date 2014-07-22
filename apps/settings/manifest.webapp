@@ -31,7 +31,14 @@
     "telephony":{},
     "audio-channel-notification":{},
     "downloads":{},
-    "nfc":{ "access": "readonly" }
+    "nfc":{ "access": "readonly" },
+    "jrdextension": {}
+  },
+  "connections": {
+    "fota-sys-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
+     }
   },
   "activities": {
     "configure": {

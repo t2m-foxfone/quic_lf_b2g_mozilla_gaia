@@ -4,13 +4,17 @@
 'use strict';
 
 var About = {
+/*Modified by baijian 2014-01-21 There is nothing begin*/
   init: function about_init() {
-    document.getElementById('check-update-now').onclick = this.checkForUpdates;
+    /*
+    document.getElementById('check-update-now').onclick =
+    this.checkForUpdates;
+    */
     this.loadHardwareInfo();
     this.loadLastUpdated();
-    this.networkStatus();
+    //this.networkStatus();
   },
-
+/*
   networkStatus: function about_networkStatus() {
     var button = document.getElementById('check-update-now');
     var status = {
@@ -21,7 +25,8 @@ var About = {
     window.addEventListener('online', status.online);
     status[(window.navigator.onLine ? 'online' : 'offline')]();
   },
-
+*/
+/*Modified by baijian 2014-01-21 There is nothing end*/
   loadLastUpdated: function about_loadLastUpdated() {
     var settings = Settings.mozSettings;
     if (!settings)
@@ -98,7 +103,8 @@ var About = {
 
     deviceInfoPhoneNum.hidden = !showListItem;
   },
-
+/*Modified by baijian 2014-01-21 There is nothing begin*/
+/*
   checkForUpdates: function about_checkForUpdates() {
     var settings = Settings.mozSettings;
     if (!settings)
@@ -111,7 +117,7 @@ var About = {
     function onUpdateStatus(setting, event) {
       var value = event.settingValue;
       checkStatus[setting].value = value;
-
+*/
       /**
        * possible return values:
        *
@@ -130,7 +136,7 @@ var About = {
        * http://mxr.mozilla.org/mozilla-central/ident?i=setUpdateStatus&tree=mozilla-central&filter=&strict=1
        * to check if this is still current
        */
-
+/*
       if (value !== 'check-complete') {
         systemStatus.textContent = _(value) || _('check-error');
         console.error('Error checking for system update:', value);
@@ -162,14 +168,14 @@ var About = {
         updateStatus.classList.remove('checking');
       }
     }
-
+*/
     /* Firefox currently doesn't implement adding 2 classes in one call */
     /* see Bug 814014 */
-    updateStatus.classList.add('checking');
+/*    updateStatus.classList.add('checking');
     updateStatus.classList.add('visible');
-
+*/
     /* remove whatever was there before */
-    systemStatus.textContent = '';
+/*    systemStatus.textContent = '';
 
     var checkStatus = {
       'gecko.updateStatus': {},
@@ -186,8 +192,9 @@ var About = {
       'gaia.system.checkForUpdates': true
     });
   }
+*/   //Added by TCL_RLL for PR 600689
 };
-
+/*Modified by baijian 2014-01-21 There is nothing end*/
 // startup
 navigator.mozL10n.ready(About.init.bind(About));
 

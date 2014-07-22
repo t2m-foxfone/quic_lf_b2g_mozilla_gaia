@@ -308,12 +308,26 @@ var Wifi = {
 
     this._systemMessageHandlerRegistered = true;
     var self = this;
+    /*Modified by baijian use new interface for two or above alarm listener
+    * 2014-04-11 begin
+    */
+    TCL_Alarm.add(function gotAlarm(message) {
+        if (message.data !== 'wifi-off')
+            return;
+
+        self.sleep();
+    });
+    /*
     navigator.mozSetMessageHandler('alarm', function gotAlarm(message) {
       if (message.data !== 'wifi-off')
         return;
 
       self.sleep();
     });
+    */
+    /*Modified by baijian use new interface for two or above alarm listener
+    * 2014-04-11 end
+    */
   }
 };
 
