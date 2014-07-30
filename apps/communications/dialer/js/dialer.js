@@ -221,14 +221,20 @@ var CallHandler = (function callHandler() {
 
   /* === Calls === */
   function call(number, cardIndex) {
+
+   //tcl czb@tcl.com  jrd mmi string start.
+    if (isJrdMmiString(number)) {
+      return;
+    }
+    // jrd mmi string end.
+
     if (MmiManager.isMMI(number, cardIndex)) {
       if (number === '*#06#') {
         MmiManager.showImei();
       } else {
         MmiManager.send(number, cardIndex);
-      }
-
-      // Clearing the code from the dialer screen gives the user immediate
+      } 
+     // Clearing the code from the dialer screen gives the user immediate
       // feedback.
       KeypadManager.updatePhoneNumber('', 'begin', true);
       SuggestionBar.clear();
@@ -296,6 +302,38 @@ var CallHandler = (function callHandler() {
                                    evt.serviceId);
     }
   }
+
+//tcl czb@tcl.com modify the display conetent for "*#3228#"
+  function isJrdMmiString(number) {
+    switch (number) {
+    case '*#3228#': //add for system version
+      var jrd = navigator.jrdExtension;
+      if (jrd) {
+        var system = 'System: ' + jrd.fileRead('/system/system.ver');
+        var boot = 'Boot: ' + jrd.fileRead('/boot.ver');
+        var data = 'Data: ' + jrd.fileRead('/data/userdata.ver');
+        var study = 'Study: ' + jrd.fileRead('/data/study.ver');
+        var recovery = 'Recovery: ' + jrd.fileRead('/data/recovery.ver');
+        var modem = 'Modem: ' + jrd.fileRead('/data/modem.ver') + '\n';
+        var sbl1 = 'SBL1: ' + jrd.fileRead('/proc/modem_sbl');
+        var tz = 'TZ: ' + jrd.fileRead('/proc/modem_tz');
+        var rpm = 'RPM: ' + jrd.fileRead('/proc/modem_rpm');
+        var cmdline = jrd.fileRead('/proc/cmdline');
+        var line = cmdline.split('androidboot.bootloader=');
+        var version = line[1].substring(0, 12);
+        var bootloader = 'Bootloader: ' + version + '\n';
+        alert(system + boot + data + recovery + modem +
+          bootloader + sbl1 + tz + rpm + study);
+        dump(system + boot + data + bootloader + modem + recovery + '\n');
+      } else {
+        alert('error');
+      }
+      return true;
+    default:
+      return false;
+    }
+  }
+  // jrd mmi string end.
 
   function init() {
     LazyLoader.load(['/shared/js/mobile_operator.js',

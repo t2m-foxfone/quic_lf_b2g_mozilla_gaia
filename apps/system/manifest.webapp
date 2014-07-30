@@ -45,7 +45,8 @@
     "nfc":{ "access": "readonly" },
     "nfc-manager":{},
     "downloads":{},
-    "systemXHR":{}
+    "systemXHR":{},
+    "jrdfota": {}
   },
   "locales": {
     "ar": {
@@ -106,6 +107,10 @@
       "rules": {
         "minimumAccessLevel": "certified"
       }
+    },
+    "fota-set-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
     }
   },
   "datastores-owned": {

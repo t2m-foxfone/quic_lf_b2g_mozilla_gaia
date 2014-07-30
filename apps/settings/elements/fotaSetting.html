@@ -1,0 +1,57 @@
+<element name="fotaSetting" extends="section">
+  <template>
+    <header>
+      <a href="#systemUpdate">
+        <span class="icon icon-back">back</span>
+      </a>
+      <h1 data-l10n-id="settings_and_help2"> Settings </h1>
+    </header>
+
+    <ul>
+
+      <li id="wifi-only">
+        <label class="pack-checkbox">
+          <input type="checkbox" name="fota.wifi-only.enabled"/>
+          <span data-l10n-id="wifi_only_title" class = "fota-spec-menu">Wi-Fi Only</span>
+        </label>
+
+        <small id="wifi-only-desc"  class = "fota-interval-desc" data-l10n-id="wifi_only_summery2"></small>
+
+      </li>
+
+      <li id="daily-auto-check">
+        <label class="pack-checkbox">
+          <input type="checkbox" name="fota.daily-auto-check.enabled"/>
+          <span data-l10n-id="msg_daily_auto_check" class = "fota-spec-menu">Daily Auto Check</span>
+        </label>
+
+        <small id="daily-check-desc" class = "fota-interval-desc" data-l10n-id="msg_summ_daily_atuo_check"></small>
+
+      </li>
+
+      <li id="auto-check-intervals">
+        <select name="fota.auto-check-interval.current" class = "fota-spec-select">
+          <option value="0" data-l10n-id="auto_check_entries_manual" selected>Manual</option>
+          <option value="168" data-l10n-id="auto_check_entries_week">1 week</option>
+          <option value="336" data-l10n-id="auto_check_entries_two_weeks">2 weeks</option>
+          <option value="720" data-l10n-id="auto_check_entries_month">1 month</option>
+        </select>
+        <small id="auto-check-intervals-desc">Never</small>
+        <a data-l10n-id="auto_check" class = "fota-interval-item" >Auto-Check Intervals</a>
+      </li>
+
+      <li id="reminder-intervals" >
+        <select name="fota.reminder-interval.current" class = "fota-spec-select">
+          <option value="1" data-l10n-id="reminde_entries_1" >1 hour</option>
+          <option value="3" data-l10n-id="reminde_entries_2">2 hours</option>
+          <option value="6" data-l10n-id="reminde_entries_3">6 hours</option>
+          <option value="24" data-l10n-id="reminde_entries_4">24 hours</option>
+          <option value="0" data-l10n-id="reminde_entries_5">Never</option>
+        </select>
+        <small id="reminder-intervals-desc">Never</small>
+        <a data-l10n-id="reminder2" class = "fota-interval-item">Upgrade status reminder</a>
+      </li>
+    </ul>
+    <script type="application/javascript" src="js/fota_setting.js"></script>
+  </template>
+</element>
