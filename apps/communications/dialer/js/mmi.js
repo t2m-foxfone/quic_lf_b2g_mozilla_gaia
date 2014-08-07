@@ -208,22 +208,7 @@ var MmiManager = {
         break;
     }
 
-    // dingp@tcl.com add for *#06# shows imei2 at 2014-02-17 04:48:38 PM  218
-    if (message.title == 'IMEI') {
-      var imei2 = '';
-      var req = navigator.jrdExtension.readNvitem(67);
-      req.onsuccess = function() {
-        var nvResultArr = req.result;
-        for (var i = 0; i < nvResultArr.length; i++) {
-          imei2 += String.fromCharCode(nvResultArr[i]);
-        }
-        message.result = message.result + "\n" + imei2;
-        window.postMessage(message, this.COMMS_APP_ORIGIN);
-      }.bind(this);
-    } else {
-      window.postMessage(message, this.COMMS_APP_ORIGIN);
-    }
-    //window.postMessage(message, this.COMMS_APP_ORIGIN);
+    window.postMessage(message, this.COMMS_APP_ORIGIN);
   },
 
   notifyError: function mm_notifyError(evt) {
@@ -439,6 +424,18 @@ var MmiManager = {
    */
   _getImeiForCard: function mm_getImeiForCard(cardIndex) {
     return new Promise(function(resolve, reject) {
+      if (cardIndex == 1) {
+        var imei2 = '';
+        var req = navigator.jrdExtension.readNvitem(67);
+        req.onsuccess = function() {
+          var nvResultArr = req.result;
+          for (var i = 0; i < nvResultArr.length; i++) {
+            imei2 += String.fromCharCode(nvResultArr[i]);
+          }
+          resolve(imei2);
+        }
+        return;
+      }
       var request = navigator.mozMobileConnections[cardIndex]
                              .sendMMI('*#06#');
       request.onsuccess = function mm_onGetImeiSuccess(event) {
