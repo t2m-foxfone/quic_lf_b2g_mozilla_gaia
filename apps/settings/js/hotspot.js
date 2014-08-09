@@ -13,6 +13,17 @@ var Hotspot = {
     var hotspotSettingBtn =
       document.querySelector('#hotspot-settings-section button');
 
+    //t2mobile dingchen add for PR731169 begin
+    var hotspotCheckbox = document.querySelector('#hotspot-enabled input');
+
+    var _mobileConnections = window.navigator.mozMobileConnections;
+    if(_mobileConnections && !_mobileConnections[0].iccId)
+    {
+      hotspotCheckbox.disabled = true;
+      setHotspotSettingsEnabled(true);
+    }
+    //t2mobile dingchen add for PR731169 end
+
     function generateHotspotPassword() {
       var words = ['amsterdam', 'ankara', 'auckland',
                    'belfast', 'berlin', 'boston',
@@ -50,6 +61,46 @@ var Hotspot = {
     settings.addObserver('tethering.wifi.enabled', function(event) {
       setHotspotSettingsEnabled(event.settingValue);
     });
+
+    //t2mobile dingchen add for PR731169 begin
+    settings.addObserver('wifi.tethering.enabled.going', function(event){
+      wifitetheringgoing = event.settingValue;
+      if(wifitetheringgoing){
+        hotspotCheckbox.disabled = true;
+      }else if(!wifienabledgoing)
+      {
+        if(_mobileConnections && _mobileConnections[0].iccId
+          &&(AirplaneModeHelper.getStatus() === 'disabled')){
+            hotspotCheckbox.disabled = false;
+        }
+      }
+    });
+
+    settings.addObserver('wifi.enabled.going', function(event){
+      wifienabledgoing = event.settingValue;
+      if(wifienabledgoing){
+        hotspotCheckbox.disabled = true;
+      }
+      else if(!wifitetheringgoing)
+      {
+        if(_mobileConnections && _mobileConnections[0].iccId
+          &&(AirplaneModeHelper.getStatus() === 'disabled')){
+            hotspotCheckbox.disabled = false;
+        }
+      }
+    });
+
+    function setHotspotCheckboxDisabled(){
+      if(AirplaneModeHelper.getStatus() === 'disabled'){
+        settings.createLock().set({'tethering.wifi.disable.checkbox': false});
+        hotspotCheckbox.disabled = false;
+      }else{
+        hotspotCheckbox.disabled = true;
+      }
+    }
+
+    AirplaneModeHelper.addEventListener('statechange', setHotspotCheckboxDisabled);
+    //t2mobile dingchen add for PR731169 end
 
     var reqTetheringWifiEnabled =
       settings.createLock().get('tethering.wifi.enabled');
