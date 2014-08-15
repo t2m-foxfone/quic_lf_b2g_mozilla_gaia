@@ -57,6 +57,10 @@ var Hotspot = {
       hotspotSettingBtn.disabled = enabled;
     }
 
+    function updatePasswordItemVisibility(securityType) {
+      passwordItem.hidden = (securityType == 'open');
+    }
+
     // tethering enabled
     settings.addObserver('tethering.wifi.enabled', function(event) {
       setHotspotSettingsEnabled(event.settingValue);
