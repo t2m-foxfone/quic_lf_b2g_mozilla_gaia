@@ -17,7 +17,7 @@ var Hotspot = {
     var hotspotCheckbox = document.querySelector('#hotspot-enabled input');
 
     var _mobileConnections = window.navigator.mozMobileConnections;
-    if(_mobileConnections && !_mobileConnections[0].iccId)
+    if(_mobileConnections && (!_mobileConnections[0].iccId && !_mobileConnections[1].iccId))
     {
       hotspotCheckbox.disabled = true;
       setHotspotSettingsEnabled(true);
