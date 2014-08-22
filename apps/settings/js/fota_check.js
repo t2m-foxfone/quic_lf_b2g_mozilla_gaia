@@ -104,6 +104,9 @@ var Fota = {
     //Because when we disable the wifi only mode,we need
     //to show a popup screen.so here we add an observe.
     SettingsListener.observe('fota.wifi-only.enabled', true, function(value) {
+      debug('Handle fota.wifi-only.enabled changed success and now its ' +
+            'value: ' + value);
+
      /*FIX PR718625,ensure the value set to self._isWifiOnly*/
       self._isWifiOnly = value;
       if (self._isWifiConnected) {
@@ -570,6 +573,8 @@ var Fota = {
       case 'Download':
         if (!isSuccess) {
           this.handleDownloadFailed(errorType);
+        } else {
+          this.handleDownloadSuccess();
         }
         break;
       case 'Pause':
@@ -796,6 +801,15 @@ var Fota = {
     button_download_action.innerHTML = _('download');
     button_download_action.onclick = this.startDownloadAgain.bind(this);
     button_download_action.disabled = false;
+  },
+
+  handleDownloadSuccess: function fota_handleDownloadSucess() {
+
+    button_download_action.innerHTML = _('btn_pause');
+    button_download_action.onclick = this.pause.bind(this);
+    button_delete_action.disabled = true;
+    update_infomation_subline.hidden = true;
+
   },
 
   handleStopDownloadFailed: function fotaStopDownload(error) {
