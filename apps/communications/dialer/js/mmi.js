@@ -424,6 +424,12 @@ var MmiManager = {
    */
   _getImeiForCard: function mm_getImeiForCard(cardIndex) {
     return new Promise(function(resolve, reject) {
+      // dingp@tcl.com modified for (PR 749158)imei display start at 2014-08-25 01:21:31 PM
+      var title = '';
+      if (navigator.mozMobileConnections.length > 1) {
+        title = 'IMEI' + (cardIndex + 1) + ': ';
+      }
+
       if (cardIndex == 1) {
         var imei2 = '';
         var req = navigator.jrdExtension.readNvitem(67);
@@ -432,7 +438,10 @@ var MmiManager = {
           for (var i = 0; i < nvResultArr.length; i++) {
             imei2 += String.fromCharCode(nvResultArr[i]);
           }
-          resolve(imei2);
+          if (isNaN(imei2)) {
+            title = '';
+          }
+          resolve(title + imei2);
         }
         return;
       }
@@ -449,7 +458,8 @@ var MmiManager = {
                            cardIndex));
         }
 
-        resolve(result.statusMessage);
+        resolve(title + result.statusMessage);
+      // dingp@tcl.com modified for imei display end at 2014-08-25 01:21:31 PM
       };
       request.onerror = function mm_onGetImeiError(error) {
         reject(error);
