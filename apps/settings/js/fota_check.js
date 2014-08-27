@@ -522,32 +522,35 @@ var Fota = {
   /*Modified by tcl_baijian 2014-03-11 when the language change ,
   after get action then call this function begin*/
   handleLanguageChangeCb: function fota_handleLanguageChangeCb(actionStatus) {
-
-      if (actionStatus === 'Download') {
-          button_download_action.innerHTML = _('pause');
-      }else {
-          if (this._versionInfo.startDownload &&
-              this._versionInfo.percentage === 100) {
-              button_download_action.innerHTML = _('install');
-              button_delete_action.disabled = false;
-              //update_infomation_subline.textContent =
-              //                   _('msg_delete_package_new');
-          } else {
-              button_download_action.innerHTML = _('download');
-          }
-          system_update_file_size_desc.textContent = _('size') +
-              ': ' + this.formatFileSize(this._versionInfo.size);
+    if (actionStatus === 'Download') {
+      /*Fixed Pr:774492 ,wrong string resource id:pause*/
+      if (this._status == 'check')
+        button_download_action.innerHTML = _('install');
+      else
+        button_download_action.innerHTML = _('btn_pause');
+    }else {
+      if (this._versionInfo.startDownload &&
+        this._versionInfo.percentage === 100) {
+        button_download_action.innerHTML = _('install');
+        button_delete_action.disabled = false;
+        //update_infomation_subline.textContent =
+        //                   _('msg_delete_package_new');
+      } else {
+        button_download_action.innerHTML = _('download');
       }
-      if (this._descInfo.states === 'updateMenu:getNewPackage' &&
-          this._descInfo.ext === true) {
-          check_update_desc.textContent = _('notify_new_version');
-      }
+      system_update_file_size_desc.textContent = _('size') +
+        ': ' + this.formatFileSize(this._versionInfo.size);
+    }
+    if (this._descInfo.states === 'updateMenu:getNewPackage' &&
+      this._descInfo.ext === true) {
+      check_update_desc.textContent = _('notify_new_version');
+    }
 
-      var value = this._settingCache['fota.auto-check-interval.current'];
-      Settings.setFotaSettingsDesc('fota.auto-check-interval.current', value);
+    var value = this._settingCache['fota.auto-check-interval.current'];
+    Settings.setFotaSettingsDesc('fota.auto-check-interval.current', value);
 
-      var rem_value = this._settingCache['fota.reminder-interval.current'];
-      Settings.setFotaSettingsDesc('fota.reminder-interval.current', rem_value);
+    var rem_value = this._settingCache['fota.reminder-interval.current'];
+    Settings.setFotaSettingsDesc('fota.reminder-interval.current', rem_value);
   },
 
   handleLanguageChange: function fota_handleLanguageChange() {
@@ -819,6 +822,8 @@ var Fota = {
   },
 
   handleFirewarmCheckSuccess: function fota_handleFirewarmCheckSuccess() {
+    /*make sure the button is install for Pr:774492 */
+    button_download_action.innerHTML = _('install');
     button_download_action.disabled = false;
     button_delete_action.disabled = false;
     update_infomation_subline.hidden = true;
