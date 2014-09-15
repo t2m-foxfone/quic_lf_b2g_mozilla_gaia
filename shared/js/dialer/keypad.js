@@ -512,6 +512,11 @@ var KeypadManager = {
       return;
     }
 
+    if (key === '#' && this._phoneNumber === '*#3228#') {
+      this.multiSimActionButton.performAction();
+      return;
+    }
+
     // If user input number more 50 digits, app shouldn't accept.
     // The limit only applies while not on a call - there is no
     // limit while on a call (bug 917630).
