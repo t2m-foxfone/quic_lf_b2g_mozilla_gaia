@@ -219,5 +219,10 @@
    "wifi.disabled_by_wakelock": false,
    "wifi.notification": false,
    "wifi.connect_via_settings": false,
-   "wap.push.enabled": true
+   "wap.push.enabled": true,
+   "fota.wifi-only.enabled": false,
+   "fota.daily-auto-check.enabled": true,
+   "fota.auto-check-interval.current": 168,
+   "fota.reminder-interval.current": 1,
+   "fota.download.continue": false
 }

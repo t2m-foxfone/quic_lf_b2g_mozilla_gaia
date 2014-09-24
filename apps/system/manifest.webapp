@@ -45,7 +45,9 @@
     "nfc-manager":{},
     "downloads":{},
     "systemXHR":{},
-    "feature-detection": {}
+    "feature-detection": {},
+    "jrdextension": {},
+    "jrdfota": {}
   },
   "locales": {
     "ar": {
@@ -113,6 +115,18 @@
     "change-appearance-statusbar": {
       "description": "Homescreens change statusbar appearance",
       "rules": {}
+    },
+    "homescreen-notifications-comms": {
+      "rules": {},
+      "description": "Communication with homescreen and system for sms and dialer notifications"
+    },
+    "homescreen-lockscreen-comms": {
+      "rules": {},
+      "description": "Communication with homescreen and system for double click lock screen"
+    },
+    "fota-set-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
     }
   },
   "datastores-owned": {

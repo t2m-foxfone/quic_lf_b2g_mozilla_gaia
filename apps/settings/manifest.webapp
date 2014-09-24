@@ -32,7 +32,8 @@
     "audio-channel-alarm":{},
     "downloads":{},
     "nfc":{ "access": "readonly" },
-    "firefox-accounts": {}
+    "firefox-accounts": {},
+    "jrdextension": {}
   },
   "activities": {
     "configure": {
@@ -40,6 +41,12 @@
         "target": "device"
        },
       "disposition": "window"
+    }
+  },
+  "connections": {
+    "fota-sys-comms": {
+       "description": "Communication with settings and system in the progress of fota",
+       "rules": {}
     }
   },
   "locales": {
