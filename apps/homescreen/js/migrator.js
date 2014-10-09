@@ -91,8 +91,13 @@
         GridItemsFactory.create(icon).getDescriptor(function(descriptor) {
           icon.record.id = descriptor.type === types.COLLECTION ?
                            descriptor.id : descriptor.url;
-          console.debug('Migrated to datastore', JSON.stringify(descriptor));
-          database.add(descriptor).then(onItemMigrated, onItemMigrated);
+          // tcl_longxiuping merge mozilla patch for bug 800718
+          if (descriptor.skipMigration) {
+            onItemMigrated();
+          } else {
+            console.debug('Migrated to datastore', JSON.stringify(descriptor));
+            database.add(descriptor).then(onItemMigrated, onItemMigrated);
+          }
         });
       }.bind(this));
 
