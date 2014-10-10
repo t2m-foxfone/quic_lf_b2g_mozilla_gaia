@@ -217,9 +217,40 @@ var Settings = {
         }
 
         // Go to that section
+        /**
+         * Modified by tcl_baijian fix Bug#621986,FOTA update white screen
+         * before panel:root--> systemUpdate;
+         * now panel: root--> about --> systemUpdate
+         * 2014-03-18 begin
+         */
         setTimeout(function settings_goToSection() {
-          Settings.currentPanel = section;
+
+         if (section === 'systemUpdate') {
+             if (Settings.currentPanel == 'systemUpdate' ||
+                   Settings.currentPanel == '#systemUpdate') {
+                 return;
+             }
+             else if (Settings.currentPanel == 'about' ||
+                        Settings.currentPanel == '#about') {
+                 Settings.currentPanel = section;
+             }
+             else {
+                 Settings.currentPanel = 'about';
+                 setTimeout(function settings_goToEndSection() {
+                     Settings.currentPanel = section;
+                 },500);
+             }
+          }
+          else {
+              Settings.currentPanel = section;
+          }
+
+
         });
+        /**
+         * Modified by tcl_baijian fix Bug#621986,FOTA update white screen
+         * 2014-03-18 end
+         */
         break;
       default:
         Settings._currentActivity = Settings._currentActivitySection = null;
