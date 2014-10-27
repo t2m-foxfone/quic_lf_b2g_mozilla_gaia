@@ -98,6 +98,12 @@ var Fota = {
     //Because when we disable the wifi only mode,we need
     //to show a popup screen.so here we add an observe.
     SettingsListener.observe('fota.wifi-only.enabled', true, function(value) {
+      debug('Handle fota.wifi-only.enabled changed success and now its ' +
+            'value: ' + value);
+
+     /*FIX PR718625,ensure the value set to self._isWifiOnly*/
+      self._isWifiOnly = value;
+
       if (self._isWifiConnected) {
         return;
       }
@@ -489,7 +495,11 @@ var Fota = {
   handleLanguageChangeCb: function fota_handleLanguageChangeCb(actionStatus) {
 
       if (actionStatus === 'Download') {
-          button_download_action.innerHTML = _('pause');
+      /*Fixed Pr:774235,wrong string resource id:pause*/
+      if (this._status == 'check')
+        button_download_action.innerHTML = _('install');
+      else
+        button_download_action.innerHTML = _('btn_pause');
       }else {
           if (this._versionInfo.startDownload &&
               this._versionInfo.percentage === 100) {
@@ -538,6 +548,8 @@ var Fota = {
       case 'Download':
         if (!isSuccess) {
           this.handleDownloadFailed(errorType);
+        } else {
+          this.handleDownloadSuccess();
         }
         break;
       case 'Pause':
@@ -707,7 +719,8 @@ var Fota = {
       button_download_action.disabled = false;
       /*when auto download,the button status not change*/
       var pause_info = _('btn_pause');
-      if (button_download_action.innerHTML != pause_info) {
+      if (button_download_action.innerHTML != pause_info &&
+            this._status != 'pause') {
           button_download_action.innerHTML = pause_info;
           button_download_action.onclick = this.pause.bind(this);
           button_delete_action.disabled = true;
@@ -763,6 +776,15 @@ var Fota = {
     button_download_action.innerHTML = _('download');
     button_download_action.onclick = this.startDownloadAgain.bind(this);
     button_download_action.disabled = false;
+  },
+
+  handleDownloadSuccess: function fota_handleDownloadSucess() {
+
+    button_download_action.innerHTML = _('btn_pause');
+    button_download_action.onclick = this.pause.bind(this);
+    button_delete_action.disabled = true;
+    update_infomation_subline.hidden = true;
+
   },
 
   handleStopDownloadFailed: function fotaStopDownload(error) {

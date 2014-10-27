@@ -389,13 +389,9 @@ var systemUpdate = {
         self._isWifiConnected = false;
         if (navigator.mozJrdFota.JrdFotaActionStatus === 'Download')
         {
-            if (this._isWifiOnly) {
-                navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
-            } else {
-                if (this._isDataConnected === false) {
-                    navigator.mozJrdFota.pause(this.onCommonCb.bind(this));
-                }
-            }
+          if (self._isWifiOnly || self._isDataConnected === false) {
+            self._mozJrdFota.pause(self.onCommonCb.bind(self));
+          }
         }
     }
     else {
@@ -440,8 +436,9 @@ var systemUpdate = {
        break;
      case 'Pause':
        if (!isSuccess) {
+           /*
            SettingsListener.getSettingsLock().set({'fota.download.continue':
-               true });
+               true });*/
            this.handleStopDownloadFailed(errorType);
        }
        this.onFotaCommonCb(actionType, isSuccess, errorType);
