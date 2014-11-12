@@ -65,6 +65,17 @@ MAKEFLAGS=-r
 
 -include local.mk
 
+#tcl_lwj add for multi-language
+LOCALES_FILE=locales/languages_zz.json
+GAIA_DEFAULT_LOCALE=en-US
+LOCALE_BASEDIR=$(abspath ../gaia-l10n)
+GAIA_KEYBOARD_LAYOUTS = cs,de,en,es,fr,pt-BR,hr,hu,pl,ro,sk,sr-Latn,el,it,tr-F,nl,mk,bg-BDS,ca,ru,zh-Hans-Pinyin
+export LOCALES_FILE
+export LOCALE_BASEDIR
+export GAIA_DEFAULT_LOCALE
+export GAIA_KEYBOARD_LAYOUTS
+#end
+
 # Headless bot does not need the full output of wget
 # and it can cause crashes in bot.io option is here so
 # -nv can be passed and turn off verbose output.
@@ -394,7 +405,7 @@ GAIA_CONCAT_LOCALES?=1
 
 # This variable is for customizing the keyboard layouts in a build.
 GAIA_KEYBOARD_LAYOUTS?=en,pt-BR,es,de,fr,pl,zh-Hans-Pinyin,en-Dvorak
-
+GAIA_KEYBOARD_LAYOUTS = cs,de,en,es,fr,pt-BR,hr,hu,pl,ro,sk,sr-Latn,el,it,tr-F,nl,mk,bg-BDS,ca,ru,zh-Hans-Pinyin
 ifeq ($(SYS),Darwin)
 MD5SUM = md5 -r
 SED_INPLACE_NO_SUFFIX = /usr/bin/sed -i ''
