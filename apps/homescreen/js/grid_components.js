@@ -203,6 +203,8 @@ Collection.prototype = {
         // If E.me has not been initialzed for the smart collections,
         // we skip migration. We let the default smart collections be populated
         // for the vertical homescreen instead.
+
+        // tcl_longxiuping merge mozilla patch for bug 800718
         descriptor.skipMigration = true;
       }
       var categoryId = descriptor.categoryId || this.providerId;

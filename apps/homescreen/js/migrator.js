@@ -91,6 +91,7 @@
         GridItemsFactory.create(icon).getDescriptor(function(descriptor) {
           icon.record.id = descriptor.type === types.COLLECTION ?
                            descriptor.id : descriptor.url;
+          // tcl_longxiuping merge mozilla patch for bug 800718
           if (descriptor.skipMigration) {
             onItemMigrated();
           } else {
