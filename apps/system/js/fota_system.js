@@ -19,11 +19,11 @@ var systemUpdate = {
   TIME_ONE_HOUR: 3600000,
 
   _firstRun: true,
-/*Added by tcl_baijian 2014-03-04 use apps communication begin*/
+  /*Added by tcl_baijian 2014-03-04 use apps communication begin*/
   _ports: null,
-/*Added by tcl_baijian 2014-03-04 use apps communication end*/
-  _isSend2Setting: false,/*now should send msg to settings ?*/
-/*make sure init do once added by baijian 2014-04-29*/
+  /*Added by tcl_baijian 2014-03-04 use apps communication end*/
+  _isSend2Setting: false, /*now should send msg to settings ?*/
+  /*make sure init do once added by baijian 2014-04-29*/
   _Init: false,
   /*When startup we set default value:false*/
   _isDataConnected: false,
@@ -52,115 +52,116 @@ var systemUpdate = {
     //  To fix the issue that WIFI icon is abnormal when connect
     //  and disconnect to AP.
     window.addEventListener('wifi-statuschange',
-                             this.handleWifiStatusChange.bind(this));
+      this.handleWifiStatusChange.bind(this));
 
     var mobileManager = window.navigator.mozMobileConnection ||
-          window.navigator.mozMobileConnections &&
-              window.navigator.mozMobileConnections[0];
-     if (mobileManager)
-        mobileManager.addEventListener('datachange',
-            this.handleDataChange.bind(this));
+      window.navigator.mozMobileConnections &&
+      window.navigator.mozMobileConnections[0];
+    if (mobileManager)
+      mobileManager.addEventListener('datachange',
+        this.handleDataChange.bind(this));
     //To track the wifi-only-enabled.
     SettingsListener.observe('fota.wifi-only.enabled', true, function(value) {
       debug('Handle fota.wifi-only.enabled changed success and now its' +
-            'value: ' + value);
+        ' value:' + value);
       self._isWifiOnly = value;
       /*
-      * fixed bug#676138 when data links connected and the wifi-only selected,
-      * should stop and resume the download if the download is going
-      * */
-       if (self._isWifiConnected == true)
-          return;/*when wifi connected,just go back*/
-       if (self._isDataConnected == true) {
-         if (self._isWifiOnly == true) {
-            if (self._mozJrdFota.JrdFotaActionStatus === 'Download') {
-                self._mozJrdFota.pause(self.onCommonCb.bind(self));
-            }
-         } else {
-            self.fota_DownloadContinue();
-         }
+       * fixed bug#676138 when data links connected and the wifi-only selected,
+       * should stop and resume the download if the download is going
+       * */
+      if (self._isWifiConnected == true)
+        return;
+      /*when wifi connected,just go back*/
+      if (self._isDataConnected == true) {
+        if (self._isWifiOnly == true) {
+          if (self._mozJrdFota.JrdFotaActionStatus === 'Download') {
+            self._mozJrdFota.pause(self.onCommonCb.bind(self));
+          }
+        } else {
+          self.fota_DownloadContinue();
+        }
       }
-     });
+    });
 
     //To track the wifi-only-enabled.
     SettingsListener.observe('fota.daily-auto-check.enabled', true,
-                             function(value) {
-      debug('Handle fota.daily-auto-check.enabled changed success ' +
-            'and now its value: ' + value);
-      self._dailyCheckEnabled = value;
-    });
+      function(value) {
+        debug('Handle fota.daily-auto-check.enabled changed success ' +
+          'and now its value: ' + value);
+        self._dailyCheckEnabled = value;
+      });
 
     SettingsListener.observe('fota.auto-check-interval.current', 0,
-                             function(value) {
-      var interval = Number(value);
-      debug('check interval:' + interval);
-      if (interval === 0) {
-        self.removeExistAlarm('check', function() {
-          debug('Disable the check alarm success.');
-        });
-        self.autoCheckInterval = 0;
-      }else if (self.autoCheckInterval != interval) {
-        self.autoCheckInterval = interval;
-        self.startAutoCheckAlarm(reboot);
-      }
-    });
+      function(value) {
+        var interval = Number(value);
+        debug('check interval:' + interval);
+        if (interval === 0) {
+          self.removeExistAlarm('check', function() {
+            debug('Disable the check alarm success.');
+          });
+          self.autoCheckInterval = 0;
+        } else if (self.autoCheckInterval != interval) {
+          self.autoCheckInterval = interval;
+          self.startAutoCheckAlarm(reboot);
+        }
+      });
 
     SettingsListener.observe('fota.reminder-interval.current', 0,
-                             function(value) {
-      var interval = Number(value);
-      debug('remind interval:' + interval);
-      if (interval === 0) {
-        self.removeExistAlarm('remind', function() {
-          debug('Disable the remind alarm success.');
-        });
-        self.remindInterval = 0;
-      } else if (self.remindInterval != interval) {
-        self.remindInterval = interval;
-        self.startRemindAlarm(reboot);
-      }
-    });
+      function(value) {
+        var interval = Number(value);
+        debug('remind interval:' + interval);
+        if (interval === 0) {
+          self.removeExistAlarm('remind', function() {
+            debug('Disable the remind alarm success.');
+          });
+          self.remindInterval = 0;
+        } else if (self.remindInterval != interval) {
+          self.remindInterval = interval;
+          self.startRemindAlarm(reboot);
+        }
+      });
 
     //This shoud be the last oberserve because we will set the flags reboot.
     SettingsListener.observe('fota.last-finished.date', 0,
-                             function(value) {
-      debug('Handle last-finished.date changed success and now its value: ' +
-            value);
-      //When we handle this obeserve means that there is a new check result
-      //is found, we need to reset or start the check and remind alarm.
-      if (!reboot && value != 0) {
-        self.addAlarm('check');
-        self.addAlarm('remind');
-      }
-      self._lastCheckedDate = value;
-      reboot = false;
-    });
+      function(value) {
+        debug('Handle last-finished.date changed success and now its value: ' +
+          value);
+        //When we handle this obeserve means that there is a new check result
+        //is found, we need to reset or start the check and remind alarm.
+        if (!reboot && value != 0) {
+          self.addAlarm('check');
+          self.addAlarm('remind');
+        }
+        self._lastCheckedDate = value;
+        reboot = false;
+      });
 
     //Here when we handle the alarm message,we will create a custom
     //event and dispatch to other modules
-     /*Modified by baijian use new interface for two or above alarm listener
-      * 2014-04-11 begin
-      * */
+    /*Modified by baijian use new interface for two or above alarm listener
+     * 2014-04-11 begin
+     * */
     TCL_Alarm.add(function(message) {
-        /*only handle check and remind*/
-        if (message.data.fotaAlarmType === 'check' ||
-            message.data.fotaAlarmType === 'remind') {
-          var evt = document.createEvent('CustomEvent');
-          evt.initCustomEvent('alarmFired', true, true, { message: message });
-          debug('Dispatch an alarm fire event.');
-          window.dispatchEvent(evt);
-        }
-    });
-    /*
-    navigator.mozSetMessageHandler('alarm', function(message) {
+      /*only handle check and remind*/
       if (message.data.fotaAlarmType === 'check' ||
-          message.data.fotaAlarmType === 'remind') {
+        message.data.fotaAlarmType === 'remind') {
         var evt = document.createEvent('CustomEvent');
         evt.initCustomEvent('alarmFired', true, true, { message: message });
         debug('Dispatch an alarm fire event.');
         window.dispatchEvent(evt);
       }
     });
-    */
+    /*
+     navigator.mozSetMessageHandler('alarm', function(message) {
+     if (message.data.fotaAlarmType === 'check' ||
+     message.data.fotaAlarmType === 'remind') {
+     var evt = document.createEvent('CustomEvent');
+     evt.initCustomEvent('alarmFired', true, true, { message: message });
+     debug('Dispatch an alarm fire event.');
+     window.dispatchEvent(evt);
+     }
+     });
+     */
     /*Modified by baijian use new interface for two or above alarm listener
      * 2014-04-11 end
      * */
@@ -172,9 +173,31 @@ var systemUpdate = {
     });
     /*PR:724495 make sure the tip pop once when startup*/
     var settings = window.navigator.mozSettings.createLock();
-    settings.set({'fota.wifionly.first' : true});
+    settings.set({'fota.wifionly.first': true});
     self._mozJrdFota.checkInstallResult(this.onCommonCb.bind(this));
+    self.setIMEI();
     self._Init = true;
+  },
+
+  setIMEI: function fota_IMEI() {
+    var self = this;
+    var request = navigator.mozMobileConnections[0].sendMMI('*#06#');
+    request.onsuccess = function mm_onGetImeiSuccess(event) {
+      var result = event.target.result;
+
+      // We always expect the IMEI, so if we got a .onsuccess event
+      // without the IMEI value, we throw an error message.
+      if ((result === null) || (result.serviceCode !== 'scImei') ||
+        (result.statusMessage === null)) {
+        reject(new Error('Could not retrieve the IMEI code for SIM' +
+          cardIndex));
+      }
+      var imei = result.statusMessage;
+      self._mozJrdFota.setIMEI(imei);
+    };
+    request.onerror = function(e) {
+      self._mozJrdFota.setIMEI('121212121212121');
+    };
   },
 
   //To check whether the given type alarm is exist.
@@ -190,8 +213,8 @@ var systemUpdate = {
       for (var i = 0; i < result.length; i++) {
         if (result[i].id && result[i].data &&
           result[i].data.fotaAlarmType === type) {
-            callback(true);
-            return;
+          callback(true);
+          return;
         }
       }
       callback(false);
@@ -257,7 +280,7 @@ var systemUpdate = {
         exist = true;
       }
 
-       self.isAlarmExist('remind', function(result) {
+      self.isAlarmExist('remind', function(result) {
         //When there is stored check result and the check alarm is not exist,
         //we will add a new alarm,but if there is an alarm and no stored
         //result, we'll remove the exist alarms.
@@ -277,35 +300,36 @@ var systemUpdate = {
 
     debug('Handle Mobile data change');
     var mobileManager = window.navigator.mozMobileConnection ||
-          window.navigator.mozMobileConnections &&
-              window.navigator.mozMobileConnections[0];
+      window.navigator.mozMobileConnections &&
+      window.navigator.mozMobileConnections[0];
 
     if (self._isWifiOnly === true || !mobileManager ||
-        mobileManager.data.state !== 'registered') {
-        self._isDataConnected = mobileManager.data.connected;
-        return;
+      mobileManager.data.state !== 'registered') {
+      self._isDataConnected = mobileManager.data.connected;
+      return;
     }
 
     debug('Handle Mobile data connected:' + mobileManager.data.connected);
     /*wifi is First Priority*/
     if (self._isWifiConnected === true) {
-        self._isDataConnected = mobileManager.data.connected;
-        return;
+      self._isDataConnected = mobileManager.data.connected;
+      return;
     }
 
     if (self._isDataConnected === mobileManager.data.connected) {
-       return;/*data contected not change,just go back*/
+      return;
+      /*data contected not change,just go back*/
     } else {
-       self._isDataConnected = mobileManager.data.connected;
+      self._isDataConnected = mobileManager.data.connected;
     }
     debug('Handle Mobile data changed, go on ...');
     if (self._isDataConnected === true) {
-       self.fota_DownloadContinue();
+      self.fota_DownloadContinue();
     } else {
-       if (self._mozJrdFota.JrdFotaActionStatus === 'Download' &&
-           self._isWifiConnected === false) {
-           self._mozJrdFota.pause(self.onCommonCb.bind(self));
-       }
+      if (self._mozJrdFota.JrdFotaActionStatus === 'Download' &&
+        self._isWifiConnected === false) {
+        self._mozJrdFota.pause(self.onCommonCb.bind(self));
+      }
     }
   },
 
@@ -315,23 +339,22 @@ var systemUpdate = {
     var settings = window.navigator.mozSettings.createLock();
     var req = settings.get('fota.download.continue');
     req.onsuccess = function fota_getSettingSuccess() {
-       var result = req.result['fota.download.continue'];
-       if (self._mozJrdFota.JrdFotaActionStatus != 'Download' &&
-           result == true) {
-           /*The last download is interrupted,just go again*/
-           self._mozJrdFota.download(
-            self.onFotaDownloadProgressCb.bind(self),
-            self.onCommonCb.bind(self));
-           /*display notification*/
-           var request = settings.get('fota.version.info');
-           request.onsuccess = function() {
-             var res = request.result['fota.version.info'];
-             var notification = '=DwnRes=' + res.percentage;
-             settings.set({'fota.notification.value': notification });
-             settings.set({'fota.status.action':
-              {name: 'download', other: null}});
-           };
-       }
+      var result = req.result['fota.download.continue'];
+      if (self._mozJrdFota.JrdFotaActionStatus != 'Download' &&
+        result == true) {
+        /*The last download is interrupted,just go again*/
+        self._mozJrdFota.download(
+          self.onFotaDownloadProgressCb.bind(self),
+          self.onCommonCb.bind(self));
+        /*display notification*/
+        var request = settings.get('fota.version.info');
+        request.onsuccess = function() {
+          var res = request.result['fota.version.info'];
+          var notification = '=DwnRes=' + res.percentage;
+          settings.set({'fota.notification.value': notification });
+          settings.set({'fota.status.action': {name: 'download', other: null}});
+        };
+      }
     };
     req.onerror = function() {
       debug('Mobile data Get fota.download.continue error!!');
@@ -353,156 +376,157 @@ var systemUpdate = {
       req.onsuccess = function fota_getSettingSuccess() {
         var result = req.result['fota.download.continue'];
         if (self._mozJrdFota.JrdFotaActionStatus != 'Download') {
-           /*The last download is interrupted,just go again*/
-            if (result == true) {
-                self._mozJrdFota.download(
-                  self.onFotaDownloadProgressCb.bind(self),
-                  self.onCommonCb.bind(self));
-               /*display notification*/
-               var request = settings.get('fota.version.info');
-               request.onsuccess = function() {
-                 var res = request.result['fota.version.info'];
-                 var notification = '=DwnRes=' + res.percentage;
-                 settings.set({'fota.notification.value': notification });
-                 settings.set({'fota.status.action':
-                  {name: 'download', other: null}});
-               };
-           }
-           else {
-             if (self._firstRun === true || self._dailyCheckEnabled === true) {
-                 self.handleWifiConnected();
-             }
-           }
+          /*The last download is interrupted,just go again*/
+          if (result == true) {
+            self._mozJrdFota.download(
+              self.onFotaDownloadProgressCb.bind(self),
+              self.onCommonCb.bind(self));
+            /*display notification*/
+            var request = settings.get('fota.version.info');
+            request.onsuccess = function() {
+              var res = request.result['fota.version.info'];
+              var notification = '=DwnRes=' + res.percentage;
+              settings.set({'fota.notification.value': notification });
+              settings.set({'fota.status.action': {name: 'download',
+                other: null}});
+            };
+          }
+          else {
+            if (self._firstRun === true || self._dailyCheckEnabled === true) {
+              self.handleWifiConnected();
+            }
+          }
         }
         if (self._firstRun === true) {
-            self._firstRun = false;
+          self._firstRun = false;
         }
       };
       req.onerror = function() {
-         debug('Wifi Get fota.download.continue error!!');
-         if (self._firstRun === true || self._dailyCheckEnabled === true) {
-            self.handleWifiConnected();
-            self._firstRun = false;
-         }
+        debug('Wifi Get fota.download.continue error!!');
+        if (self._firstRun === true || self._dailyCheckEnabled === true) {
+          self.handleWifiConnected();
+          self._firstRun = false;
+        }
       };
     }
     /*Added by_baijian bug#625710:when wifi is closed,
      *we need pause the process of download.2014-03-20
      */
     else if (wifiManager.connection.status === 'disconnected') {
-        self._isWifiConnected = false;
-        if (self._mozJrdFota.JrdFotaActionStatus === 'Download')
-        {
-          if (self._isWifiOnly || self._isDataConnected === false) {
-            self._mozJrdFota.pause(self.onCommonCb.bind(self));
-          }
+      self._isWifiConnected = false;
+      if (self._mozJrdFota.JrdFotaActionStatus === 'Download') {
+        if (self._isWifiOnly || self._isDataConnected === false) {
+          self._mozJrdFota.pause(self.onCommonCb.bind(self));
         }
+      }
     }
     else {
-       self._isWifiConnected = false;
+      self._isWifiConnected = false;
     }
   },
 
-  onGetNewPackageCb: function fs_onGetNewPackageCb(versionName,
-                                                   size,
+  onGetNewPackageCb: function fs_onGetNewPackageCb(versionName, size,
                                                    description) {
     debug('onGetNewPackageCb:: versionName:  ' + versionName +
       ' size:' + size + ' description:' + description);
     this.checkSuccessCb(versionName, size, description);
   },
-    /*Midified by tcl_baijian 2014-03-11 move some logic handle from settings
-     to system begin*/
+  /*Midified by tcl_baijian 2014-03-11 move some logic handle from settings
+   to system begin*/
   onCommonCb: function fs_commonCb(actionType, isSuccess, errorType) {
     var errorStr = null;
     var notification = '';
     debug('onCommonCb::' + 'actionType: ' + actionType + 'isSuccess: ' +
       isSuccess + 'errorType: ' + errorType + '\n');
     switch (actionType) {
-     case 'CheckInstallResult':
+      case 'CheckInstallResult':
         //Have success and fail case
-      if (isSuccess) {
-        systemUpdate.handleInstallSuccess();
-      }else {
-        systemUpdate.handleInstallFailed();
-      }
-      break;
-     case 'GetNewPackage':
-       this.handleGetNewPackageFailed(errorType);
-       this.onFotaCommonCb(actionType, isSuccess, errorType);
-       break;
-     case 'Download':
-       if (!isSuccess) {
+        if (isSuccess) {
+          systemUpdate.handleInstallSuccess();
+        } else {
+          systemUpdate.handleInstallFailed();
+        }
+        break;
+      case 'GetNewPackage':
+        this.handleGetNewPackageFailed(errorType);
+        this.onFotaCommonCb(actionType, isSuccess, errorType);
+        break;
+      case 'Download':
+        if (!isSuccess) {
+          SettingsListener.getSettingsLock().set({'fota.download.continue':
+            false });
+          this.handleDownloadFailed(errorType);
+        }
+        this.onFotaCommonCb(actionType, isSuccess, errorType);
+        break;
+      case 'Pause':
+        if (!isSuccess) {
+          /*
            SettingsListener.getSettingsLock().set({'fota.download.continue':
-               false });
-           this.handleDownloadFailed(errorType);
-       }
-       this.onFotaCommonCb(actionType, isSuccess, errorType);
-       break;
-     case 'Pause':
-       if (!isSuccess) {
-           /*
-           SettingsListener.getSettingsLock().set({'fota.download.continue':
-               true });*/
-           this.handleStopDownloadFailed(errorType);
-       }
-       this.onFotaCommonCb(actionType, isSuccess, errorType);
-       break;
-     case 'Delete':
-       if (isSuccess) {
-           this.handleDeletePackageSuccess();
-       }else {
-           this.handleDeletePackageFailed(errorType);
-       }
-       this.onFotaCommonCb(actionType, isSuccess, errorType);
-       break;
-     case 'CheckFirmwarm':
-       if (!isSuccess) {
-           this.handleFirewarmCheckFailed(errorType);
-       }else {
-           this.handleFirewarmCheckSuccess();
-       }
-       this.onFotaCommonCb(actionType, isSuccess, errorType);
-       break;
-     case 'Install':
-       if (!isSuccess) {
-           this.handleInstallException(errorType);
-           this.onFotaCommonCb(actionType, isSuccess, errorType);
-       }
-       break;
+           true });*/
+          this.handleStopDownloadFailed(errorType);
+        }
+        this.onFotaCommonCb(actionType, isSuccess, errorType);
+        break;
+      case 'Delete':
+        if (isSuccess) {
+          this.handleDeletePackageSuccess();
+        } else {
+          this.handleDeletePackageFailed(errorType);
+        }
+        this.onFotaCommonCb(actionType, isSuccess, errorType);
+        break;
+      case 'CheckFirmwarm':
+        if (!isSuccess) {
+          this.handleFirewarmCheckFailed(errorType);
+        } else {
+          this.handleFirewarmCheckSuccess();
+        }
+        this.onFotaCommonCb(actionType, isSuccess, errorType);
+        break;
+      case 'Install':
+        if (!isSuccess) {
+          this.handleInstallException(errorType);
+          if ('FullPackageNotExistError' == errorType) {
+            return;
+          }
+          this.onFotaCommonCb(actionType, isSuccess, errorType);
+        }
+        break;
     }
   },
   /*Midified by tcl_baijian 2014-03-11 move some logic handle from settings
-  to system end*/
+   to system end*/
   /*Added by tcl_baijian 2014-03-11 save the completion rate begin*/
   saveCompletionRate: function fs_saveCompletionRate(completionRate,
                                                      starDownload) {
-      debug('saveCompletionRate');
-      var notification = '';
-      var settings = window.navigator.mozSettings.createLock();
+    debug('saveCompletionRate');
+    var notification = '';
+    var settings = window.navigator.mozSettings.createLock();
 
-      var req = settings.get('fota.version.info');
-      req.onsuccess = function fota_getSettingSuccess() {
-          var result = req.result['fota.version.info'];
-          if (result.percentage != completionRate) {
-              settings.set({'fota.version.info': {
-                  version_number: result.version_number,
-                  size: result.size, startDownload: starDownload,
-                  percentage: completionRate,
-                  background: false, description: result.description}});
-          }
-      };
-      req.onerror = function fota_getVersionInfo() {
-          debug('fota.version.info error');
-      };
-      if (starDownload == true) {
-          notification = '=DwnRes=' + completionRate;
+    var req = settings.get('fota.version.info');
+    req.onsuccess = function fota_getSettingSuccess() {
+      var result = req.result['fota.version.info'];
+      if (result.percentage != completionRate) {
+        settings.set({'fota.version.info': {
+          version_number: result.version_number,
+          size: result.size, startDownload: starDownload,
+          percentage: completionRate,
+          background: false, description: result.description}});
       }
-      if (completionRate > 99) {
-          notification = '=FwcRes=' + _('msg_checking_ongoing');
-          settings.set({'fota.download.continue': false });
-      }
+    };
+    req.onerror = function fota_getVersionInfo() {
+      debug('fota.version.info error');
+    };
+    if (starDownload == true) {
+      notification = '=DwnRes=' + completionRate;
+    }
+    if (completionRate > 99) {
+      notification = '=FwcRes=' + _('msg_checking_ongoing');
+      settings.set({'fota.download.continue': false });
+    }
 
-      settings.set({'fota.notification.value': notification });
+    settings.set({'fota.notification.value': notification });
   },
   /*Added by tcl_baijian 2014-03-11 save the completion rate end*/
 
@@ -517,36 +541,36 @@ var systemUpdate = {
 
       /*Begin Time:2013-11-14 resolute bug#531419 author:baijian*/
       if (result && result.version_number && result.size) {
-         if (result.size != size || result.version_number != versionName) {
-           settings.set({'fota.version.info': {version_number: versionName,
-               size: size, startDownload: false, percentage: 0,
-               background: true, description: description}});
-           /*added by baijian*/
-           debug('fota.version.info is different,so reset it');
-           /*version different, so download from begin*/
-           settings.createLock().set({'fota.download.continue': false });
+        if (result.size != size || result.version_number != versionName) {
+          settings.set({'fota.version.info': {version_number: versionName,
+            size: size, startDownload: false, percentage: 0,
+            background: true, description: description}});
+          /*added by baijian*/
+          debug('fota.version.info is different,so reset it');
+          /*version different, so download from begin*/
+          settings.createLock().set({'fota.download.continue': false });
         }
         else/*added by baijian,when fota.version.info is not changed*/
         {
-           debug('fota.version.info size and version are the same,' +
-               'and there are ' + size + ':' + versionName);
+          debug('fota.version.info size and version are the same,' +
+            'and there are ' + size + ':' + versionName);
         }
       }
       else
       /*
-      added by baijian, resolute bug#531419,
-      when the fota.version.info is not exist,just add it
-      */
+       added by baijian, resolute bug#531419,
+       when the fota.version.info is not exist,just add it
+       */
       {
-          debug('fota.version.info is not exist,so add it');
-          settings.set({'fota.version.info': {version_number: versionName,
-              size: size, startDownload: false, percentage: 0,
-              background: true, description: description}});
+        debug('fota.version.info is not exist,so add it');
+        settings.set({'fota.version.info': {version_number: versionName,
+          size: size, startDownload: false, percentage: 0,
+          background: true, description: description}});
       }
     };
     /*add by baijian*,when get fota.version.info error,give us a tip*/
     req.onerror = function fota_getSettingFail() {
-        debug('fota.version.info error');
+      debug('fota.version.info error');
     };
     /*End Time:2013-11-14 resolute bug#531419 author:baijian*/
     notification = '=GnpRes=' + _('notify_reminder_download');
@@ -568,7 +592,7 @@ var systemUpdate = {
           //to check some times, and now the alarm is one hour.
           this.retry();
         }
-      }else if (message.data.fotaAlarmType === 'remind') {
+      } else if (message.data.fotaAlarmType === 'remind') {
         this.remind();
         this.addAlarm('remind');
       }
@@ -580,7 +604,7 @@ var systemUpdate = {
     //If the interval or the key is unavaliable,we will ignore
     //the requst.
     debug('addAlarm key: ' + key + ' ' + this.autoCheckInterval + ' ' +
-          this.remindInterval);
+      this.remindInterval);
 
     if (key !== 'check' && key !== 'remind') {
       return;
@@ -607,12 +631,12 @@ var systemUpdate = {
       // Setting the new alarm
       requst.onsuccess = function(e) {
         /* For debugging.
-        var req = navigator.mozAlarms.getAll();
-        req.onsuccess = function(e) {
-           debug('Total: ' + e.target.result.length + ' alarms.');
-           debug('All alarms: ' + JSON.stringify(e.target.result));
-        };
-        */
+         var req = navigator.mozAlarms.getAll();
+         req.onsuccess = function(e) {
+         debug('Total: ' + e.target.result.length + ' alarms.');
+         debug('All alarms: ' + JSON.stringify(e.target.result));
+         };
+         */
       };
 
       requst.onerror = function(e) {
@@ -628,7 +652,7 @@ var systemUpdate = {
     debug('retry');
     if (!this.autoCheckInterval) {
       debug('retry: Auto check interval is not available : ' +
-            this.autoCheckInterval);
+        this.autoCheckInterval);
       return;
     }
     this._retryTimes++;
@@ -666,32 +690,32 @@ var systemUpdate = {
   downPackage: function fs_DownPackage() {
     debug('downPackage enter');
     this.sendToSettingCommand('downloadFromSetting', 0);
-   /*
-    var self = this;
-    if (this._isWifiConnected ||
-        (this._isDataConnected && this._isWifiOnly == false)) {
-      debug('downPackage enter');
-      var settings = window.navigator.mozSettings.createLock();
+    /*
+     var self = this;
+     if (this._isWifiConnected ||
+     (this._isDataConnected && this._isWifiOnly == false)) {
+     debug('downPackage enter');
+     var settings = window.navigator.mozSettings.createLock();
 
-      self._mozJrdFota.download(self.onFotaDownloadProgressCb.bind(self),
-                                self.onCommonCb.bind(self));
-        //display notification
-      var request = settings.get('fota.version.info');
-      request.onsuccess = function() {
-        var res = request.result['fota.version.info'];
-        var notification = '=DwnRes=' + res.percentage;
-        settings.set({'fota.notification.value': notification });
-        settings.set({'fota.version.info':
-            {version_number: res.version_number,
-            size: res.size, startDownload: true, percentage: res.percentage,
-            background: true, description: res.description}});
-        settings.set({'fota.status.action': {name: 'download', other: null}});
-      };
-    } else {
-        showAttention({title: _('popup_dialog_title_attention'),
-          msg: _('msg_download_failed_net_error'), acceptCb: null});
-    }
-   */
+     self._mozJrdFota.download(self.onFotaDownloadProgressCb.bind(self),
+     self.onCommonCb.bind(self));
+     //display notification
+     var request = settings.get('fota.version.info');
+     request.onsuccess = function() {
+     var res = request.result['fota.version.info'];
+     var notification = '=DwnRes=' + res.percentage;
+     settings.set({'fota.notification.value': notification });
+     settings.set({'fota.version.info':
+     {version_number: res.version_number,
+     size: res.size, startDownload: true, percentage: res.percentage,
+     background: true, description: res.description}});
+     settings.set({'fota.status.action': {name: 'download', other: null}});
+     };
+     } else {
+     showAttention({title: _('popup_dialog_title_attention'),
+     msg: _('msg_download_failed_net_error'), acceptCb: null});
+     }
+     */
   },
 
   getNewPackage: function fs_getNewPackage() {
@@ -702,18 +726,19 @@ var systemUpdate = {
     }
     /*_isDataConnected and _isWifiConnected is realtime changed*/
     debug('check:: isWifiOnly: ' + this._isWifiOnly + ' isMobileConnected: ' +
-        this._isDataConnected + ' isWifiConnected: ' + this._isWifiConnected);
+      this._isDataConnected + ' isWifiConnected: ' + this._isWifiConnected);
     if (this._isWifiOnly && !this._isWifiConnected) {
       return false;
     }
     if (!this._isWifiOnly && !(this._isDataConnected ||
-        this._isWifiConnected)) {
+      this._isWifiConnected)) {
       return false;
     }
     /*Modified by tcl_baijian 2014-03-14 fixed bug#621637 background get new
      *package popup the dialog begin*/
-      this._mozJrdFota.getNewPackage(this.onGetNewPackageCb.bind(this),
-                                     this.onGetNewPackageCmnCb.bind(this));
+    this.setFotaParas('auto');
+    this._mozJrdFota.getNewPackage(this.onGetNewPackageCb.bind(this),
+      this.onGetNewPackageCmnCb.bind(this));
     /*Modified by tcl_baijian 2014-03-14 fixed bug#621637 background get new
      *package popup the dialog end*/
     return true;
@@ -723,9 +748,9 @@ var systemUpdate = {
   onGetNewPackageCmnCb: function fs_GetNewPackageCmnCb(actionType, isSuccess,
                                                        errorType) {
     debug('onGetNewPackageCmnCb::' + 'actionType: ' + actionType +
-       ' isSuccess: ' + isSuccess + ' errorType: ' + errorType + '\n');
+      ' isSuccess: ' + isSuccess + ' errorType: ' + errorType + '\n');
     if (actionType == 'GetNewPackage' &&
-        errorType == 'NotFoundUpdatePackageError') {
+      errorType == 'NotFoundUpdatePackageError') {
       var settings = window.navigator.mozSettings.createLock();
       settings.set({'fota.last-finished.date': Date.now()});
     }
@@ -754,15 +779,15 @@ var systemUpdate = {
       if (result && result.version_number && result.size) {
         if (result.startDownload &&
           result.startDownload === true) {
-           if (result.percentage && result.percentage === 100) {
-             notification = '=GnpRes=' + _('notify_reminder_upgrade');
-           } else {
-             // When the download is not fineshed, we will remind the user
-             // to download.
-             notification = '=GnpRes=' + _('notify_reminder_download');
-           }
-        }else {
-           notification = '=GnpRes=' + _('notify_reminder_download');
+          if (result.percentage && result.percentage === 100) {
+            notification = '=GnpRes=' + _('notify_reminder_upgrade');
+          } else {
+            // When the download is not fineshed, we will remind the user
+            // to download.
+            notification = '=GnpRes=' + _('notify_reminder_download');
+          }
+        } else {
+          notification = '=GnpRes=' + _('notify_reminder_download');
         }
         settings.set({'fota.notification.value': notification});
       }
@@ -792,7 +817,7 @@ var systemUpdate = {
       });
     };
     req.onerror = function() {
-       debug('Get deviceinfo.firmware_revision error');
+      debug('Get deviceinfo.firmware_revision error');
     };
   },
 
@@ -819,80 +844,95 @@ var systemUpdate = {
       now.getMonth() == lastedCheckDate.getMonth()) {
       debug('handleWifiConnected:: Check action has took already today.');
       return;
-    }else {
+    } else {
       this.getNewPackage();
     }
   },
+
+  setFotaParas: function fota_paras(checkType) {
+    var network;
+
+    if (this._isWifiConnected) {
+      network = 'wifi';
+    } else if (this._isDataConnected) {
+      network = 'data';
+    }
+    this._mozJrdFota.setRepoterParament(network, checkType, '');
+  },
   /*Added by tcl_baijian 2014-03-04 communicate between system and setting:
-  receive fota command from settings begin*/
+   receive fota command from settings begin*/
   receiveFotaCommand: function receiveFromSettings(category, actionType) {
-      var self;
+    var self;
 
-      debug('receive from setting category:' + category + ' action:' +
-          actionType);
-      self = this;
+    debug('receive from setting category:' + category + ' action:' +
+      actionType);
+    self = this;
 
-      if (category == 'common') {
-          switch (actionType) {
-              case 'install':
-                  self._mozJrdFota.install(self.onCommonCb.bind(self));
-                  break;
-              case 'delete':
-                  self._mozJrdFota.delete(self.onCommonCb.bind(self));
-                  break;
-              case 'pause':
-                  self._mozJrdFota.pause(self.onCommonCb.bind(self));
-                  SettingsListener.getSettingsLock().set(
-                      {'fota.download.continue': false });
-                  break;
-              case 'exit':
-                  self._ports = null;
-                  self._isSend2Setting = false;
-                  break;
-              case 'GetAction':
-                  self.sendReplyCommand(category, actionType,
-                      self._mozJrdFota.JrdFotaActionStatus, null);
-                  break;
-              case 'enter':
-                  self._ports = null;
-                  self._isSend2Setting = true;
-                  break;
-              /*Added by tcl_baijian 2014-03-17 set storage devices begin*/
-              case 'ext_sdcard':
-                  /*1:external sdcard*/
-                  self._mozJrdFota.selectSdcard(1, false);
-                  break;
-              case 'int_sdcard':
-                  /*0:internal sdcard*/
-                  self._mozJrdFota.selectSdcard(0, false);
-                  break;
-              /*Added by tcl_baijian 2014-03-17 set storage devices begin*/
-              default:;
-          }
+    if (category == 'common') {
+      switch (actionType) {
+        case 'install':
+          self._mozJrdFota.install(self.onCommonCb.bind(self));
+          break;
+        case 'delete':
+          self._mozJrdFota.delete(self.onCommonCb.bind(self));
+          break;
+        case 'pause':
+          self._mozJrdFota.pause(self.onCommonCb.bind(self));
+          SettingsListener.getSettingsLock().set(
+            {'fota.download.continue': false });
+          break;
+        case 'exit':
+          self._ports = null;
+          self._isSend2Setting = false;
+          break;
+        case 'GetAction':
+          self.sendReplyCommand(category, actionType,
+            self._mozJrdFota.JrdFotaActionStatus, null);
+          break;
+        case 'enter':
+          self._ports = null;
+          self._isSend2Setting = true;
+          break;
+        /*Added by tcl_baijian 2014-03-17 set storage devices begin*/
+        case 'ext_sdcard':
+          /*1:external sdcard*/
+          self._mozJrdFota.selectSdcard(1, false);
+          break;
+        case 'int_sdcard':
+          /*0:internal sdcard*/
+          self._mozJrdFota.selectSdcard(0, false);
+          break;
+        /*Added by tcl_baijian 2014-03-17 set storage devices begin*/
+        case 'installFull':
+          self._mozJrdFota.installfull(self.onCommonCb.bind(self));
+          break;
+        default:;
       }
-      else if (category == 'download') {
-          if (actionType == 'download') {
-              SettingsListener.getSettingsLock().set({'fota.download.continue':
-                  true });
-              self._mozJrdFota.download(
-                  self.onFotaDownloadProgressCb.bind(self),
-                  self.onCommonCb.bind(self));
-          }
+    }
+    else if (category == 'download') {
+      if (actionType == 'download') {
+        SettingsListener.getSettingsLock().set(
+          {'fota.download.continue': true });
+        self.setFotaParas(null);
+        self._mozJrdFota.download(
+          self.onFotaDownloadProgressCb.bind(self),
+          self.onCommonCb.bind(self));
       }
-      else if (category == 'getNewPackage') {/*GetNewPackage*/
-          if (actionType == 'getNewPackage') {
-              self._mozJrdFota.getNewPackage(
-                  self.onFotaGetNewPackageCb.bind(self),
-                  self.onCommonCb.bind(self));
-          }
+    }
+    else if (category == 'getNewPackage') {/*GetNewPackage*/
+      if (actionType == 'getNewPackage') {
+        self.setFotaParas('manual');
+        self._mozJrdFota.getNewPackage(
+          self.onFotaGetNewPackageCb.bind(self),
+          self.onCommonCb.bind(self));
       }
-      else {
-          debug('receive from fota command error!!!');
-      }
+    }
+    else {
+      debug('receive from fota command error!!!');
+    }
   },
   /*send command to setting*/
-  sendReplyCommand: function fota_reply_command(category, value1, value2,
-                                                value3) {
+  sendReplyCommand: function fota_rply_cmd(category, value1, value2, value3) {
     var replyMsg;
     var self;
 
@@ -944,8 +984,8 @@ var systemUpdate = {
           port.postMessage(replyMsg);
         });
       }, function onConnRejected(reason) {
-           console.log('system is rejected fota reply message');
-           console.log(reason);
+        console.log('system is rejected fota reply message');
+        console.log(reason);
       });
     };
   },
@@ -989,149 +1029,150 @@ var systemUpdate = {
           port.postMessage(replyMsg);
         });
       }, function onConnRejected(reason) {
-           console.log('system is send command to setting');
-           console.log(reason);
-         });
+        console.log('system is send command to setting');
+        console.log(reason);
+      });
     };
   },
   /*common callback funcation*/
   onFotaCommonCb: function fota_commonCb(actionType, isSuccess, errorType) {
-      debug('Received from gecko message:common');
-      this.sendReplyCommand('common', actionType, isSuccess, errorType);
+    debug('Received from gecko message:common');
+    this.sendReplyCommand('common', actionType, isSuccess, errorType);
   },
   /*download callback funcation*/
-  onFotaDownloadProgressCb: function fota_onDownloadProgressCb(completionRate)
-  {
-      debug('Received from gecko message:Download');
-      this.saveCompletionRate(completionRate, true);
-      this.sendReplyCommand('download', completionRate, null, null);
+  onFotaDownloadProgressCb: function fota_DownloadProgressCb(completionRate) {
+    debug('Received from gecko message:Download');
+    this.saveCompletionRate(completionRate, true);
+    this.sendReplyCommand('download', completionRate, null, null);
   },
   /*GetNewPackage callback funcation*/
   onFotaGetNewPackageCb: function fota_getPackage(versionNun, size,
                                                   description) {
-      debug('Received from gecko message:getNewPackage');
-      /*save the version info*/
+    debug('Received from gecko message:getNewPackage');
+    /*save the version info*/
 
-      if (!versionNun || !size) {
-         this.handleGetNewPackageFailed('DataError');
-         this.sendReplyCommand('getNewPackage', versionNun, size, description);
-         return;
-      }
-
-      this.checkSuccessCb(versionNun, size, description);
-      var msg = _('default_update_info2');
-      var params = {};
-      params.title = _('popup_release_note_title');
-      params.msg = _('default_update_info2');
-      params.version_number = versionNun;
-      params.size = size;
-      params.accept_str = _('download');
-      params.cancel_str = _('ignore');
-      params.acceptCb = this.downPackage.bind(this);
-      params.cancelCb = null;
-      show_CustomDialog(params);
-      //showDialog(_('popup_release_note_title'), msg, null);
+    if (!versionNun || !size) {
+      this.handleGetNewPackageFailed('DataError');
       this.sendReplyCommand('getNewPackage', versionNun, size, description);
+      return;
+    }
+
+    this.checkSuccessCb(versionNun, size, description);
+    var msg = _('default_update_info2');
+    var params = {};
+    params.title = _('popup_release_note_title');
+    params.msg = _('default_update_info2');
+    params.version_number = versionNun;
+    params.size = size;
+    params.accept_str = _('download');
+    params.cancel_str = _('ignore');
+    params.acceptCb = this.downPackage.bind(this);
+    params.cancelCb = null;
+    show_CustomDialog(params);
+    //showDialog(_('popup_release_note_title'), msg, null);
+    this.sendReplyCommand('getNewPackage', versionNun, size, description);
   },
   /*Added by tcl_baijian 2014-03-04 communicate between system and setting:
-    receive fota command from settings begin*/
+   receive fota command from settings begin*/
   handleGetNewPackageFailed: function fota_handleGetNewPackageFailed(result) {
-     //Show popup
-     var info = this.getErrorMessage(result);
-     showDialog(_('popup_dialog_title_attention'), info, null);
+    //Show popup
+    var info = this.getErrorMessage(result);
+    showDialog(_('popup_dialog_title_attention'), info, null);
 
-     //Show notification.
-     var settings = window.navigator.mozSettings;
-     var notification = '=GnpRes=' + info;
-     settings.createLock().set({'fota.notification.value': notification});
+    //Show notification.
+    var settings = window.navigator.mozSettings;
+    var notification = '=GnpRes=' + info;
+    settings.createLock().set({'fota.notification.value': notification});
   },
   handleDownloadFailed: function fota_handleDownloadFailed(error) {
-     var msg = this.getErrorMessage(error);
-     debug('handleDownloadFailed:: The error msg:' + msg);
-     var info = _('download_finished_failed') + ' ' + msg;
-     showDialog(_('popup_dialog_title_attention'), info, null);
+    var msg = this.getErrorMessage(error);
+    debug('handleDownloadFailed:: The error msg:' + msg);
+    var info = _('download_finished_failed') + ' ' + msg;
+    showDialog(_('popup_dialog_title_attention'), info, null);
 
-     var notification = '=FwcRes=' + info;
-     SettingsListener.getSettingsLock().set(
-     {'fota.notification.value': notification});
+    var notification = '=FwcRes=' + info;
+    SettingsListener.getSettingsLock().set(
+      {'fota.notification.value': notification});
   },
   handleStopDownloadFailed: function fotaStopDownload(error) {
-      var msg = this.getErrorMessage(error);
-      debug('handleStopDownloadFailed:: msg:' + msg);
-      showDialog(_('popup_dialog_title_attention'), msg, null);
+    var msg = this.getErrorMessage(error);
+    debug('handleStopDownloadFailed:: msg:' + msg);
+    showDialog(_('popup_dialog_title_attention'), msg, null);
   },
   handleDeletePackageSuccess: function fota_handleDeletePackageSuccess() {
-     debug('handleDeletePackageSuccess: entry.');
-     this.saveCompletionRate(0, false);
+    debug('handleDeletePackageSuccess: entry.');
+    this.saveCompletionRate(0, false);
   },
-  handleDeletePackageFailed: function fota_handleDeletePackageFailed(errorType)
-  {
-     var settings = window.navigator.mozSettings;
-     var msg = _('fota_delete_package_error');
-     var notification = '=FwcRes=' + msg;
+  handleDeletePackageFailed: function fota_DeletePackageFailed(errorType) {
+    var settings = window.navigator.mozSettings;
+    var msg = _('fota_delete_package_error');
+    var notification = '=FwcRes=' + msg;
 
-     showDialog(_('popup_dialog_title_attention'), msg, null);
+    showDialog(_('popup_dialog_title_attention'), msg, null);
 
-     settings.createLock().set({'fota.notification.value': notification});
+    settings.createLock().set({'fota.notification.value': notification});
   },
   handleFirewarmCheckFailed: function fotaFireWarmCheckSFailed(error) {
-     var notification = '';
-     var msg = this.getErrorMessage(error);
-     var settings = window.navigator.mozSettings;
+    var notification = '';
+    var msg = this.getErrorMessage(error);
+    var settings = window.navigator.mozSettings;
 
-     debug('handleFirewarmCheckFailed:: The error msg:' + msg);
+    debug('handleFirewarmCheckFailed:: The error msg:' + msg);
 
-     notification = '=FwcRes=' + _('download_finished_failed') + ' ' + msg;
-     showDialog(_('popup_dialog_title_attention'), msg, null);
-     settings.createLock().set({'fota.notification.value': notification});
+    notification = '=FwcRes=' + _('download_finished_failed') + ' ' + msg;
+    showDialog(_('popup_dialog_title_attention'), msg, null);
+    settings.createLock().set({'fota.notification.value': notification});
   },
   handleFirewarmCheckSuccess: function fota_handleFirewarmCheckSuccess() {
-     var notification = '';
-     var settings = window.navigator.mozSettings;
+    var notification = '';
+    var settings = window.navigator.mozSettings;
 
-     notification = '=FwcRes=' + _('notify_reminder_upgrade');
-     settings.createLock().set({'fota.notification.value': notification });
+    notification = '=FwcRes=' + _('notify_reminder_upgrade');
+    settings.createLock().set({'fota.notification.value': notification });
   },
   handleInstallException: function fota_handleException(errorType) {
 
-     var message = this.getErrorMessage(errorType);
+    var message = this.getErrorMessage(errorType);
 
-      showDialog(_('popup_dialog_title_attention'), message, null);
+    showDialog(_('popup_dialog_title_attention'), message, null);
   },
   getErrorMessage: function fota_getErrorMessage(errorType) {
-     var errorStr;
-     switch (errorType) {
-         case 'NetworkError':
-             errorStr = _('msg_download_failed_net_error');
-             break;
-         case 'DataError':
-             errorStr = _('msg_download_failed_chksum_err');
-             break;
-         case 'DeletePackageError':
-             errorStr = _('fota_delete_package_error');
-             break;
-         case 'StopDownloadError':
-             errorStr = _('fota_stop_download_error');
-             break;
-         case 'InstallError':
-             errorStr = _('msg_upgrade_failed_unknow');
-             break;
-         case 'DefaultError':
-             errorStr = _('msg_download_failed_unknow');
-             break;
-         case 'DiffPackageNotExistError':
-             errorStr = _('popup_text_file_not_found_err');
-             break;
-         case 'DiffPackageUnavailableError':
-             errorStr = _('msg_upgrade_failed_file_invalid');
-             break;
-         case 'NotFoundUpdatePackageError':
-             errorStr = _('no_new_version');
-             break;
-         default:
-             break;
-        }
-     return errorStr;
+    var errorStr;
+    switch (errorType) {
+      case 'NetworkError':
+        errorStr = _('msg_download_failed_net_error');
+        break;
+      case 'DataError':
+        errorStr = _('msg_download_failed_chksum_err');
+        break;
+      case 'DeletePackageError':
+        errorStr = _('fota_delete_package_error');
+        break;
+      case 'StopDownloadError':
+        errorStr = _('fota_stop_download_error');
+        break;
+      case 'InstallError':
+        errorStr = _('msg_upgrade_failed_unknow');
+        break;
+      case 'DefaultError':
+        errorStr = _('msg_download_failed_unknow');
+        break;
+      case 'DiffPackageNotExistError':
+        errorStr = _('popup_text_file_not_found_err');
+        break;
+      case 'DiffPackageUnavailableError':
+        errorStr = _('msg_upgrade_failed_file_invalid');
+        break;
+      case 'NotFoundUpdatePackageError':
+        errorStr = _('no_new_version');
+        break;
+      case 'FullPackageNotExistError':
+        errorStr = _('msg_no_full_package');
+        break;
+      default:
+        break;
+    }
+    return errorStr;
   }
 };
 

@@ -215,7 +215,7 @@ function showConfirm(params) {
     }
 
   };
-
+  params.msg = params.msg.split('\\r\\n').join('\n');
   Fota_CustomDialog.show(params.title, params.msg, cancelObject, acceptObject);
 }
 
@@ -230,6 +230,7 @@ function showAttention(params) {
       }
     }
   };
+  params.msg = params.msg.split('\\r\\n').join('\n');
   Fota_CustomDialog.show(params.title, params.msg, btnObject);
 
   window.addEventListener('home', function toCancelPrompt() {
@@ -249,6 +250,7 @@ function showDialog(title, msg, cb) {
       }
     }
   };
+  msg = msg.split('\\r\\n').join('\n');
   Fota_CustomDialog.show(title, msg, btnObject);
 
   window.addEventListener('home', function toCancelPrompt() {
@@ -276,7 +278,7 @@ function show_CustomDialog(params) {
             Fota_CustomDialog.hide();
         }
     };
-
+   params.msg = params.msg.split('\\r\\n').join('\n');
     Fota_CustomDialog.show(params.title, params.msg, cancelObject, acceptObject,
       params.version_number, fota_formatSize(params.size));
     window.addEventListener('home', function toCancelPrompt() {

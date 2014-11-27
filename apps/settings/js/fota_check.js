@@ -39,6 +39,8 @@ var Fota = {
 
   _isWifiConnected: false,
 
+  _isDataConnected: false,
+
   _isPopupShow: false,
 
   _descInfo: {states: '', ext: false},
@@ -54,6 +56,7 @@ var Fota = {
   _status: null,
   /*current storage devices name*/
   _storageName: null,
+  _dataManager: null,
 
   init: function fota_init() {
 
@@ -69,13 +72,13 @@ var Fota = {
     //Get the version info.include 'version_name,size,description,
     //percentage,download'.
 
-    self.getSettingsValue('fota.version.info',function (value){
+    self.getSettingsValue('fota.version.info', function(value) {
       if (value && value.version_number && value.size) {
         self.updateInfoPanelEx(value);
         self.saveVersionInfo(value, false);
       }
     },function() {
-      debug("settings init get fota.version.info error!!!");
+      debug('settings init get fota.version.info error!!!');
     });
 
     /*Added by tcl_baijian notify system that settings is already enter begin*/
@@ -84,16 +87,27 @@ var Fota = {
     var wifiManager = window.navigator.mozWifiManager;
     if (wifiManager)
     {
-        if (wifiManager.connection &&
-            wifiManager.connection.status &&
+      if (wifiManager.connection && wifiManager.connection.status &&
             wifiManager.connection.status === 'connected') {
-            this._isWifiConnected = true;
-        }
-        wifiManager.onstatuschange = this.handleWifiStatusChange.bind(this);
+        this._isWifiConnected = true;
+      }
+      wifiManager.onstatuschange = this.handleWifiStatusChange.bind(this);
     }
     else
     {
-        debug('wifiManager is null');
+      debug('wifiManager is null');
+    }
+
+    self._dataManager = window.navigator.mozMobileConnection ||
+      window.navigator.mozMobileConnections &&
+      window.navigator.mozMobileConnections[0];
+    if (self._dataManager) {
+      if (self._dataManager.data.connected == true) {
+        self._isDataConnected = true;
+        self.showDataLinkTip();
+      }
+      self._dataManager.addEventListener('datachange',
+        this.handleDataChange.bind(this));
     }
     //Because when we disable the wifi only mode,we need
     //to show a popup screen.so here we add an observe.
@@ -104,16 +118,13 @@ var Fota = {
         return;
       }
 
-      var mobileManager = window.navigator.mozMobileConnection ||
-        window.navigator.mozMobileConnections &&
-        window.navigator.mozMobileConnections[0];
       /*when wifiConnection and MoblileConnection are both false,just return*/
-      if (!mobileManager || !mobileManager.data.connected) {
+      if (self._dataManager || !self._dataManager.data.connected) {
         return;
       }
 
       if (self._isWifiOnly === true) {
-        self.getSettingsValue('fota.wifionly.first',function(first) {
+        self.getSettingsValue('fota.wifionly.first', function(first) {
           if (first) {
             var settings = window.navigator.mozSettings.createLock();
             settings.set({'fota.wifionly.first' : false});
@@ -136,14 +147,70 @@ var Fota = {
     window.setTimeout(this.delayedInit.bind(this), 1000);
   },
 
-  getSettingsValue: function fota_settingValue(key,okCallback,errCallback) {
+  getSettingsValue: function fota_settingValue(key, okCallback, errCallback) {
     var settings = window.navigator.mozSettings.createLock();
     var req = settings.get(key);
     req.onsuccess = function(result) {
       var value = req.result[key];
-      okCallback(value)
+      okCallback(value);
     };
     req.onerror = errCallback;
+  },
+
+  handleDataChange: function fota_dataChange() {
+    var self = this;
+
+    debug('Handle Mobile data change');
+
+    if (self._isWifiOnly === true || !self._dataManager ||
+      self._dataManager.data.state !== 'registered') {
+      self._isDataConnected = self._dataManager.data.connected;
+      return;
+    }
+
+    debug('Handle Mobile data connected:' + self._dataManager.data.connected);
+    /*wifi is First Priority*/
+    if (self._isWifiConnected === true) {
+      self._isDataConnected = self._dataManager.data.connected;
+      return;
+    }
+
+    if (self._isDataConnected === self._dataManager.data.connected) {
+      /*data contected not change,just go back*/
+      return;
+    } else {
+      self._isDataConnected = self._dataManager.data.connected;
+    }
+    debug('Handle Mobile data changed, go on ...');
+    if (self._isDataConnected === true) {
+     self.showDataLinkTip();
+    }
+  },
+
+  showDataLinkTip: function fota_dataTip() {
+    debug('show data link tips');
+    var self = this;
+    this.getSettingsValue('fota.mobile-data-notification.disabled',
+      function(isNotifed) {
+        if (isNotifed === true) {
+          return;
+        }
+
+        var params = {};
+        if (self._dataManager.data.roaming) {
+          params.msg = _('msg_roaming');
+        }else {
+          params.msg = _('msg_mobiledata_warning');
+        }
+
+        params.title = _('popup_dialog_title');
+        showAttention(params);
+
+        var settings = window.navigator.mozSettings;
+        settings.createLock().set(
+          {'fota.mobile-data-notification.disabled': true});
+
+      },null);
   },
 
   handleStorage: function fota_storage() {
@@ -283,57 +350,16 @@ var Fota = {
   },
 
   getMobileDataStatus: function fota_getMobileDataStatus(callback) {
-    //tcl_WCL modified for pr635733 begin
-    var mobileManager = window.navigator.mozMobileConnection ||
-        window.navigator.mozMobileConnections &&
-            window.navigator.mozMobileConnections[0];
-    //tcl_WCL modified for pr635733 end
+
     /*some time the mobileManager is null*/
-    if (!mobileManager || !mobileManager.data.connected) {
+    if (!this._dataManager || !this._dataManager.data.connected) {
       debug('getMobileDataStatus:: The status: disconnected');
       return 'disconnected';
+    } else {
+      debug('getMobileDataStatus:: The status: connected');
+      return 'connected';
     }
 
-    var reval = '';
-    var pretime = Data.now();
-
-    this.getSettingsValue('fota.mobile-data-notification.disabled',
-      function(isNotifed) {
-        if (isNotifed === true) {
-          debug('getMobileDataStatus:: The status: connected');
-          reval = 'connected';
-          return;
-        }
-
-        var params = {};
-        if (mobileManager.data.roaming) {
-          params.msg = _('msg_roaming');
-        }else {
-          params.msg = _('msg_mobiledata_warning');
-        }
-        //params.accept_str = 'Continue';
-        params.accept_str = _('btn_continue');
-        params.acceptCb = function() {
-          if (callback && typeof callback === 'function') {
-            callback();
-          }
-        };
-        params.cancelCb = null;
-        //params.title = 'Note';
-        params.title = _('popup_dialog_title');
-        showConfirm(params);
-
-        var settings = window.navigator.mozSettings;
-        settings.createLock().set(
-          {'fota.mobile-data-notification.disabled': true});
-        reval = 'pending_connected';
-      },null);
-
-    var sptime = Data.now();
-    while(sptime < pretime+1000 && reval == ''){
-      sptime = Data.now();
-    }
-    return reval;
   },
 
   wifiDisconnectedCb: function fota_wifiDisconnectedCb(actionStatus) {
@@ -345,12 +371,7 @@ var Fota = {
         this._status = actionStatus;/*update the action status*/
         this.pauseDisplay();
       } else {
-        //tcl_WCL modified for pr635733 begin
-        var mobileManager = window.navigator.mozMobileConnection ||
-            window.navigator.mozMobileConnections &&
-                window.navigator.mozMobileConnections[0];
-        //tcl_WCL modified for pr635733 end
-        if (!mobileManager || !mobileManager.data.connected) {
+        if (!this._dataManager || !this._dataManager.data.connected) {
            this._status = actionStatus;/*update the action status*/
            this.pauseDisplay();
         }
@@ -374,7 +395,7 @@ var Fota = {
         }
 
         var self = this;
-        self.getSettingsValue('ril.data.enabled',function(enable){
+        self.getSettingsValue('ril.data.enabled', function(enable) {
           if (enable === true) {
             /*wait for 3s for data links contected*/
             window.setTimeout(function() {
@@ -407,6 +428,9 @@ var Fota = {
           params.msg = _('msg_confirm_delete_update');
           params.accept_str = _('ok');
           params.acceptCb = function() {
+            if (self._status === 'download') {
+              return;
+            }
             self.disableCheckUpdateMenu();
             self.sendFotaCommand('common', 'delete');
           };
@@ -518,12 +542,12 @@ var Fota = {
       check_update_desc.textContent = _('notify_new_version');
     }
 
-    this.getSettingsValue('fota.auto-check-interval.current',function(value){
-      FotaSetting.FotaSettingsDesc('fota.auto-check-interval.current',value);
+    this.getSettingsValue('fota.auto-check-interval.current', function(value) {
+      FotaSetting.FotaSettingsDesc('fota.auto-check-interval.current', value);
     },null);
 
-    this.getSettingsValue('fota.reminder-interval.current',function(value){
-      FotaSetting.FotaSettingsDesc('fota.reminder-interval.current',value);
+    this.getSettingsValue('fota.reminder-interval.current', function(value) {
+      FotaSetting.FotaSettingsDesc('fota.reminder-interval.current', value);
     },null);
   },
 
@@ -896,18 +920,18 @@ var Fota = {
   },
 
   handleDeletePackageSuccess: function fota_handleDeletePackageSuccess() {
-   debug('handleDeletePackageSuccess: entry.');
-   if (this._versionInfo != undefined) {
-     if (this._versionInfo.version_number &&
-       this._versionInfo.size) {
-       this._versionInfo.startDownload = false;
-       this._versionInfo.percentage = 0;
-       this.updateInfoPanelEx(this._versionInfo);
-     }
-     this.saveVersionInfo(this._versionInfo);
-   }
-   button_delete_action.disabled = true;
-   update_infomation_subline.hidden = true;
+    debug('handleDeletePackageSuccess: entry.');
+    if (this._versionInfo != undefined) {
+      if (this._versionInfo.version_number &&
+        this._versionInfo.size) {
+        this._versionInfo.startDownload = false;
+        this._versionInfo.percentage = 0;
+        this.updateInfoPanelEx(this._versionInfo);
+      }
+      this.saveVersionInfo(this._versionInfo);
+    }
+    button_delete_action.disabled = true;
+    update_infomation_subline.hidden = true;
   },
 
   handleGetNewPackageSuccess: function fota_handleGetNewPackageSuccess(result)
@@ -995,7 +1019,7 @@ var Fota = {
     //acquire for cpu for bug 532900 528114
     //DO REMEMBER TO UNLOCK WHEN DOWNLOADING FINISHED OR
     //SETTINGS CLOSED
-    this._cpuWakelock = navigator.requestWakeLock('cpu');
+    //this._cpuWakelock = navigator.requestWakeLock('cpu');
     //tcl_lwj end
 
     //Add download notification
@@ -1023,7 +1047,7 @@ var Fota = {
           return;
       }
 
-      var result = this.checkNetworkAvailable(this.getNewpackage);
+      var result = this.checkNetworkAvailable();
       if (result === false) {
           return;
       }
@@ -1169,7 +1193,7 @@ var Fota = {
     }
     if (value) {
 
-      this.getSettingsValue('deviceinfo.os',function(os_version){
+      this.getSettingsValue('deviceinfo.os', function(os_version) {
         var svn = navigator.jrdExtension.readRoValue('ro.def.software.svn');
         updateDesc = _('brandShortName') + ' ' + os_version + '-' + svn;
         check_update_desc.textContent = updateDesc;

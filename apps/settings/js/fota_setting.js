@@ -9,55 +9,33 @@
 
 
 var FotaSetting = {
-  ele_reminder: null,
-  ele_check: null,
 
   init: function fota_setting_init() {
     debug('fota setting init enter');
     var self = this;
-
     var dialog = document.getElementById('fotaSetting');
-    var select_check = document.getElementById('auto-check-intervals-select');
-    var select_reminder = document.getElementById('reminder-intervals-select');
 
-    self.ele_reminder = document.getElementById('reminder-intervals-desc');
-    self.ele_check = document.getElementById('auto-check-intervals-desc');
-
-    select_check.onchange = function(){
-      self.FotaSettingsDesc('fota.auto-check-interval.current', this.value);
-    };
-
-    select_reminder.onchange = function(){
-      self.FotaSettingsDesc('fota.reminder-interval.current', this.value);
-    };
-
-    Fota.getSettingsValue('fota.wifi-only.enabled',function(value){
-      self.fotaSettingChecked('#wifi-only',value,dialog);
+    Fota.getSettingsValue('fota.wifi-only.enabled', function(value) {
+      self.fotaSettingChecked('#wifi-only', value, dialog);
     },null);
 
-    Fota.getSettingsValue('fota.daily-auto-check.enabled',function(value){
-      self.fotaSettingChecked('#daily-auto-check',value,dialog);
+    Fota.getSettingsValue('fota.daily-auto-check.enabled', function(value) {
+      self.fotaSettingChecked('#daily-auto-check', value, dialog);
     },null);
 
-    Fota.getSettingsValue('fota.auto-check-interval.current',function(check){
-      if (check)
-      {
-        self.FotaSettingsDesc('fota.auto-check-interval.current',check);
-      } else {
+    Fota.getSettingsValue('fota.auto-check-interval.current', function(check) {
+      if (!check) {
         var apSelectionCheck = dialog.querySelector('#auto-check-intervals');
-        self.fotaSetDesc('fota.auto-check-interval.current',apSelectionCheck);
+        self.fotaSetDesc('fota.auto-check-interval.current', apSelectionCheck);
       }
     },null);
 
-    Fota.getSettingsValue('fota.reminder-interval.current',function(remind){
-      if (remind)
-      {
-        self.FotaSettingsDesc('fota.reminder-interval.current',remind);
-      } else {
+    Fota.getSettingsValue('fota.reminder-interval.current', function(remind) {
+      if (!remind) {
         var apSelectionRemind = dialog.querySelector('#reminder-intervals');
-        self.fotaSetDesc('fota.reminder-interval.current',apSelectionRemind);
+        self.fotaSetDesc('fota.reminder-interval.current', apSelectionRemind);
       }
-    },null)
+    },null);
 
     debug('fota setting init leaver');
   },
@@ -71,7 +49,7 @@ var FotaSetting = {
       var select = selects[i];
       if (select.selected) {
         this.FotaSettingsDesc(key, select.value);
-        settings.set({key : false});
+        settings.set({key: false});
         break;
       }
     }
@@ -84,50 +62,6 @@ var FotaSetting = {
       input.checked = true;
     else
       input.checked = false;
-  },
-
-  FotaSettingsDesc : function setFotaSettingsDesc(key, value) {
-    var _ = navigator.mozL10n.get;
-    if (key === 'fota.auto-check-interval.current') {
-
-      switch (Number(value)) {
-        case 0:
-          desc = _('auto_check_entries_manual');
-          break;
-        case 168:
-          desc = _('auto_check_entries_week');
-          break;
-        case 336:
-          desc = _('auto_check_entries_two_weeks');
-          break;
-        case 720:
-          desc = _('auto_check_entries_month');
-          break;
-      }
-      this.ele_check.textContent = desc;
-    } else if (key === 'fota.reminder-interval.current') {
-
-      var desc;
-      switch (Number(value)) {
-        case 0:
-          desc = _('reminde_entries_5');
-          break;
-        case 1:
-          desc = _('reminde_entries_1');
-          break;
-
-        case 3:
-          desc = _('reminde_entries_2');
-          break;
-        case 6:
-          desc = _('reminde_entries_3');
-          break;
-        case 24:
-          desc = _('reminde_entries_4');
-          break;
-      }
-      this.ele_reminder.textContent = desc;
-    }
   }
 };
 

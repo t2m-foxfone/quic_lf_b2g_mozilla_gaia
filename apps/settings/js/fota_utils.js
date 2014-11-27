@@ -185,7 +185,7 @@ function showConfirm(params) {
   };
 
   var cancelObject = {
-    title: _('cancel'),
+    title: navigator.mozL10n.get('cancel'),
     callback: function onCancel() {
       if (typeof params.cancelCb === 'function') {
         params.cancelCb();
@@ -194,14 +194,14 @@ function showConfirm(params) {
     }
 
   };
-
+  params.msg = params.msg.split('\\r\\n').join('\n');
   CustomDialog.show(params.title, params.msg, cancelObject, acceptObject);
 }
 
 function showAttention(params) {
   debug('showAttention:: Entry.');
   var btnObject = {
-    title: _('ok'),
+    title: navigator.mozL10n.get('ok'),
     callback: function onAccept() {
       CustomDialog.hide();
       if (typeof params.acceptCb === 'function') {
@@ -209,6 +209,8 @@ function showAttention(params) {
       }
     }
   };
+
+  params.msg = params.msg.split('\\r\\n').join('\n');
   CustomDialog.show(params.title, params.msg, btnObject);
 }
 
@@ -223,6 +225,7 @@ function showDialog(title, msg, cb) {
       }
     }
   };
+  msg = msg.split('\\r\\n').join('\n');
   CustomDialog.show(title, msg, btnObject);
 }
 
@@ -234,7 +237,7 @@ function isBatteryLevelAvailable() {
   }
   var level = Math.min(100, Math.round(battery.level * 100));
   debug('isBatteryLevelAvailable:: Now BatteryLevel: ' + level);
-  if (level < 60) {/*For TA we just change to 60 temp*/
+  if (level < 30) {
     return false;
   }else {
     return true;

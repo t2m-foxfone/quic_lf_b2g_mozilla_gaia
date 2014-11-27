@@ -30,26 +30,28 @@
       </li>
 
       <li id="auto-check-intervals">
-        <select id="auto-check-intervals-select" name="fota.auto-check-interval.current" class = "fota-spec-select">
-          <option value="0" data-l10n-id="auto_check_entries_manual" selected>Manual</option>
-          <option value="168" data-l10n-id="auto_check_entries_week">1 week</option>
-          <option value="336" data-l10n-id="auto_check_entries_two_weeks">2 weeks</option>
-          <option value="720" data-l10n-id="auto_check_entries_month">1 month</option>
-        </select>
-        <small id="auto-check-intervals-desc">Never</small>
-        <a data-l10n-id="auto_check" class = "fota-interval-item" >Auto-Check Intervals</a>
+        <p data-l10n-id="auto_check" class = "fota-interval-item" >Auto-Check Intervals</p>
+        <span class="button icon icon-dialog">
+          <select id="auto-check-intervals-select" name="fota.auto-check-interval.current" class = "fota-spec-select">
+            <option value="0" data-l10n-id="auto_check_entries_manual" selected>Manual</option>
+            <option value="168" data-l10n-id="auto_check_entries_week">1 week</option>
+            <option value="336" data-l10n-id="auto_check_entries_two_weeks">2 weeks</option>
+            <option value="720" data-l10n-id="auto_check_entries_month">1 month</option>
+          </select>
+        </span>
       </li>
 
       <li id="reminder-intervals" >
-        <select id="reminder-intervals-select" name="fota.reminder-interval.current" class = "fota-spec-select">
-          <option value="1" data-l10n-id="reminde_entries_1" >1 hour</option>
-          <option value="3" data-l10n-id="reminde_entries_2">2 hours</option>
-          <option value="6" data-l10n-id="reminde_entries_3">6 hours</option>
-          <option value="24" data-l10n-id="reminde_entries_4">24 hours</option>
-          <option value="0" data-l10n-id="reminde_entries_5">Never</option>
-        </select>
-        <small id="reminder-intervals-desc">Never</small>
-        <a data-l10n-id="reminder2" class = "fota-interval-item">Upgrade status reminder</a>
+        <p data-l10n-id="reminder2" class = "fota-interval-item">Upgrade status reminder</p>
+        <span class="button icon icon-dialog">
+          <select id="reminder-intervals-select" name="fota.reminder-interval.current" class = "fota-spec-select">
+            <option value="1" data-l10n-id="reminde_entries_1" >1 hour</option>
+            <option value="3" data-l10n-id="reminde_entries_2">2 hours</option>
+            <option value="6" data-l10n-id="reminde_entries_3">6 hours</option>
+            <option value="24" data-l10n-id="reminde_entries_4">24 hours</option>
+            <option value="0" data-l10n-id="reminde_entries_5">Never</option>
+          </select>
+        </span>
       </li>
     </ul>
     <script type="application/javascript" src="js/fota_setting.js"></script>
