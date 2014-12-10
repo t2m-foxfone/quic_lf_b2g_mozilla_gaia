@@ -369,9 +369,13 @@ var systemUpdate = {
       return;
     debug('handleWifiStatusChange:' + wifiManager.connection.status);
     if (wifiManager.connection.status === 'connected') {
-      var settings = window.navigator.mozSettings.createLock();
-      var req = settings.get('fota.download.continue');
+      var settings;
+      var req;
+      /*sometimes, this event would come above one times*/
+      if (self._isWifiConnected) return;
 
+      settings = window.navigator.mozSettings.createLock();
+      req = settings.get('fota.download.continue');
       self._isWifiConnected = true;
       req.onsuccess = function fota_getSettingSuccess() {
         var result = req.result['fota.download.continue'];
@@ -413,6 +417,8 @@ var systemUpdate = {
      *we need pause the process of download.2014-03-20
      */
     else if (wifiManager.connection.status === 'disconnected') {
+      /*sometimes, this event would come above one times*/
+      if (!self._isWifiConnected) return;
       self._isWifiConnected = false;
       if (self._mozJrdFota.JrdFotaActionStatus === 'Download') {
         if (self._isWifiOnly || self._isDataConnected === false) {

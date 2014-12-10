@@ -483,12 +483,9 @@ var Fota = {
       } else {
         if (result.name === 'download') {
           debug('fota.status.action:: download.');
-          self.disableCheckUpdateMenu();
-          button_download_action.innerHTML = _('btn_pause');
-          button_download_action.disabled = true;
-          button_download_action.onclick = self.pause.bind(self);
-          button_delete_action.disabled = true;
-          update_infomation_subline.hidden = true;
+          if (self._status != null) {
+            self.downloadDisplay();
+          }
         }
         var settings = window.navigator.mozSettings.createLock();
         settings.set({'fota.status.action': null });
@@ -563,7 +560,8 @@ var Fota = {
 
     //Activate check menu
     this.enableCheckUpdateMenu();
-
+    /*when error occured,clear the status*/
+    if (!isSuccess) this._status = null;
     switch (actionType) {
       case 'GetNewPackage':
         this.handleGetNewPackageFailed(errorType);
@@ -1014,6 +1012,17 @@ var Fota = {
     }
   },
 
+  downloadDisplay: function fota_downloadDisplay() {
+    //Disable check of update menu
+    this.disableCheckUpdateMenu();
+
+    button_download_action.innerHTML = _('btn_pause');
+    button_download_action.disabled = true;
+    button_download_action.onclick = this.pause.bind(this);
+    button_delete_action.disabled = true;
+    update_infomation_subline.hidden = true;
+  },
+
   startDownload1: function fota_startDownload1() {
     //tcl_lwj
     //acquire for cpu for bug 532900 528114
@@ -1027,14 +1036,8 @@ var Fota = {
     var notification = '=DwnRes=' + this._versionInfo.percentage;
     settings.createLock().set({'fota.notification.value': notification});
 
-    //Disable check of update menu
-    this.disableCheckUpdateMenu();
+    this.downloadDisplay();
 
-    button_download_action.innerHTML = _('btn_pause');
-    button_download_action.disabled = true;
-    button_download_action.onclick = this.pause.bind(this);
-    button_delete_action.disabled = true;
-    update_infomation_subline.hidden = true;
     this.sendFotaCommand('download', 'download');
   },
 
