@@ -341,18 +341,21 @@ var systemUpdate = {
     req.onsuccess = function fota_getSettingSuccess() {
       var result = req.result['fota.download.continue'];
       if (self._mozJrdFota.JrdFotaActionStatus != 'Download' &&
-        result == true) {
-        /*The last download is interrupted,just go again*/
-        self._mozJrdFota.download(
-          self.onFotaDownloadProgressCb.bind(self),
-          self.onCommonCb.bind(self));
+        result == true && (self._isWifiConnected ||
+        (!self._isWifiOnly && self._isDataConnected))) {
         /*display notification*/
         var request = settings.get('fota.version.info');
         request.onsuccess = function() {
           var res = request.result['fota.version.info'];
           var notification = '=DwnRes=' + res.percentage;
-          settings.set({'fota.notification.value': notification });
+
           settings.set({'fota.status.action': {name: 'download', other: null}});
+          settings.set({'fota.notification.value': notification });
+
+          /*The last download is interrupted,just go again*/
+          self._mozJrdFota.download(
+            self.onFotaDownloadProgressCb.bind(self),
+            self.onCommonCb.bind(self));
         };
       }
     };
@@ -381,18 +384,21 @@ var systemUpdate = {
         var result = req.result['fota.download.continue'];
         if (self._mozJrdFota.JrdFotaActionStatus != 'Download') {
           /*The last download is interrupted,just go again*/
-          if (result == true) {
-            self._mozJrdFota.download(
-              self.onFotaDownloadProgressCb.bind(self),
-              self.onCommonCb.bind(self));
+          if (result == true && (self._isWifiConnected ||
+            (!self._isWifiOnly && self._isDataConnected))) {
             /*display notification*/
             var request = settings.get('fota.version.info');
             request.onsuccess = function() {
               var res = request.result['fota.version.info'];
               var notification = '=DwnRes=' + res.percentage;
-              settings.set({'fota.notification.value': notification });
+
               settings.set({'fota.status.action': {name: 'download',
                 other: null}});
+              settings.set({'fota.notification.value': notification });
+
+              self._mozJrdFota.download(
+                self.onFotaDownloadProgressCb.bind(self),
+                self.onCommonCb.bind(self));
             };
           }
           else {
