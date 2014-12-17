@@ -38,12 +38,11 @@ var JrdFotaNotifiCation = {
 
 
     SettingsListener.observe('fota.notification.value', null, function(value) {
-      debug('fota_notification:: init. Handle the notification value ' +
-            'changed: ' + value);
+      debug('fota_notification value changed: ' + value);
       self.notificationValue = value;
       if (!value) {
         return;
-      }else {
+      } else {
         var result = new String(value);
         var origin = result.slice(0, 8);
         var msg = result.slice(8, result.length);
@@ -85,8 +84,8 @@ var JrdFotaNotifiCation = {
      this.notifContainer.insertAdjacentHTML('afterbegin', newNotif);
 
      var newNode = this.notifContainer.firstElementChild;
-
-     debug('title: ' + param.title + '  message: ' + param.message);
+     if (param.message)
+       debug('title: ' + param.title + '  message: ' + param.message);
      newNode.querySelector('.percentage').textContent = param.percentage + '%';
      newNode.querySelector('.title').textContent = param.title;
      var process = newNode.querySelector('.progress').firstElementChild;
@@ -95,13 +94,17 @@ var JrdFotaNotifiCation = {
      there will be an error:not a finite floating-point value*/
      if (param.percentage)
      {
-         process.value = param.percentage;
+       process.value = param.percentage;
+     } else if (param.message) {
+       message.textContent = param.message;
      }
-     message.textContent = param.message;
 
      if (param.downloading != undefined) {
-       param.downloading ? this.notifContainer.classList.add('downloading') :
-        this.notifContainer.classList.remove('downloading');
+       if (param.downloading) {
+         this.notifContainer.classList.add('downloading');
+       } else {
+         this.notifContainer.classList.remove('downloading');
+       }
        downloading = param.downloading;
      }
      this.node = newNode;

@@ -192,7 +192,7 @@ var Fota = {
     var self = this;
     this.getSettingsValue('fota.mobile-data-notification.disabled',
       function(isNotifed) {
-        if (isNotifed === true) {
+        if (isNotifed) {
           return;
         }
 
@@ -286,34 +286,6 @@ var Fota = {
     var fixedDigits = (size < 1024 * 1024) ? 0 : 1;
     var sizeInfo = FileSizeFormatter.getReadableFileSize(size, fixedDigits);
     return sizeInfo.size + sizeInfo.unit;
-  },
-
-  getStoredVersionInfo: function fota_getVersion(success, failed) {
-    var settings = window.navigator.mozSettings;
-    if (!settings) {
-      debug('getStoredVersionInfo:: Settings is not exist');
-      return;
-    }
-    var req = settings.createLock().get('fota.version.info');
-    req.onsuccess = function() {
-      debug('getStoredVersionInfo:: getStoredVersionInfo success.');
-      var result = req.result['fota.version.info'];
-      if (!result) {
-        debug('getStoredVersionInfo::failed');
-        if (failed && typeof failed === 'function') {
-          failed();
-        }
-      } else {
-        if (success && typeof success === 'function') {
-          success(result);
-        }
-      }
-    };
-    req.onerror = function() {
-      if (failed && typeof failed === 'function') {
-        failed();
-      }
-    };
   },
 
   updateInfoPanelEx: function fota_updateInfoPanel(result) {
@@ -451,15 +423,12 @@ var Fota = {
 
     this.sendFotaCommand('common', 'GetAction');
     this._callback = function(action) {
-        var self;
-        self = this;
-        if (action == 'Download') {
-            var info = _('btn_pause');
-            button_download_action.disabled = false;
-            self.disableCheckUpdateMenu();
-            button_download_action.innerHTML = info;
-            button_download_action.onclick = this.pause.bind(this);
-        }
+      if (action == 'Download') {
+        button_download_action.disabled = false;
+        self.disableCheckUpdateMenu();
+        button_download_action.innerHTML =  _('btn_pause');
+        button_download_action.onclick = self.pause.bind(self);
+      }
     };
 
     this.initStorageCheck();
@@ -479,7 +448,7 @@ var Fota = {
     SettingsListener.observe('fota.status.action', null, function(result) {
       debug('fota.status.action::value=' + result);
       if (!result) {
-         return;
+        return;
       } else {
         if (result.name === 'download') {
           debug('fota.status.action:: download.');
@@ -492,26 +461,8 @@ var Fota = {
       }
     });
 
-    SettingsListener.observe('fota.version.info', null, function(value) {
-      if (!value) {
-        return;
-      } else {
-        self.getStoredVersionInfo(function(result) {
-          if (!result || !result.version_number || !result.size) {
-            return;
-          }
-          debug('version_number: ' + result.version_number + ' size: ' +
-            result.size + ' background: ' + result.background);
-          if (result.background === true) {
-            self.updateInfoPanelEx(result);
-            self.saveVersionInfo(result, false);
-          }
-          //self.updateInfoPanelEx(result);
-        },null);
-      }
-    });
     document.addEventListener('mozvisibilitychange',
-        this.handleActivityEvent.bind(this));
+      this.handleActivityEvent.bind(this));
   },
 
   handleLanguageChangeCb: function fota_handleLanguageChangeCb(actionStatus) {
@@ -555,8 +506,8 @@ var Fota = {
 
   onCommonCb: function fota_commonCb(actionType, isSuccess, errorType) {
     var errorStr = null;
-    debug('onCommonCb:: ' + 'actionType: ' + actionType + 'isSuccess: ' +
-      isSuccess + 'errorType: ' + errorType + '\n');
+    debug('onCommonCb:: ' + 'actionType: ' + actionType + ' isSuccess: ' +
+      isSuccess + ' errorType: ' + errorType + '\n');
 
     //Activate check menu
     this.enableCheckUpdateMenu();
@@ -586,13 +537,6 @@ var Fota = {
         }
         break;
       case 'CheckFirmwarm':
-        //tcl_lwj
-        //acquire for cpu for bug 532900 528114
-        //no matter fails or succeed we have to unlock CPU
-        if (this._cpuWakelock != null) {
-          this._cpuWakelock.unlock();
-          this._cpuWakelock = null;
-        }
         if (!isSuccess) {
           this.handleFirewarmCheckFailed(errorType);
         }else {
@@ -797,6 +741,7 @@ var Fota = {
 
     button_download_action.innerHTML = _('btn_pause');
     button_download_action.onclick = this.pause.bind(this);
+    button_download_action.disabled = false;
     button_delete_action.disabled = true;
     update_infomation_subline.hidden = true;
 
@@ -970,17 +915,9 @@ var Fota = {
   },
   /*Modified by tcl_baijian update display*/
   pauseDisplay: function fota_pause_display() {
-      button_download_action.innerHTML = _('download');
-      button_download_action.disabled = true;
-      this.disableCheckUpdateMenu();
-
-      //tcl_lwj
-      //acquire for cpu for bug 532900 528114
-      //unlock the wakelock when user pauses it.
-      if (this._cpuWakelock != null) {
-          this._cpuWakelock.unlock();
-          this._cpuWakelock = null;
-      }
+    button_download_action.innerHTML = _('download');
+    button_download_action.disabled = true;
+    this.disableCheckUpdateMenu();
   },
   /*Modified by tcl_baijian only send pause command*/
   pause: function fota_pause() {
@@ -1024,12 +961,6 @@ var Fota = {
   },
 
   startDownload1: function fota_startDownload1() {
-    //tcl_lwj
-    //acquire for cpu for bug 532900 528114
-    //DO REMEMBER TO UNLOCK WHEN DOWNLOADING FINISHED OR
-    //SETTINGS CLOSED
-    //this._cpuWakelock = navigator.requestWakeLock('cpu');
-    //tcl_lwj end
 
     //Add download notification
     var settings = window.navigator.mozSettings;
@@ -1214,83 +1145,76 @@ var Fota = {
   },
 /*Added by tcl_baijian 2014-03-04 this funcation send command to system begin*/
   sendFotaCommand: function send2sys_fota_command(category, action) {
-      var self;
-      var comand2Sys;
+    var self;
+    var comand2Sys;
 
-      debug('send to system category:' + category + ' action:' + action);
-      self = this;
-      comand2Sys = {
-          category: category,
-          actionType: action
-      };
-      self._status = action;/*update the action status*/
-      if (self._ports != null)
-      {
-          self._ports.forEach(function(port) {
-              port.postMessage(comand2Sys);
-          });
-          return;
-      }
+    debug('send to system category:' + category + ' action:' + action);
+    self = this;
+    comand2Sys = {
+      category: category,
+      actionType: action
+    };
+    self._status = action;/*update the action status*/
+    if (self._ports != null)
+    {
+      self._ports.forEach(function(port) {
+        port.postMessage(comand2Sys);
+      });
+      return;
+    }
 
-      navigator.mozApps.getSelf().onsuccess = function(e) {
-          var app = e.target.result;
-          app.connect('fota-set-comms').then(function onConnAccepted(ports) {
-              self._ports = ports;
-              self._ports.forEach(function(port) {
-                  port.postMessage(comand2Sys);
-              });
-          }, function onConnRejected(reason) {
-              console.log('system is rejected fota command');
-              console.log(reason);
-          });
-      };
+    navigator.mozApps.getSelf().onsuccess = function(e) {
+      var app = e.target.result;
+      app.connect('fota-set-comms').then(function onConnAccepted(ports) {
+        self._ports = ports;
+        self._ports.forEach(function(port) {
+          port.postMessage(comand2Sys);
+        });
+      }, function onConnRejected(reason) {
+        console.log('system is rejected fota command');
+        console.log(reason);
+      });
+    };
   },
 /*Added by tcl_baijian 2014-03-04 this funcation send command to system end*/
   uninit: function fota_uninit() {
     debug('uninit');
-    var settings = window.navigator.mozSettings;
-    var notification = '=cloBar=';
+
     /*Added by tcl_baijian 2014-03-04 when settings exit
     and notify to system begin*/
     this.sendFotaCommand('common', 'exit');
     /*Added by tcl_baijian 2014-03-04 when settings exit
     and tell to system end*/
-    settings.createLock().set({'fota.notification.value': notification});
-    //tcl_lwj
-    //acquire for cpu for bug 532900 528114
-    if (this._cpuWakelock != null) {
-      this._cpuWakelock.unlock();
-      this._cpuWakelock = null;
-    }
+
+    this._ports = null;
   }
 };
 
 /*Added by tcl_baijian 2014-03-04 receive from system message begin*/
 window.addEventListener('iac-fota-sys-comms', function(evt) {
-    if (evt != null)
+  if (evt != null)
+  {
+    var msg = evt.detail;
+    debug('category is ' + msg.category);
+    switch (msg.category)
     {
-        var msg = evt.detail;
-        debug('category is ' + msg.category);
-        switch (msg.category)
-        {
-            case 'common':
-                Fota.onCommonCb(msg.actionType, msg.isSuccess, msg.errorType);
-                break;
-            case 'download':
-                Fota.onDownloadProgressCb(msg.completeRate);
-                break;
-            case 'getNewPackage':
-                Fota.onGetNewPackageCb(msg.versionNum, msg.size,
-                    msg.discription);
-                break;
-            case 'downloadFromSetting':
-                debug('receive download from setting');
-                //checkBeforeDownload
-                Fota.checkBeforeDownload();
-                break;
-            default :;
-        }
+      case 'common':
+        Fota.onCommonCb(msg.actionType, msg.isSuccess, msg.errorType);
+        break;
+      case 'download':
+        Fota.onDownloadProgressCb(msg.completeRate);
+        break;
+      case 'getNewPackage':
+        Fota.onGetNewPackageCb(msg.versionNum, msg.size, msg.discription);
+        break;
+      case 'downloadFromSetting':
+        debug('receive download from setting');
+        //checkBeforeDownload
+        Fota.checkBeforeDownload();
+        break;
+      default :;
     }
+  }
 });
 /*Added by tcl_baijian 2014-03-04 receive from system message end*/
 navigator.mozL10n.once(Fota.init.bind(Fota));

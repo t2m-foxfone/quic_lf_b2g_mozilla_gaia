@@ -324,7 +324,14 @@ var systemUpdate = {
     }
     debug('Handle Mobile data changed, go on ...');
     if (self._isDataConnected === true) {
-      self.fota_DownloadContinue();
+      var settings = window.navigator.mozSettings.createLock();
+      var req = settings.get('fota.mobile-data-notification.disabled');
+      req.onsuccess = function fota_getSettingSuccess() {
+        debug('baijian get notify');
+        var res = req.result['fota.mobile-data-notification.disabled'];
+        if (res)
+          self.fota_DownloadContinue();
+      };
     } else {
       if (self._mozJrdFota.JrdFotaActionStatus === 'Download' &&
         self._isWifiConnected === false) {
@@ -336,8 +343,13 @@ var systemUpdate = {
   fota_DownloadContinue: function fota_download_continue() {
 
     var self = this;
-    var settings = window.navigator.mozSettings.createLock();
-    var req = settings.get('fota.download.continue');
+    var settings;
+    var req;
+
+    if (self._mozJrdFota.JrdFotaActionStatus == 'Download')
+      return;
+    settings = window.navigator.mozSettings.createLock();
+    req = settings.get('fota.download.continue');
     req.onsuccess = function fota_getSettingSuccess() {
       var result = req.result['fota.download.continue'];
       if (self._mozJrdFota.JrdFotaActionStatus != 'Download' &&
@@ -448,8 +460,8 @@ var systemUpdate = {
   onCommonCb: function fs_commonCb(actionType, isSuccess, errorType) {
     var errorStr = null;
     var notification = '';
-    debug('onCommonCb::' + 'actionType: ' + actionType + 'isSuccess: ' +
-      isSuccess + 'errorType: ' + errorType + '\n');
+    debug('onCommonCb::' + 'actionType: ' + actionType + ' isSuccess: ' +
+      isSuccess + ' errorType: ' + errorType + '\n');
     switch (actionType) {
       case 'CheckInstallResult':
         //Have success and fail case
@@ -516,20 +528,23 @@ var systemUpdate = {
     var notification = '';
     var settings = window.navigator.mozSettings.createLock();
 
-    var req = settings.get('fota.version.info');
-    req.onsuccess = function fota_getSettingSuccess() {
-      var result = req.result['fota.version.info'];
-      if (result.percentage != completionRate) {
-        settings.set({'fota.version.info': {
-          version_number: result.version_number,
-          size: result.size, startDownload: starDownload,
-          percentage: completionRate,
-          background: false, description: result.description}});
-      }
-    };
-    req.onerror = function fota_getVersionInfo() {
-      debug('fota.version.info error');
-    };
+    if (this._isSend2Setting == false) {
+      var req = settings.get('fota.version.info');
+      req.onsuccess = function fota_getSettingSuccess() {
+        var result = req.result['fota.version.info'];
+        if (result.percentage != completionRate) {
+          settings.set({'fota.version.info': {
+            version_number: result.version_number,
+            size: result.size, startDownload: starDownload,
+            percentage: completionRate,
+            background: false, description: result.description}});
+        }
+      };
+      req.onerror = function fota_getVersionInfo() {
+        debug('fota.version.info error');
+      };
+    }
+
     if (starDownload == true) {
       notification = '=DwnRes=' + completionRate;
     }
