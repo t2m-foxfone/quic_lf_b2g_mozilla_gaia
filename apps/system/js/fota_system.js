@@ -324,20 +324,31 @@ var systemUpdate = {
     }
     debug('Handle Mobile data changed, go on ...');
     if (self._isDataConnected === true) {
-      var settings = window.navigator.mozSettings.createLock();
-      var req = settings.get('fota.mobile-data-notification.disabled');
-      req.onsuccess = function fota_getSettingSuccess() {
-        debug('baijian get notify');
-        var res = req.result['fota.mobile-data-notification.disabled'];
-        if (res)
-          self.fota_DownloadContinue();
-      };
+      self.fota_DownloadContinue();
     } else {
       if (self._mozJrdFota.JrdFotaActionStatus === 'Download' &&
         self._isWifiConnected === false) {
         self._mozJrdFota.pause(self.onCommonCb.bind(self));
       }
     }
+  },
+
+  fota_DownloadDo:function fota_do_download(){
+    var self = this;
+    var settings = window.navigator.mozSettings.createLock();
+    var request = settings.get('fota.version.info');
+    request.onsuccess = function() {
+      var res = request.result['fota.version.info'];
+      var notification = '=DwnRes=' + res.percentage;
+
+      settings.set({'fota.status.action': {name: 'download', other: null}});
+      settings.set({'fota.notification.value': notification });
+
+      /*The last download is interrupted,just go again*/
+      self._mozJrdFota.download(
+        self.onFotaDownloadProgressCb.bind(self),
+        self.onCommonCb.bind(self));
+    };
   },
 
   fota_DownloadContinue: function fota_download_continue() {
@@ -352,23 +363,19 @@ var systemUpdate = {
     req = settings.get('fota.download.continue');
     req.onsuccess = function fota_getSettingSuccess() {
       var result = req.result['fota.download.continue'];
-      if (self._mozJrdFota.JrdFotaActionStatus != 'Download' &&
-        result == true && (self._isWifiConnected ||
-        (!self._isWifiOnly && self._isDataConnected))) {
-        /*display notification*/
-        var request = settings.get('fota.version.info');
-        request.onsuccess = function() {
-          var res = request.result['fota.version.info'];
-          var notification = '=DwnRes=' + res.percentage;
-
-          settings.set({'fota.status.action': {name: 'download', other: null}});
-          settings.set({'fota.notification.value': notification });
-
-          /*The last download is interrupted,just go again*/
-          self._mozJrdFota.download(
-            self.onFotaDownloadProgressCb.bind(self),
-            self.onCommonCb.bind(self));
-        };
+      if (self._mozJrdFota.JrdFotaActionStatus != 'Download'
+        && result == true) {
+        if (self._isWifiConnected ){
+          self.fota_DownloadDo();
+        } else if (!self._isWifiOnly && self._isDataConnected) {
+          var reqt = settings.get('fota.mobile-data-notification.disabled');
+          reqt.onsuccess = function fota_getSettingSuccess() {
+            var res = reqt.result['fota.mobile-data-notification.disabled'];
+            if (res) {
+              self.fota_DownloadDo();
+            }
+          };
+        }
       }
     };
     req.onerror = function() {
